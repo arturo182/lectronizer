@@ -40,7 +40,7 @@ struct Item
     } product;
     QList<ItemOption> options;
     int qty;
-        double price;
+    double price;
 };
 QDebug operator<<(QDebug debug, const Item &it);
 
