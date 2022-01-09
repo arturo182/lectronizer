@@ -133,7 +133,11 @@ void MainWindow::fetchOrders(const int offset, const int limit)
     req.setRawHeader("Authorization", QString("Bearer %1").arg(m_shared.apiKey).toUtf8());
 
     QNetworkReply *reply = m_nam->get(req);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
     connect(reply, &QNetworkReply::errorOccurred, reply, [this, reply]()
+#else
+    connect(reply, qOverload<QNetworkReply::NetworkError>(&QNetworkReply::error), reply, [this, reply]()
+#endif
     {
         QMessageBox::critical(this, tr("Error fetching orders"), reply->errorString());
         reply->deleteLater();
@@ -247,7 +251,11 @@ void MainWindow::fetchCurrencyRates()
 
     QNetworkRequest req(CurrencyUrl);
     QNetworkReply *reply = m_nam->get(req);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
     connect(reply, &QNetworkReply::errorOccurred, reply, [this, reply]()
+#else
+    connect(reply, qOverload<QNetworkReply::NetworkError>(&QNetworkReply::error), reply, [this, reply]()
+#endif
     {
         QMessageBox::critical(this, tr("Error fetching currencies"), reply->errorString());
         reply->deleteLater();

@@ -6,6 +6,7 @@
 #include <QClipboard>
 #include <QDesktopServices>
 #include <QMessageBox>
+#include <QUrl>
 
 OrderDetailsWidget::OrderDetailsWidget(QWidget *parent)
     : QWidget(parent)
