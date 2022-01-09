@@ -7,7 +7,7 @@
 
 namespace Ui { class OrderDetailsWidget; }
 
-class SharedData;
+struct SharedData;
 
 class OrderDetailsWidget : public QWidget
 {
@@ -36,4 +36,3 @@ class OrderDetailsWidget : public QWidget
         Ui::OrderDetailsWidget *m_ui{};
         SharedData *m_shared;
 };
-
