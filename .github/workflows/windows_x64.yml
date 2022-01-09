@@ -53,5 +53,5 @@ jobs:
               uses: actions/upload-artifact@v1
               with:
                 path: output
-                name: lectronizer-${{ steps.short_sha1.outputs.value }}
+                name: lectronizer-${{ steps.short_sha1.outputs.value }}-win64
                 
