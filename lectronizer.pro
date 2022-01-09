@@ -36,6 +36,9 @@ RESOURCES += \
 # Window icon
 RC_ICONS = res/cart_chip.ico
 
+# MacOS icon
+ICON = res/cart_chip.icns
+
 # Version
 VERSION = 0.1
 VERSION_PARTS = $$split(VERSION, ".")
