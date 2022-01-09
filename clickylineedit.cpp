@@ -12,7 +12,7 @@
 ClickyLineEdit::ClickyLineEdit(QWidget *parent, Qt::WindowFlags f)
     : QFrame(parent, f)
 {
-    setStyleSheet("QFrame { background-color: white; }");
+    setStyleSheet("QFrame { background-color: palette(base); }");
     setFrameShape(QFrame::StyledPanel);
 
     m_lineEdit = new QLineEdit(this);
