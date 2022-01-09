@@ -19,7 +19,7 @@ jobs:
 
             - name: Get short sha1
               id: short_sha1
-              run: echo `git rev-parse --short HEAD`
+              run: echo "::set-output name=value::$(git rev-parse --short HEAD)"
               
             - name: Compile Lectronizer
               run: |
