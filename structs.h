@@ -27,6 +27,7 @@ struct ItemOption
     QString sku;
     QString name;
     QString choice;
+    double weight;
 };
 QDebug operator<<(QDebug debug, const ItemOption &op);
 
@@ -41,6 +42,7 @@ struct Item
     QList<ItemOption> options;
     int qty;
     double price;
+    double weight;
 };
 QDebug operator<<(QDebug debug, const Item &it);
 
@@ -90,13 +92,23 @@ struct Order
     } shipping;
 
     struct {
+        bool required;
         QString code;
         QString url;
     } tracking;
 
+
+    struct {
+        QString unit;
+        double total;
+        double base;
+    } weight;
+
     QString editUrl() const;
     QString customerInvoiceUrl() const;
     QString supplierInvoiceUrl() const;
+
+    double calcWeight() const;
 
     void openInBrowser() const;
     void copyFullAddress() const;

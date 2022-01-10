@@ -37,7 +37,7 @@ QDebug operator<<(QDebug debug, const ItemOption &op)
 {
     QDebugStateSaver saver(debug);
 
-    debug.nospace() << "ItemOption(sku = " << op.sku << ", name = " << op.name << ", choice = " << op.choice << ')';
+    debug.nospace() << "ItemOption(sku = " << op.sku << ", name = " << op.name << ", choice = " << op.choice << ", weight = " << op.weight << ')';
 
     return debug;
 }
@@ -51,7 +51,8 @@ QDebug operator<<(QDebug debug, const Item &it)
                     << ", sku = " << it.product.sku
                     << "), options = " << it.options
                     << ", qty = " << it.qty
-                    << "price = " << it.price
+                    << ", price = " << it.price
+                    << ", weight = " << it.weight
                     << ')';
 
     return debug;
@@ -91,7 +92,8 @@ QDebug operator<<(QDebug debug, const Order &o)
         debug << o.billing.address;
     }
     debug << ", shipping = { method = " << o.shipping.method << ", cost = " << o.shipping.cost << ", address = " << o.shipping.address << " }";
-    debug << ", tracking = { code = " << o.tracking.code << ", url = " << o.tracking.url << "}";
+    debug << ", tracking = { code = " << o.tracking.code << ", url = " << o.tracking.url << ", required = " << o.tracking.required << "}";
+    debug << ", weight = { base = " << o.weight.base << ", total = " << o.weight.total << ", unit = " << o.weight.unit << "}";
 
     debug << ')';
 
@@ -165,6 +167,7 @@ ItemOption parseJsonItemOption(const QJsonValue &val)
     itemOp.sku     = object.value("sku", true).toString();
     itemOp.name    = object.value("name").toString();
     itemOp.choice  = object.value("choice").toString();
+    itemOp.weight  = object.value("weight").toDouble();
 
     return itemOp;
 }
@@ -183,6 +186,7 @@ Item parseJsonItem(const QJsonValue &val)
     item.product.description = object.value("product_description").toString();
     item.qty                 = object.value("quantity").toInt();
     item.price               = object.value("price").toDouble();
+    item.weight              = object.value("weight").toDouble();
 
     const QJsonArray options = object.value("options").toArray();
     for (const QJsonValue &option : options)
@@ -238,8 +242,14 @@ Order parseJsonOrder(const QJsonValue &val)
     order.shipping.cost              = object.value("shipping_cost").toDouble();
     order.shipping.method            = object.value("shipping_method").toString();
 
+    order.tracking.required          = object.value("shipping_is_tracked").toBool();
     order.tracking.code              = object.value("tracking_code").toString();
     order.tracking.url               = object.value("tracking_url").toString();
+
+    const QJsonObject weight         = object.value("shipping_weight").toObject();
+    order.weight.base  = weight.value("base").toDouble();
+    order.weight.total = weight.value("total").toDouble();
+    order.weight.unit  = weight.value("weight_unit").toString();
 
     return order;
 }
@@ -257,6 +267,20 @@ QString Order::customerInvoiceUrl() const
 QString Order::supplierInvoiceUrl() const
 {
     return QString("https://lectronz.com/orders/%1/supplier_invoice").arg(id);
+}
+
+double Order::calcWeight() const
+{
+    double totalWeight = weight.base;
+
+    for (const Item &item : items) {
+        totalWeight += item.qty * item.weight;
+
+        for (const ItemOption &option : item.options)
+            totalWeight += option.weight;
+    }
+
+    return totalWeight;
 }
 
 void Order::openInBrowser() const

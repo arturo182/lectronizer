@@ -60,6 +60,7 @@ MainWindow::MainWindow(QWidget *parent)
                                                tr("Status"),    // 7
                                                tr("Updated"),   // 8
                                                tr("Fulfilled"), // 9
+                                               tr("Weight"),    // 10
                                            });
 
     m_orderProxyModel.setSourceModel(&m_orderModel);
@@ -230,6 +231,9 @@ void MainWindow::fetchOrders(const int offset, const int limit)
             } else {
                 rowItems << new QStandardItem("-");
             }
+
+            rowItems << new QStandardItem(tr("%1 %2").arg(order.calcWeight(), 0, 'f', 1).arg(order.weight.unit));
+            rowItems.last()->setData(order.calcWeight());
 
             rootItem->appendRow(rowItems);
         }
