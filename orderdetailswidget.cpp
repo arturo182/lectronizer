@@ -8,11 +8,24 @@
 #include <QMessageBox>
 #include <QUrl>
 
-OrderDetailsWidget::OrderDetailsWidget(QWidget *parent)
+OrderDetailsWidget::OrderDetailsWidget(const bool standalone, QWidget *parent)
     : QWidget(parent)
     , m_ui(new Ui::OrderDetailsWidget)
 {
     m_ui->setupUi(this);
+
+    if (standalone) {
+        m_ui->collapseButton->hide();
+        m_ui->orderPosLabel->hide();
+        m_ui->prevOrderButton->hide();
+        m_ui->nextOrderButton->hide();
+
+        QSettings set;
+        set.beginGroup("OrderDetails");
+        readSettings(set);
+    } else {
+        layout()->setContentsMargins(0, 0, 0, 0);
+    }
 
     // This seems to reset in Designer from time to time (bug?) so just set from code
     QFont monospaceFont = font();
@@ -52,6 +65,7 @@ OrderDetailsWidget::OrderDetailsWidget(QWidget *parent)
 OrderDetailsWidget::~OrderDetailsWidget()
 {
     delete m_ui;
+    m_ui = nullptr;
 }
 
 void OrderDetailsWidget::setSharedData(SharedData *shared)
@@ -62,6 +76,9 @@ void OrderDetailsWidget::setSharedData(SharedData *shared)
 void OrderDetailsWidget::setOrder(const Order &order)
 {
     m_order = order;
+
+    if (!parent())
+        setWindowTitle(tr("Order details - #%1").arg(order.id));
 
     const Address &address = order.shipping.address;
 
@@ -214,10 +231,36 @@ void OrderDetailsWidget::processOrderButton()
 
 void OrderDetailsWidget::readSettings(const QSettings &set)
 {
-    m_ui->itemsTreeWidget->header()->restoreState(set.value("detailColumns").toByteArray());
+    // separate widget and window settings
+    if (set.group().isEmpty()) {
+        m_ui->itemsTreeWidget->header()->restoreState(set.value("detailColumns").toByteArray());
+    } else {
+        restoreGeometry(set.value("geometry").toByteArray());
+        setWindowState(Qt::WindowStates(set.value("state").toInt()));
+
+        m_ui->itemsTreeWidget->header()->restoreState(set.value("columns").toByteArray());
+    }
 }
 
 void OrderDetailsWidget::writeSettings(QSettings &set) const
 {
-    set.setValue("detailColumns",  m_ui->itemsTreeWidget->header()->saveState());
+    // separate widget and window settings
+    if (set.group().isEmpty()) {
+        set.setValue("detailColumns", m_ui->itemsTreeWidget->header()->saveState());
+    } else {
+        set.setValue("geometry", saveGeometry());
+        set.setValue("state", windowState().toInt());
+        set.setValue("columns", m_ui->itemsTreeWidget->header()->saveState());
+    }
+}
+
+void OrderDetailsWidget::closeEvent(QCloseEvent *event)
+{
+    if (!parent()) {
+        QSettings set;
+        set.beginGroup("OrderDetails");
+        writeSettings(set);
+    }
+
+    QWidget::closeEvent(event);
 }

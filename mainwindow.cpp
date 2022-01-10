@@ -89,7 +89,10 @@ MainWindow::~MainWindow()
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     writeSettings();
-    event->accept();
+
+    QMainWindow::closeEvent(event);
+
+    qApp->quit();
 }
 
 void MainWindow::addColumnFilter(const int column, const QString &name, std::function<QString(const Order &)> getter)
@@ -347,6 +350,8 @@ void MainWindow::updateOrderDetails(const QItemSelection &selected)
     const QModelIndex proxyCurrent = selected.indexes().first();
     const QModelIndex current = m_orderProxyModel.mapToSource(proxyCurrent);
     QStandardItem *item = m_orderModel.item(current.row());
+    if (!item)
+        return;
 
     const int id = item->text().toInt();
     const Order &order = m_orders[id];
@@ -393,6 +398,29 @@ void MainWindow::connectSignals()
 {
     // Update order details when selection changes
     connect(m_ui->orderTreeView->selectionModel(), &QItemSelectionModel::selectionChanged, this, &MainWindow::updateOrderDetails);
+
+    // Double-clicking an order opens it in a separate window
+    connect(m_ui->orderTreeView, &QTreeView::doubleClicked, this, [&](const QModelIndex &proxyCurrent)
+    {
+        if (!proxyCurrent.isValid())
+            return;
+
+        const QModelIndex current = m_orderProxyModel.mapToSource(proxyCurrent);
+        if (!current.isValid())
+            return;
+
+        QStandardItem *item = m_orderModel.item(current.row());
+        if (!item)
+            return;
+
+        const int id = item->text().toInt();
+
+        OrderDetailsWidget *orderWidget = new OrderDetailsWidget(true);
+        orderWidget->setAttribute(Qt::WA_DeleteOnClose);
+        orderWidget->setSharedData(&m_shared);
+        orderWidget->setOrder(m_orders[id]);
+        orderWidget->show();
+    });
 
     // Update order details when filters change
     connect(&m_orderProxyModel, &OrderSortFilterModel::layoutChanged, this, [&]()

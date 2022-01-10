@@ -14,7 +14,7 @@ class OrderDetailsWidget : public QWidget
     Q_OBJECT
 
     public:
-        explicit OrderDetailsWidget(QWidget *parent = nullptr);
+        explicit OrderDetailsWidget(const bool standalone = false, QWidget *parent = nullptr);
         ~OrderDetailsWidget() override;
 
         void setSharedData(SharedData *shared);
@@ -30,6 +30,9 @@ class OrderDetailsWidget : public QWidget
     signals:
         void orderRequested(const int delta);
         void hideRequested();
+
+    protected:
+        void closeEvent(QCloseEvent *event) override;
 
     private:
         Order m_order{};
