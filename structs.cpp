@@ -5,6 +5,7 @@
 #include <QDesktopServices>
 #include <QJsonArray>
 #include <QJsonObject>
+#include <QUrl>
 
 QDebug operator<<(QDebug debug, const Address &a)
 {
