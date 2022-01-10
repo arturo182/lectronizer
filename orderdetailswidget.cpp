@@ -208,7 +208,7 @@ void OrderDetailsWidget::writeSettings(QSettings &set) const
         set.setValue("detailColumns", m_ui->itemsTreeWidget->header()->saveState());
     } else {
         set.setValue("geometry", saveGeometry());
-        set.setValue("state", windowState().toInt());
+        set.setValue("state", (int)windowState());
         set.setValue("columns", m_ui->itemsTreeWidget->header()->saveState());
     }
 }
