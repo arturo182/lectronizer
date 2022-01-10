@@ -18,6 +18,8 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 
     connect(m_ui->apiKeyHelpButton, &QPushButton::pressed, this, showToolTip);
     connect(m_ui->targetCurrencyHelpButton, &QPushButton::pressed, this, showToolTip);
+
+    // TODO: Add Shipping URL template with wildcard so it's auto-filled with tracking number
 }
 
 SettingsDialog::~SettingsDialog()

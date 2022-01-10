@@ -1,5 +1,8 @@
 #include "structs.h"
 
+#include <QApplication>
+#include <QClipboard>
+#include <QDesktopServices>
 #include <QJsonArray>
 #include <QJsonObject>
 
@@ -238,4 +241,53 @@ Order parseJsonOrder(const QJsonValue &val)
     order.tracking.url               = object.value("tracking_url").toString();
 
     return order;
+}
+
+QString Order::editUrl() const
+{
+    return QString("https://lectronz.com/orders/%1/edit").arg(id);
+}
+
+QString Order::customerInvoiceUrl() const
+{
+    return QString("https://lectronz.com/orders/%1/customer_invoice").arg(id);
+}
+
+QString Order::supplierInvoiceUrl() const
+{
+    return QString("https://lectronz.com/orders/%1/supplier_invoice").arg(id);
+}
+
+void Order::openInBrowser() const
+{
+    QDesktopServices::openUrl(QUrl(editUrl()));
+}
+
+void Order::copyFullAddress() const
+{
+    QString address;
+    address += shipping.address.firstName + " " + shipping.address.lastName + "\n";
+
+    if (!shipping.address.organization.isEmpty())
+        address += shipping.address.organization + "\n";
+
+    address += shipping.address.street + "\n";
+
+    if (!shipping.address.streetExtension.isEmpty())
+        address += shipping.address.streetExtension + "\n";
+
+    const QString state = (shipping.address.state.isEmpty() ? "" : ", " + shipping.address.state);
+    address += shipping.address.city + state + " " + shipping.address.postalCode + "\n";
+    address += shipping.address.country + "\n";
+
+    if (!customerPhone.isEmpty())
+        address += customerPhone + "\n";
+
+    if (!customerEmail.isEmpty())
+        address += customerEmail + "\n";
+
+    if (address.endsWith("\n"))
+        address = address.chopped(1);
+
+    qApp->clipboard()->setText(address);
 }

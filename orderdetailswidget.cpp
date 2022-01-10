@@ -34,7 +34,7 @@ OrderDetailsWidget::OrderDetailsWidget(const bool standalone, QWidget *parent)
     m_ui->billingLabel->setFont(monospaceFont);
 
     // Copy full shipping address
-    connect(m_ui->addressCopyAllButton, &QPushButton::clicked, this, &OrderDetailsWidget::copyShippingAddress);
+    connect(m_ui->addressCopyAllButton, &QPushButton::clicked, this, [&]() { m_order.copyFullAddress(); });
 
     // Mark shipped
     connect(m_ui->shippingSubmitButton, &QPushButton::clicked, this, [&]()
@@ -52,13 +52,11 @@ OrderDetailsWidget::OrderDetailsWidget(const bool standalone, QWidget *parent)
     // Invoice buttons
     connect(m_ui->customerInvoiceButton, &QPushButton::clicked, this, [this]()
     {
-        const QUrl url(QString("https://lectronz.com/orders/%1/customer_invoice").arg(m_order.id));
-        QDesktopServices::openUrl(url);
+        QDesktopServices::openUrl(QUrl(m_order.customerInvoiceUrl()));
     });
     connect(m_ui->sellerInvoiceButton, &QPushButton::clicked, this, [this]()
     {
-        const QUrl url(QString("https://lectronz.com/orders/%1/supplier_invoice").arg(m_order.id));
-        QDesktopServices::openUrl(url);
+        QDesktopServices::openUrl(QUrl(m_order.supplierInvoiceUrl()));
     });
 }
 
@@ -83,7 +81,7 @@ void OrderDetailsWidget::setOrder(const Order &order)
     const Address &address = order.shipping.address;
 
     // Header
-    m_ui->orderNumberLabel->setText(tr("<a href='https://lectronz.com/orders/%1/edit'>Order #%1</a>").arg(QString::number(order.id)));
+    m_ui->orderNumberLabel->setText(tr("<a href='%1'>Order #%2</a>").arg(order.editUrl(), QString::number(order.id)));
     m_ui->orderStatusLabel->setText(tr("Status: %1").arg(order.status));
     m_ui->createdAtLabel->setText(tr("Created: %1").arg(friendlyDate(order.createdAt)));
     m_ui->updatedAtLabel->setText(tr("Updated: %1").arg(friendlyDate(order.updatedAt)));
@@ -174,45 +172,6 @@ void OrderDetailsWidget::setOrder(const Order &order)
 
     m_ui->billingLabel->setText(billingText);
     m_ui->billingLinkLabel->setText(QString("<a href='https://dashboard.stripe.com/payments/%1'>See payment on Stripe</a>").arg(order.payment.reference));
-}
-
-void OrderDetailsWidget::copyShippingAddress()
-{
-    const QString name = m_ui->addressNameEdit->text();
-    const QString org = m_ui->addressOrgEdit->text();
-    const QString address1 = m_ui->address1Edit->text();
-    const QString address2 = m_ui->address2Edit->text();
-    const QString cityState = m_ui->addressCityEdit->text();
-    const QString zip = m_ui->addressZipEdit->text();
-    const QString country = m_ui->addressCountryEdit->text();
-    const QString phone = m_ui->addressPhoneEdit->text();
-    const QString email = m_ui->addressEmailEdit->text();
-
-    QString address;
-    address += name + "\n";
-
-    if (!org.isEmpty())
-        address += org + "\n";
-
-    address += address1 + "\n";
-
-    if (!address2.isEmpty())
-        address += address2 + "\n";
-
-    address += cityState + " " + zip + "\n";
-    address += country + "\n";
-
-    if (!phone.isEmpty())
-        address += phone + "\n";
-
-    if (!email.isEmpty())
-        address += email + "\n";
-
-    if (address.endsWith("\n"))
-        address = address.chopped(1);
-
-    qApp->clipboard()->setText(address);
-
 }
 
 void OrderDetailsWidget::updateOrderButtons(const int row, const int rowCount)

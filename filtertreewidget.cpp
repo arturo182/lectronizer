@@ -33,6 +33,38 @@ void FilterTreeWidget::addFilter(const int modelColumn, const QString &name, con
     root->setExpanded(true);
 }
 
+void FilterTreeWidget::setFilter(const QString &name, const QString &value)
+{
+    QTreeWidgetItem *topItem = nullptr;
+
+    // find category
+    for (int i = 0; i < topLevelItemCount(); ++i) {
+        QTreeWidgetItem *item = topLevelItem(i);
+        if (item->data(0, Qt::UserRole + 1).toString() != name)
+            continue;
+
+        topItem = item;
+        break;
+    }
+
+    if (!topItem || (topItem->childCount() == 0))
+        return;
+
+    // deselect "All"
+    topItem->child(0)->setCheckState(0, Qt::Unchecked);
+
+    // find value and select
+    for (int i = 0; i < topItem->childCount(); ++i) {
+        QTreeWidgetItem *child = topItem->child(i);
+
+        if (child->text(0) != value)
+            continue;
+
+        child->setCheckState(0, Qt::Checked);
+        break;
+    }
+}
+
 void FilterTreeWidget::expandClickedItem(QTreeWidgetItem *item)
 {
     if (!item)
@@ -57,6 +89,8 @@ void FilterTreeWidget::processCheckBox(QTreeWidgetItem *item, int column)
 
     const bool isChecked = (item->checkState(0) == Qt::Checked);
     QTreeWidgetItem *allItem = parent->child(0);
+    if (!allItem)
+        return;
 
     // use a flag so we don't recurse
     if (property("processing").toBool())

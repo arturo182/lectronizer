@@ -36,6 +36,8 @@ class MainWindow : public QMainWindow
         void processOrderButton();
         void showSettingsDialog();
         void showAboutDialog();
+        void openOrderWindow(const int id);
+        int orderIdFromProxyModel(const QModelIndex &proxyIndex);
 
     private:
         QNetworkAccessManager *m_nam{};

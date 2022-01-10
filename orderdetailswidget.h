@@ -21,7 +21,6 @@ class OrderDetailsWidget : public QWidget
         void setOrder(const Order &order);
 
     public slots:
-        void copyShippingAddress();
         void updateOrderButtons(const int row, const int rowCount);
         void processOrderButton();
         void readSettings(const QSettings &set);

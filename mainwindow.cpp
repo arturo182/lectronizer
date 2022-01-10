@@ -5,6 +5,7 @@
 
 #include <QClipboard>
 #include <QCloseEvent>
+#include <QDesktopServices>
 #include <QItemDelegate>
 #include <QItemSelectionModel>
 #include <QJsonArray>
@@ -68,7 +69,8 @@ MainWindow::MainWindow(QWidget *parent)
     m_ui->orderTreeView->header()->setSectionHidden(8, true);
     m_ui->orderTreeView->header()->setSectionHidden(9, true);
 
-    // customContextMenuRequested will be called on right click
+    // customContextMenuRequested will be called on right click, also for columns
+    m_ui->orderTreeView->setContextMenuPolicy(Qt::CustomContextMenu);
     m_ui->orderTreeView->header()->setContextMenuPolicy(Qt::CustomContextMenu);
 
     connectSignals();
@@ -348,12 +350,10 @@ void MainWindow::updateOrderDetails(const QItemSelection &selected)
     }
 
     const QModelIndex proxyCurrent = selected.indexes().first();
-    const QModelIndex current = m_orderProxyModel.mapToSource(proxyCurrent);
-    QStandardItem *item = m_orderModel.item(current.row());
-    if (!item)
+    const int id = orderIdFromProxyModel(proxyCurrent);
+    if (id < 0)
         return;
 
-    const int id = item->text().toInt();
     const Order &order = m_orders[id];
     m_ui->detailWidget->setOrder(order);
 
@@ -402,24 +402,52 @@ void MainWindow::connectSignals()
     // Double-clicking an order opens it in a separate window
     connect(m_ui->orderTreeView, &QTreeView::doubleClicked, this, [&](const QModelIndex &proxyCurrent)
     {
-        if (!proxyCurrent.isValid())
+        const int id = orderIdFromProxyModel(proxyCurrent);
+        if (id < 0)
             return;
 
-        const QModelIndex current = m_orderProxyModel.mapToSource(proxyCurrent);
-        if (!current.isValid())
+        openOrderWindow(id);
+    });
+
+    // Order context menu
+    connect(m_ui->orderTreeView, &QHeaderView::customContextMenuRequested, this, [&](const QPoint &pos)
+    {
+        QTreeView *tree = m_ui->orderTreeView;
+        QItemSelectionModel *selection = tree->selectionModel();
+        if (!selection->hasSelection())
             return;
 
-        QStandardItem *item = m_orderModel.item(current.row());
-        if (!item)
+        const int id = orderIdFromProxyModel(selection->currentIndex());
+        if (id < 0)
             return;
 
-        const int id = item->text().toInt();
+        const Order &order= m_orders[id];
 
-        OrderDetailsWidget *orderWidget = new OrderDetailsWidget(true);
-        orderWidget->setAttribute(Qt::WA_DeleteOnClose);
-        orderWidget->setSharedData(&m_shared);
-        orderWidget->setOrder(m_orders[id]);
-        orderWidget->show();
+        // TODO: Add Copy->Tracking # if fullfilled
+        // TODO: Add item for opening tracking URL if there's tracking
+        // TODO: Add Mark Shipped if not fulfilled
+
+        QMenu menu;
+        menu.setDefaultAction(menu.addAction(tr("&Open"), this, [&, id]() { openOrderWindow(id); }));
+        menu.addAction(QIcon(":/res/icons/world.png"), tr("Open in &browser"), this, [&, order]() { order.openInBrowser(); });
+
+        QMenu *invoiceMenu = menu.addMenu(QIcon(":/res/icons/page_money.png"), tr("Open &invoice"));
+        invoiceMenu->addAction(QIcon(), tr("&Customer invoice"), this, [&, order]() { QDesktopServices::openUrl(order.customerInvoiceUrl()); });
+        invoiceMenu->addAction(QIcon(), tr("&Seller invoice"),   this, [&, order]() { QDesktopServices::openUrl(order.supplierInvoiceUrl()); });
+
+        QMenu *copyMenu = menu.addMenu(QIcon(":/res/icons/page_white_copy.png"), tr("&Copy"));
+        copyMenu->addAction(QIcon(":/res/icons/box.png"),   tr("Order &Id"),              this, [&, order]() { qApp->clipboard()->setText(QString::number(order.id)); });
+        copyMenu->addAction(QIcon(":/res/icons/user.png"),  tr("Customer &Name"),         this, [&, order]() { const auto &a = order.shipping.address; qApp->clipboard()->setText(a.firstName + " " + a.lastName); });
+        copyMenu->addAction(QIcon(":/res/icons/email.png"), tr("Customer &Email"),        this, [&, order]() { qApp->clipboard()->setText(order.customerEmail); });
+        copyMenu->addAction(QIcon(":/res/icons/house.png"), tr("Full shipping &address"), this, [&, order]() { order.copyFullAddress(); });
+
+
+        QMenu *filterMenu = menu.addMenu(QIcon(":/res/icons/funnel.png"), tr("&Filter with same"));
+        filterMenu->addAction(tr("&Country"),  this, [&, order]() { m_ui->filterTreeWidget->setFilter(tr("Country"), order.shipping.address.country); });
+        filterMenu->addAction(tr("&Shipping"), this, [&, order]() { m_ui->filterTreeWidget->setFilter(tr("Shipping"), order.shipping.method); });
+        filterMenu->addAction(tr("S&tatus"),   this, [&, order]() { m_ui->filterTreeWidget->setFilter(tr("Status"), order.status); });
+
+        menu.exec(tree->mapToGlobal(pos));
     });
 
     // Update order details when filters change
@@ -431,17 +459,6 @@ void MainWindow::connectSignals()
             return;
         }
         updateOrderDetails(selection->selection());
-    });
-
-    // Update order detail buttons when sorting changes
-    connect(m_ui->orderTreeView->header(), &QHeaderView::sortIndicatorChanged, this, [this]()
-    {
-        QItemSelectionModel *selection = m_ui->orderTreeView->selectionModel();
-        if (!selection->hasSelection())
-            return;
-
-        const QModelIndex proxyCurrent = selection->currentIndex();
-        m_ui->detailWidget->updateOrderButtons(proxyCurrent.row(), m_orderProxyModel.rowCount());
     });
 
     // Dialogs
@@ -498,6 +515,17 @@ void MainWindow::connectSignals()
         createColumnMenu(&menu);
 
         menu.exec(header->mapToGlobal(pos));
+    });
+
+    // Update order detail buttons when sorting changes
+    connect(m_ui->orderTreeView->header(), &QHeaderView::sortIndicatorChanged, this, [this]()
+    {
+        QItemSelectionModel *selection = m_ui->orderTreeView->selectionModel();
+        if (!selection->hasSelection())
+            return;
+
+        const QModelIndex proxyCurrent = selection->currentIndex();
+        m_ui->detailWidget->updateOrderButtons(proxyCurrent.row(), m_orderProxyModel.rowCount());
     });
 
     // Column menubar menu
@@ -593,5 +621,30 @@ if (_MSC_VER >= 1500) // 1500: MSVC 2008, 1600: MSVC 2010, ... (2-year release c
                            .arg(compilerVersion())
                            .arg(__DATE__)
                            .arg(__TIME__)
-                           .arg(verSha1));
+                       .arg(verSha1));
+}
+
+void MainWindow::openOrderWindow(const int id)
+{
+    OrderDetailsWidget *orderWidget = new OrderDetailsWidget(true);
+    orderWidget->setAttribute(Qt::WA_DeleteOnClose);
+    orderWidget->setSharedData(&m_shared);
+    orderWidget->setOrder(m_orders[id]);
+    orderWidget->show();
+}
+
+int MainWindow::orderIdFromProxyModel(const QModelIndex &proxyIndex)
+{
+    if (!proxyIndex.isValid())
+        return -1;
+
+    const QModelIndex index = m_orderProxyModel.mapToSource(proxyIndex);
+    if (!index.isValid())
+        return -1;
+
+    QStandardItem *item = m_orderModel.item(index.row());
+    if (!item)
+        return -1;
+
+    return item->text().toInt();
 }

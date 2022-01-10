@@ -93,6 +93,13 @@ struct Order
         QString code;
         QString url;
     } tracking;
+
+    QString editUrl() const;
+    QString customerInvoiceUrl() const;
+    QString supplierInvoiceUrl() const;
+
+    void openInBrowser() const;
+    void copyFullAddress() const;
 };
 QDebug operator<<(QDebug debug, const Order &o);
 

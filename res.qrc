@@ -9,5 +9,12 @@
         <file>res/icons/world.png</file>
         <file>res/icons/arrow_left.png</file>
         <file>res/icons/arrow_right.png</file>
+        <file>res/icons/email_open.png</file>
+        <file>res/icons/page_money.png</file>
+        <file>res/icons/funnel.png</file>
+        <file>res/icons/email.png</file>
+        <file>res/icons/house.png</file>
+        <file>res/icons/box.png</file>
+        <file>res/icons/user.png</file>
     </qresource>
 </RCC>

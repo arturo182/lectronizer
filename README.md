@@ -19,4 +19,5 @@ You can open the project in Qt Creator and just build it there or from the comma
 
 # Credits
 - Silk icon set 1.3 by Mark James https://www.famfamfam.com/lab/icons/silk/
+- Silk companion icon set #1 by Damien Guard https://damieng.com/creative/icons/silk-companion-1-icons
 - Main app icon: cart by Uniconlabs, motherboard by Chattapat, both from https://www.flaticon.com

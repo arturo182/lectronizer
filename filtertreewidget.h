@@ -11,6 +11,8 @@ class FilterTreeWidget : public QTreeWidget
 
         void addFilter(const int modelColumn, const QString &name, const QStringList &items);
 
+        void setFilter(const QString &name, const QString &value);
+
     private:
         void expandClickedItem(QTreeWidgetItem *item);
         void processCheckBox(QTreeWidgetItem *item, int column);
