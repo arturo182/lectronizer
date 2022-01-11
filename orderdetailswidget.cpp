@@ -24,7 +24,7 @@ OrderDetailsWidget::OrderDetailsWidget(const bool standalone, QWidget *parent)
         set.beginGroup("OrderDetails");
         readSettings(set);
     } else {
-        layout()->setContentsMargins(0, 0, 0, 0);
+        layout()->setContentsMargins(2, 2, 2, 2);
     }
 
     // This seems to reset in Designer from time to time (bug?) so just set from code
@@ -141,8 +141,11 @@ void OrderDetailsWidget::setOrder(const Order &order)
     m_ui->itemsTotalLabel->setText(totalText);
 
     // Shipping
+    m_ui->shippingWeightValueLabel->setText(tr("%1 %2").arg(order.calcWeight(), 0, 'f', 1).arg(order.weight.unit));
+    m_ui->shippingTrackingRequiredLabel->setText(order.tracking.required ? tr("Required") : tr("Not required"));
+    m_ui->shippingTrackingRequiredLabel->setStyleSheet(order.tracking.required ? "font-weight: bold; color: red;" : "");
     m_ui->shippingMethodValueLabel->setText(order.shipping.method);
-    m_ui->shippingSubmitButton->setDisabled(order.fulfilledAt.isValid()/* || !order.shipping.hasTracking */);
+    m_ui->shippingSubmitButton->setDisabled(order.fulfilledAt.isValid());
     m_ui->shippingSubmitButton->setText(order.fulfilledAt.isValid() ? tr("Shipped %1").arg(friendlyDate(order.fulfilledAt)) : tr("Mark Shipped"));
 
     // Billing
