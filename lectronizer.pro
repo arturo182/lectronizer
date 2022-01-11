@@ -2,33 +2,33 @@ QT       += core gui network widgets
 CONFIG   += c++20
 
 SOURCES += \
-    clickylineedit.cpp \
     filterbuttondelegate.cpp \
-    filtertreewidget.cpp \
     main.cpp \
-    mainwindow.cpp \
-    orderdetailswidget.cpp \
     ordersortfiltermodel.cpp \
-    settingsdialog.cpp \
     structs.cpp \
-    utils.cpp
+    utils.cpp \
+    widgets/clickylineedit.cpp \
+    widgets/filtertreewidget.cpp \
+    widgets/mainwindow.cpp \
+    widgets/orderdetailswidget.cpp \
+    widgets/settingsdialog.cpp
 
 HEADERS += \
-    clickylineedit.h \
     filterbuttondelegate.h \
-    filtertreewidget.h \
-    mainwindow.h \
-    orderdetailswidget.h \
     ordersortfiltermodel.h \
-    settingsdialog.h \
     shareddata.h \
     structs.h \
-    utils.h
+    utils.h \
+    widgets/clickylineedit.h \
+    widgets/filtertreewidget.h \
+    widgets/mainwindow.h \
+    widgets/orderdetailswidget.h \
+    widgets/settingsdialog.h
 
 FORMS += \
-    mainwindow.ui \
-    orderdetailswidget.ui \
-    settingsdialog.ui
+    widgets/mainwindow.ui \
+    widgets/orderdetailswidget.ui \
+    widgets/settingsdialog.ui
 
 RESOURCES += \
     res.qrc

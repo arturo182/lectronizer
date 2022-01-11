@@ -47,7 +47,7 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="res.qrc">
+        <iconset resource="../res.qrc">
          <normaloff>:/res/icons/collapse_right.png</normaloff>:/res/icons/collapse_right.png</iconset>
        </property>
        <property name="flat">
@@ -544,7 +544,7 @@
         <bool>false</bool>
        </property>
        <property name="icon">
-        <iconset resource="res.qrc">
+        <iconset resource="../res.qrc">
          <normaloff>:/res/icons/arrow_left.png</normaloff>:/res/icons/arrow_left.png</iconset>
        </property>
       </widget>
@@ -565,7 +565,7 @@
         <bool>false</bool>
        </property>
        <property name="icon">
-        <iconset resource="res.qrc">
+        <iconset resource="../res.qrc">
          <normaloff>:/res/icons/arrow_right.png</normaloff>:/res/icons/arrow_right.png</iconset>
        </property>
       </widget>
@@ -578,12 +578,12 @@
   <customwidget>
    <class>ClickyLineEdit</class>
    <extends>QFrame</extends>
-   <header>clickylineedit.h</header>
+   <header>widgets/clickylineedit.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="res.qrc"/>
+  <include location="../res.qrc"/>
  </resources>
  <connections/>
 </ui>

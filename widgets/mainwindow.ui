@@ -14,7 +14,7 @@
    <string>Lectronizer</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="res.qrc">
+   <iconset resource="../res.qrc">
     <normaloff>:/res/cart_chip.png</normaloff>:/res/cart_chip.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -256,7 +256,7 @@ QTreeView::item:!selected {
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="res.qrc">
+             <iconset resource="../res.qrc">
               <normaloff>:/res/icons/arrow_left.png</normaloff>:/res/icons/arrow_left.png</iconset>
             </property>
            </widget>
@@ -270,7 +270,7 @@ QTreeView::item:!selected {
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="res.qrc">
+             <iconset resource="../res.qrc">
               <normaloff>:/res/icons/arrow_right.png</normaloff>:/res/icons/arrow_right.png</iconset>
             </property>
            </widget>
@@ -364,7 +364,7 @@ QTreeView::item:!selected {
   <widget class="QStatusBar" name="statusbar"/>
   <action name="exitAction">
    <property name="icon">
-    <iconset resource="res.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/res/icons/door.png</normaloff>:/res/icons/door.png</iconset>
    </property>
    <property name="text">
@@ -376,7 +376,7 @@ QTreeView::item:!selected {
   </action>
   <action name="helpAboutAction">
    <property name="icon">
-    <iconset resource="res.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/res/icons/information.png</normaloff>:/res/icons/information.png</iconset>
    </property>
    <property name="text">
@@ -385,7 +385,7 @@ QTreeView::item:!selected {
   </action>
   <action name="toolsSettingsAction">
    <property name="icon">
-    <iconset resource="res.qrc">
+    <iconset resource="../res.qrc">
      <normaloff>:/res/icons/cog.png</normaloff>:/res/icons/cog.png</iconset>
    </property>
    <property name="text">
@@ -397,17 +397,17 @@ QTreeView::item:!selected {
   <customwidget>
    <class>FilterTreeWidget</class>
    <extends>QTreeWidget</extends>
-   <header>filtertreewidget.h</header>
+   <header>widgets/filtertreewidget.h</header>
   </customwidget>
   <customwidget>
    <class>OrderDetailsWidget</class>
    <extends>QWidget</extends>
-   <header>orderdetailswidget.h</header>
+   <header>widgets/orderdetailswidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="res.qrc"/>
+  <include location="../res.qrc"/>
  </resources>
  <connections>
   <connection>
