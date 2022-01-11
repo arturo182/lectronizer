@@ -679,7 +679,7 @@ void MainWindow::orderTreeKeyPressEvent(QKeyEvent *event)
 
     const Order &order= m_orders[id];
 
-    if (event->keyCombination() == QKeyCombination(Qt::ControlModifier, Qt::Key_Return)) {
+    if ((event->key() == Qt::Key_Return) && (event->modifiers() == Qt::ControlModifier)) {
         if (!order.fulfilledAt.isValid())
             QMessageBox::information(this, tr("Not implemented"), tr("Not implemented yet, sorry"));
     } else if (event->key() == Qt::Key_Return) {
