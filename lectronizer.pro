@@ -8,6 +8,7 @@ SOURCES += \
     structs.cpp \
     utils.cpp \
     widgets/clickylineedit.cpp \
+    widgets/currencyfetchdialog.cpp \
     widgets/filtertreewidget.cpp \
     widgets/mainwindow.cpp \
     widgets/orderdetailswidget.cpp \
@@ -20,6 +21,7 @@ HEADERS += \
     structs.h \
     utils.h \
     widgets/clickylineedit.h \
+    widgets/currencyfetchdialog.h \
     widgets/filtertreewidget.h \
     widgets/mainwindow.h \
     widgets/orderdetailswidget.h \

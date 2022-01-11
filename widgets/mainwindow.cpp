@@ -1,3 +1,4 @@
+#include "currencyfetchdialog.h"
 #include "mainwindow.h"
 #include "settingsdialog.h"
 #include "ui_mainwindow.h"
@@ -25,7 +26,6 @@
 #include <QUrlQuery>
 
 static const QString ApiUrl{"https://lectronz.com/api/v1/orders"};
-static const QString CurrencyUrl{"https://api.exchangerate.host/latest"};
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -271,53 +271,16 @@ void MainWindow::fetchCurrencyRates()
 {
     statusBar()->showMessage(tr("Fetching currency rates..."));
 
-    QNetworkRequest req(CurrencyUrl);
-    QNetworkReply *reply = m_nam->get(req);
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
-    connect(reply, &QNetworkReply::errorOccurred, reply, [this, reply]()
-#else
-    connect(reply, qOverload<QNetworkReply::NetworkError>(&QNetworkReply::error), reply, [this, reply]()
-#endif
-    {
-        QMessageBox::critical(this, tr("Error fetching currencies"), reply->errorString());
-        reply->deleteLater();
-    });
-    connect(reply, &QNetworkReply::sslErrors, reply, [&, reply](const QList<QSslError> &errors)
-    {
-        QMessageBox::critical(this, tr("Error fetching currencies - SSL"), errors[0].errorString());
-        reply->deleteLater();
-    });
-    connect(reply, &QNetworkReply::finished, reply, [&, reply]()
-    {
-        const QByteArray json = reply->readAll();
-
-        QJsonParseError error = {};
-        QJsonDocument doc = QJsonDocument::fromJson(json, &error);
-        if (error.error != QJsonParseError::NoError) {
-            QMessageBox::critical(this, tr("Error parsing currencies"), error.errorString());
-
-            reply->deleteLater();
-            return;
-        }
-
-        const QJsonObject root = doc.object();
-
-        if (root.value("base").toString() != "EUR") {
-            QMessageBox::critical(this, tr("Unexpected value"), "Base currency is not EUR");
-            reply->deleteLater();
-            return;
-        }
-
-        const QJsonObject rates = root.value("rates").toObject();
-        for (auto it = rates.begin(); it != rates.end(); ++it)
-            m_shared.currencyRates.insert(it.key(), it.value().toDouble());
-
-        QTimer::singleShot(100, this, [&]() { fetchOrders(); });
-
+    CurrencyFetchDialog dlg(m_nam, this);
+    if(dlg.exec() == QDialog::Accepted) {
         statusBar()->showMessage(tr("Currencies fetched"));
+    } else {
+        statusBar()->showMessage(tr("Currencies disabled"));
+    }
 
-        reply->deleteLater();
-    });
+    m_shared.currencyRates = dlg.rates();
+
+    QTimer::singleShot(100, this, [&]() { fetchOrders(); });
 }
 
 void MainWindow::updateDateFilter()

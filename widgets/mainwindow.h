@@ -46,8 +46,8 @@ class MainWindow : public QMainWindow
         OrderSortFilterModel m_orderProxyModel{};
         QStandardItemModel m_orderModel{};
         QHash<int, Order> m_orders{};
-        int m_totalOrders{0};
         int m_orderOffset{0};
-        Ui::MainWindow *m_ui{};
         SharedData m_shared{};
+        int m_totalOrders{0};
+        Ui::MainWindow *m_ui{};
 };
