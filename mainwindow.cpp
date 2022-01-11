@@ -178,6 +178,9 @@ void MainWindow::fetchOrders(const int offset, const int limit)
         const QJsonObject root = doc.object();
         const QJsonArray jsonOrders = root.value("orders").toArray();
 
+        m_orderOffset = root.value("offset").toInt();
+        m_totalOrders = root.value("total_count").toInt();
+
         m_orders.clear();
         for (const QJsonValue &val : jsonOrders) {
             const Order order = parseJsonOrder(val);
@@ -256,7 +259,7 @@ void MainWindow::fetchOrders(const int offset, const int limit)
         m_ui->orderNumberLabel->setText(tr("%1-%2 of %3")
                                         .arg(1)
                                         .arg(m_orders.size())
-                                        .arg(m_orders.size()));
+                                        .arg(m_totalOrders));
 
         statusBar()->showMessage(tr("Orders fetched"), 3000);
 
