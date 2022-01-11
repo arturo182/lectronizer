@@ -74,6 +74,8 @@ MainWindow::MainWindow(QWidget *parent)
     m_ui->orderTreeView->setContextMenuPolicy(Qt::CustomContextMenu);
     m_ui->orderTreeView->header()->setContextMenuPolicy(Qt::CustomContextMenu);
 
+    m_ui->orderTreeView->installEventFilter(this);
+
     connectSignals();
     readSettings();
 
@@ -96,6 +98,14 @@ void MainWindow::closeEvent(QCloseEvent *event)
     QMainWindow::closeEvent(event);
 
     qApp->quit();
+}
+
+bool MainWindow::eventFilter(QObject *object, QEvent *event)
+{
+    if ((object == m_ui->orderTreeView) && (event->type() == QEvent::KeyRelease))
+        orderTreeKeyPressEvent(static_cast<QKeyEvent*>(event));
+
+    return QMainWindow::eventFilter(object, event);
 }
 
 void MainWindow::addColumnFilter(const int column, const QString &name, std::function<QString(const Order &)> getter)
@@ -427,24 +437,40 @@ void MainWindow::connectSignals()
 
         const Order &order= m_orders[id];
 
-        // TODO: Add Copy->Tracking # if fullfilled
-        // TODO: Add item for opening tracking URL if there's tracking
-        // TODO: Add Mark Shipped if not fulfilled
-
         QMenu menu;
-        menu.setDefaultAction(menu.addAction(tr("&Open"), this, [&, id]() { openOrderWindow(id); }));
+        QAction *openAction = menu.addAction(tr("&Open"), this, [&, id]() { openOrderWindow(id); }, Qt::Key_Return);
+        menu.setDefaultAction(openAction);
+
+        QAction *markShippedAction = menu.addAction(QIcon(":/res/icons/package_go.png"), tr("Mark &shipped"), this, [&, id]()
+        {
+            QMessageBox::information(this, tr("Not implemented"), tr("Not implemented yet, sorry"));
+        }, QKeySequence("Ctrl+Return"));
+        markShippedAction->setEnabled(!order.fulfilledAt.isValid());
+
+        menu.addSeparator();
+
         menu.addAction(QIcon(":/res/icons/world.png"), tr("Open in &browser"), this, [&, order]() { order.openInBrowser(); });
+        QAction *openTrackingAction = menu.addAction(QIcon(":/res/icons/package_link.png"), tr("Open &tracking URL"), this, [&, order]()
+        {
+            QDesktopServices::openUrl(QUrl(order.tracking.url));
+        });
+        openTrackingAction->setEnabled(order.tracking.required && !order.tracking.url.isEmpty());
 
         QMenu *invoiceMenu = menu.addMenu(QIcon(":/res/icons/page_money.png"), tr("Open &invoice"));
         invoiceMenu->addAction(QIcon(), tr("&Customer invoice"), this, [&, order]() { QDesktopServices::openUrl(order.customerInvoiceUrl()); });
         invoiceMenu->addAction(QIcon(), tr("&Seller invoice"),   this, [&, order]() { QDesktopServices::openUrl(order.supplierInvoiceUrl()); });
+
+        menu.addSeparator();
 
         QMenu *copyMenu = menu.addMenu(QIcon(":/res/icons/page_white_copy.png"), tr("&Copy"));
         copyMenu->addAction(QIcon(":/res/icons/box.png"),   tr("Order &Id"),              this, [&, order]() { qApp->clipboard()->setText(QString::number(order.id)); });
         copyMenu->addAction(QIcon(":/res/icons/user.png"),  tr("Customer &Name"),         this, [&, order]() { const auto &a = order.shipping.address; qApp->clipboard()->setText(a.firstName + " " + a.lastName); });
         copyMenu->addAction(QIcon(":/res/icons/email.png"), tr("Customer &Email"),        this, [&, order]() { qApp->clipboard()->setText(order.customerEmail); });
         copyMenu->addAction(QIcon(":/res/icons/house.png"), tr("Full shipping &address"), this, [&, order]() { order.copyFullAddress(); });
+        QAction *copyTrackingAction = copyMenu->addAction(QIcon(":/res/icons/package.png"), tr("Copy &tracking number"), this, [&, order]() { qApp->clipboard()->setText(order.tracking.code); });
+        copyTrackingAction->setEnabled(order.tracking.required && !order.tracking.code.isEmpty());
 
+        menu.addSeparator();
 
         QMenu *filterMenu = menu.addMenu(QIcon(":/res/icons/funnel.png"), tr("&Filter with same"));
         filterMenu->addAction(tr("&Country"),  this, [&, order]() { m_ui->filterTreeWidget->setFilter(tr("Country"), order.shipping.address.country); });
@@ -635,6 +661,27 @@ void MainWindow::openOrderWindow(const int id)
     orderWidget->setSharedData(&m_shared);
     orderWidget->setOrder(m_orders[id]);
     orderWidget->show();
+}
+
+void MainWindow::orderTreeKeyPressEvent(QKeyEvent *event)
+{
+    QTreeView *tree = m_ui->orderTreeView;
+    QItemSelectionModel *selection = tree->selectionModel();
+    if (!selection->hasSelection())
+        return;
+
+    const int id = orderIdFromProxyModel(selection->currentIndex());
+    if (id < 0)
+        return;
+
+    const Order &order= m_orders[id];
+
+    if (event->keyCombination() == QKeyCombination(Qt::ControlModifier, Qt::Key_Return)) {
+        if (!order.fulfilledAt.isValid())
+            QMessageBox::information(this, tr("Not implemented"), tr("Not implemented yet, sorry"));
+    } else if (event->key() == Qt::Key_Return) {
+        openOrderWindow(id);
+    }
 }
 
 int MainWindow::orderIdFromProxyModel(const QModelIndex &proxyIndex)

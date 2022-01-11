@@ -16,5 +16,8 @@
         <file>res/icons/house.png</file>
         <file>res/icons/box.png</file>
         <file>res/icons/user.png</file>
+        <file>res/icons/package.png</file>
+        <file>res/icons/package_link.png</file>
+        <file>res/icons/package_go.png</file>
     </qresource>
 </RCC>

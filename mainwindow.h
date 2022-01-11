@@ -23,6 +23,7 @@ class MainWindow : public QMainWindow
 
     protected:
         void closeEvent(QCloseEvent *event) override;
+        bool eventFilter(QObject *object, QEvent *event) override;
 
     private:
         void addColumnFilter(const int column, const QString &name, std::function<QString(const Order&)> getter);
@@ -37,6 +38,7 @@ class MainWindow : public QMainWindow
         void showSettingsDialog();
         void showAboutDialog();
         void openOrderWindow(const int id);
+        void orderTreeKeyPressEvent(QKeyEvent *event);
         int orderIdFromProxyModel(const QModelIndex &proxyIndex);
 
     private:
