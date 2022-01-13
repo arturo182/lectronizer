@@ -13,6 +13,8 @@ namespace Ui { class MainWindow; }
 class QCloseEvent;
 class QNetworkAccessManager;
 
+class OrderManager;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -25,29 +27,34 @@ class MainWindow : public QMainWindow
         void closeEvent(QCloseEvent *event) override;
         bool eventFilter(QObject *object, QEvent *event) override;
 
-    private:
-        void addColumnFilter(const int column, const QString &name, std::function<QString(const Order&)> getter);
-        void fetchOrders(const int offset = 0, const int limit = 20);
-        void fetchCurrencyRates();
-        void updateDateFilter();
-        void updateOrderDetails(const QItemSelection &selected);
+    private:        
         void readSettings();
         void writeSettings() const;
+
         void connectSignals();
-        void processOrderButton();
-        void showSettingsDialog();
-        void showAboutDialog();
         void openOrderWindow(const int id);
         void orderTreeKeyPressEvent(QKeyEvent *event);
         int orderIdFromProxyModel(const QModelIndex &proxyIndex);
+        void syncOrderRow(const int row, const Order &order);
+
+        void fetchCurrencyRates();
+        double convertCurrency(const double eur);
+        QString convertCurrencyString(const double eur);
+
+    private slots:
+        void addOrder(const Order &order);
+        void updateOrder(const Order &order);
+        void updateDateFilter();
+        void updateOrderDetails(const QItemSelection &selected);
+        void updateTreeStatsLabel();
+        void showSettingsDialog();
+        void showAboutDialog();
 
     private:
         QNetworkAccessManager *m_nam{};
         OrderSortFilterModel m_orderProxyModel{};
         QStandardItemModel m_orderModel{};
-        QHash<int, Order> m_orders{};
-        int m_orderOffset{0};
+        OrderManager *m_orderMgr{};
         SharedData m_shared{};
-        int m_totalOrders{0};
         Ui::MainWindow *m_ui{};
 };

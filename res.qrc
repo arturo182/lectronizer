@@ -19,5 +19,6 @@
         <file>res/icons/package.png</file>
         <file>res/icons/package_link.png</file>
         <file>res/icons/package_go.png</file>
+        <file>res/icons/arrow_refresh.png</file>
     </qresource>
 </RCC>

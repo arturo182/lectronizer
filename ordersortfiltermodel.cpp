@@ -34,6 +34,12 @@ bool OrderSortFilterModel::filterAcceptsRow(int sourceRow, const QModelIndex &so
         it.next();
 
         const QStringList &filters = it.value();
+        if (filters.isEmpty())
+            return false;
+
+        // "All"
+        if (filters.first() == "*")
+            continue;
 
         const QModelIndex index = sourceModel()->index(sourceRow, it.key(), sourceParent);
         const QString value = index.data().toString();

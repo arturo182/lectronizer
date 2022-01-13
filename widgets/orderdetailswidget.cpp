@@ -133,7 +133,7 @@ void OrderDetailsWidget::setOrder(const Order &order)
             .arg(order.total, 7, 'f', 2)
             .arg(order.currency);
 
-    if (m_shared->targetCurrency != "EUR")
+    if (m_shared->targetCurrency != "EUR" && (m_shared->currencyRates.size() > 1))
         totalText += QString("\n%1 %2")
                         .arg(order.total * m_shared->currencyRates[m_shared->targetCurrency], 7, 'f', 2)
                         .arg(m_shared->targetCurrency);
@@ -168,7 +168,7 @@ void OrderDetailsWidget::setOrder(const Order &order)
             .arg(order.total - order.lectronzFee - order.paymentFee, 7, 'f', 2)
             .arg(order.currency);
 
-    if (m_shared->targetCurrency != "EUR")
+    if (m_shared->targetCurrency != "EUR" && (m_shared->currencyRates.size() > 1))
         billingText += QString("\n%1 %2")
                         .arg(order.payout, 7, 'f', 2)
                         .arg(m_shared->targetCurrency);

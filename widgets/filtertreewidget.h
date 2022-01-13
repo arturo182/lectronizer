@@ -1,6 +1,11 @@
 #pragma once
 
+#include "enums.h"
+#include "structs.h"
+
 #include <QTreeWidget>
+
+class QStandardItemModel;
 
 class FilterTreeWidget : public QTreeWidget
 {
@@ -9,9 +14,12 @@ class FilterTreeWidget : public QTreeWidget
     public:
         explicit FilterTreeWidget(QWidget *parent = nullptr);
 
-        void addFilter(const int modelColumn, const QString &name, const QStringList &items);
+        void setOrderModel(QStandardItemModel *orderModel);
 
+        void addFilter(const ModelColumn column);
         void setFilter(const QString &name, const QString &value);
+
+        void refreshFilters();
 
     private:
         void expandClickedItem(QTreeWidgetItem *item);
@@ -19,5 +27,7 @@ class FilterTreeWidget : public QTreeWidget
 
     signals:
         void filterChanged(const int column, const QStringList &filters);
-};
 
+    private:
+        QStandardItemModel *m_orderModel{};
+};

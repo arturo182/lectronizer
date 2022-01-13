@@ -2,6 +2,10 @@
 #include "filtertreewidget.h"
 
 #include <QApplication>
+#include <QStandardItemModel>
+
+static const int ColumnRole = Qt::UserRole + 0;
+static const int NameRole   = Qt::UserRole + 1;
 
 FilterTreeWidget::FilterTreeWidget(QWidget *parent)
     : QTreeWidget(parent)
@@ -12,14 +16,26 @@ FilterTreeWidget::FilterTreeWidget(QWidget *parent)
     connect(this, &QTreeWidget::itemChanged, this, &FilterTreeWidget::processCheckBox);
 }
 
-void FilterTreeWidget::addFilter(const int modelColumn, const QString &name, const QStringList &items)
+void FilterTreeWidget::setOrderModel(QStandardItemModel *orderModel)
 {
+    m_orderModel = orderModel;
+}
+
+void FilterTreeWidget::addFilter(const ModelColumn column)
+{
+    if (!m_orderModel) {
+        qDebug() << "Model empty, can't add a filter!";
+        return;
+    }
+
+    const QString name = m_orderModel->horizontalHeaderItem((int)column)->text();
+
     QTreeWidgetItem *root = new QTreeWidgetItem(this);
     root->setText(0, QString("%1 (0/0)").arg(name));
-    root->setData(0, Qt::UserRole + 0, modelColumn);
-    root->setData(0, Qt::UserRole + 1, name); // for updating the text later
+    root->setData(0, ColumnRole, (int)column);
+    root->setData(0, NameRole, name); // for updating the text later
 
-    const auto addItem = [&, root](const QString &itemName)
+    const auto addItem = [root](const QString &itemName)
     {
         QTreeWidgetItem *treeItem = new QTreeWidgetItem(root);
         treeItem->setText(0, itemName);
@@ -27,8 +43,6 @@ void FilterTreeWidget::addFilter(const int modelColumn, const QString &name, con
     };
 
     addItem("All");
-    for (const QString &item : items)
-        addItem(item);
 
     root->setExpanded(true);
 }
@@ -40,7 +54,7 @@ void FilterTreeWidget::setFilter(const QString &name, const QString &value)
     // find category
     for (int i = 0; i < topLevelItemCount(); ++i) {
         QTreeWidgetItem *item = topLevelItem(i);
-        if (item->data(0, Qt::UserRole + 1).toString() != name)
+        if (item->data(0, NameRole).toString() != name)
             continue;
 
         topItem = item;
@@ -62,6 +76,54 @@ void FilterTreeWidget::setFilter(const QString &name, const QString &value)
 
         child->setCheckState(0, Qt::Checked);
         break;
+    }
+}
+
+void FilterTreeWidget::refreshFilters()
+{
+    for (int i = 0; i < topLevelItemCount(); ++i) {
+        QTreeWidgetItem *categoryItem = topLevelItem(i);
+        const int column = categoryItem->data(0, ColumnRole).toInt();
+
+        QStringList values;
+
+        // collect values
+        const int rowCount = m_orderModel->rowCount();
+        for (int row = 0; row < rowCount; ++row) {
+            QStandardItem *item = m_orderModel->item(row, column);
+            values << item->text();
+        }
+
+        // sort and unique
+        values.removeDuplicates();
+        values.sort(Qt::CaseInsensitive);
+
+        // add if new
+        for (int j = 0; j < values.size(); ++j) {
+            const QString value = values[j];
+
+            bool found = false;
+            for (int child = 0; child < categoryItem->childCount(); ++child) {
+                if (categoryItem->child(child)->text(0) == value) {
+                    found = true;
+                    break;
+                }
+            }
+
+            // already exists
+            if (found)
+                continue;
+
+            QTreeWidgetItem *childItem = new QTreeWidgetItem();
+            childItem->setText(0, value);
+
+            // we can use the idx in values list because it reflects what the filter list will be after we're done
+            // +1 cause "All" is 0
+            categoryItem->insertChild(j + 1, childItem);
+
+            // after insertChild() so processCheckBox() is called
+            childItem->setCheckState(0, Qt::Checked);
+        }
     }
 }
 
@@ -132,20 +194,23 @@ void FilterTreeWidget::processCheckBox(QTreeWidgetItem *item, int column)
         }
     }
 
-    const QString columnName = parent->data(0, Qt::UserRole + 1).toString();
+    const QString columnName = parent->data(0, NameRole).toString();
     parent->setText(0, QString("%1 (%2/%3)").arg(columnName).arg(checkedCount).arg(parent->childCount() - 1));
 
     setProperty("processing", false);
 
     QStringList filters;
 
-    // we can skip "All" because it sets all to checked anyway
+    // "All" is a special case
+    if (allItem->checkState(0) == Qt::Checked)
+        filters << "*";
+
     for (int i = 1; i < parent->childCount(); ++i) {
         QTreeWidgetItem *treeItem = parent->child(i);
         if (treeItem->checkState(0) == Qt::Checked)
             filters << treeItem->text(0);
     }
 
-    const int modelColumn = parent->data(0, Qt::UserRole).toInt();
+    const int modelColumn = parent->data(0, ColumnRole).toInt();
     emit filterChanged(modelColumn, filters);
 }

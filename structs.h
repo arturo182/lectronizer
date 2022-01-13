@@ -19,6 +19,14 @@ struct Address
     QString state;
     QString country;
     QString countryCode;
+
+    bool operator==(const Address &other) const
+    {
+        return std::tie(firstName, lastName, organization, street, streetExtension,
+                        postalCode, city, state, country, countryCode) ==
+                    std::tie(other.firstName, other.lastName, other.organization, other.street, other.streetExtension,
+                             other.postalCode, other.city, other.state, other.country, other.countryCode);
+    }
 };
 QDebug operator<<(QDebug debug, const Address &a);
 
@@ -28,29 +36,56 @@ struct ItemOption
     QString name;
     QString choice;
     double weight;
+
+    bool operator==(const ItemOption &other) const
+    {
+        return std::tie(sku, name, choice, weight) ==
+                    std::tie(other.sku, other.name, other.choice, other.weight);
+    }
 };
 QDebug operator<<(QDebug debug, const ItemOption &op);
 
 struct Item
 {
-    struct {
+    struct Product
+    {
         int id;
         QString name;
         QString sku;
         QString description;
+
+        bool operator==(const Product &other) const
+        {
+
+            return std::tie(id, name, sku, description)
+                    == std::tie(other.id, other.name, other.sku, other.description);
+        }
     } product;
     QList<ItemOption> options;
     int qty;
     double price;
     double weight;
+
+    bool operator==(const Item &other) const
+    {
+        return std::tie(product, options, qty, price, weight) ==
+                    std::tie(other.product, other.options, other.qty, other.price, other.weight);
+    }
 };
 QDebug operator<<(QDebug debug, const Item &it);
 
 struct Order
 {
-    struct {
+    struct Billing
+    {
         Address address;
         bool useShippingAddress;
+
+        bool operator==(const Billing &other) const
+        {
+            return std::tie(address, useShippingAddress) ==
+                        std::tie(other.address, other.useShippingAddress);
+        }
     } billing;
 
     int id;
@@ -63,9 +98,16 @@ struct Order
     double lectronzFee;
     double paymentFee;
 
-    struct {
+    struct Payment
+    {
         QString provider;
         QString reference;
+
+        bool operator==(const Payment &other) const
+        {
+            return std::tie(provider, reference) ==
+                        std::tie(other.provider, other.reference);
+        }
     } payment;
 
     QDateTime createdAt;
@@ -78,40 +120,81 @@ struct Order
     QString customerPhone;
     QList<Item> items;
 
-    struct {
+    struct Tax
+    {
         bool appliesToShipping;
         double rate;
         double total;
         double collected;
+
+        bool operator==(const Tax &other) const
+        {
+            return std::tie(appliesToShipping, rate, total, collected) ==
+                        std::tie(other.appliesToShipping, other.rate, other.total, other.collected);
+        }
     } tax;
 
-    struct {
+    struct Shipping
+    {
         Address address;
         double cost;
         QString method;
+
+        bool operator==(const Shipping &other) const
+        {
+            return std::tie(address, cost, method) ==
+                        std::tie(other.address, other.cost, other.method);
+        }
     } shipping;
 
-    struct {
+    struct Tracking
+    {
         bool required;
         QString code;
         QString url;
+
+        bool operator==(const Tracking &other) const
+        {
+            return std::tie(required, code, url) ==
+                        std::tie(other.required, other.code, other.url);
+        }
     } tracking;
 
-
-    struct {
+    struct Weight
+    {
         QString unit;
         double total;
         double base;
+
+        bool operator==(const Weight &other) const
+        {
+            return std::tie(unit, total, base) ==
+                        std::tie(other.unit, other.total, other.base);
+        }
     } weight;
 
     QString editUrl() const;
     QString customerInvoiceUrl() const;
     QString supplierInvoiceUrl() const;
+    QString itemListing() const;
 
     double calcWeight() const;
 
     void openInBrowser() const;
     void copyFullAddress() const;
+
+    bool operator==(const Order &other) const
+    {
+        return std::tie(billing, id, currency, subtotal, taxableAmount, total, payout, lectronzFee,
+                        paymentFee, payment, createdAt, updatedAt, fulfilledAt, status, storeUrl,
+                        customerEmail, customerPhone, items, tax, shipping, tracking, weight) ==
+                    std::tie(other.billing, other.id, other.currency, other.subtotal, other.taxableAmount,
+                             other.total, other.payout, other.lectronzFee, other. paymentFee, other.payment,
+                             other.createdAt, other.updatedAt, other.fulfilledAt, other.status, other.storeUrl,
+                             other.customerEmail, other.customerPhone, other.items, other.tax, other.shipping,
+                             other.tracking, other.weight);
+    }
+    bool operator!=(const Order &other) const { return !(*this == other); };
 };
 QDebug operator<<(QDebug debug, const Order &o);
 

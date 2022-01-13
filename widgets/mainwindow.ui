@@ -40,7 +40,7 @@
          </widget>
         </item>
         <item>
-         <widget class="FilterTreeWidget" name="filterTreeWidget">
+         <widget class="FilterTreeWidget" name="filterTree">
           <property name="indentation">
            <number>0</number>
           </property>
@@ -188,7 +188,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QTreeView" name="orderTreeView">
+         <widget class="QTreeView" name="orderTree">
           <property name="autoFillBackground">
            <bool>false</bool>
           </property>
@@ -241,37 +241,9 @@ QTreeView::item:!selected {
            </spacer>
           </item>
           <item>
-           <widget class="QLabel" name="orderNumberLabel">
+           <widget class="QLabel" name="treeStatsLabel">
             <property name="text">
-             <string>0-0 of 0</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="prevPageButton">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="../res.qrc">
-              <normaloff>:/res/icons/arrow_left.png</normaloff>:/res/icons/arrow_left.png</iconset>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="nextPageButton">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="../res.qrc">
-              <normaloff>:/res/icons/arrow_right.png</normaloff>:/res/icons/arrow_right.png</iconset>
+             <string>Showing 0 of 0</string>
             </property>
            </widget>
           </item>
@@ -356,7 +328,15 @@ QTreeView::item:!selected {
     </property>
     <addaction name="toolsSettingsAction"/>
    </widget>
+   <widget class="QMenu" name="orderMenu">
+    <property name="title">
+     <string>&amp;Order</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="orderRefreshOrdersAction"/>
+   </widget>
    <addaction name="fileMenu"/>
+   <addaction name="orderMenu"/>
    <addaction name="viewMenu"/>
    <addaction name="toolsMenu"/>
    <addaction name="helpMenu"/>
@@ -390,6 +370,18 @@ QTreeView::item:!selected {
    </property>
    <property name="text">
     <string>&amp;Settings...</string>
+   </property>
+  </action>
+  <action name="orderRefreshOrdersAction">
+   <property name="icon">
+    <iconset resource="../res.qrc">
+     <normaloff>:/res/icons/arrow_refresh.png</normaloff>:/res/icons/arrow_refresh.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Refresh orders...</string>
+   </property>
+   <property name="shortcut">
+    <string>F5</string>
    </property>
   </action>
  </widget>

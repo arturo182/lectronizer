@@ -4,6 +4,7 @@ CONFIG   += c++20
 SOURCES += \
     filterbuttondelegate.cpp \
     main.cpp \
+    ordermanager.cpp \
     ordersortfiltermodel.cpp \
     structs.cpp \
     utils.cpp \
@@ -15,7 +16,9 @@ SOURCES += \
     widgets/settingsdialog.cpp
 
 HEADERS += \
+    enums.h \
     filterbuttondelegate.h \
+    ordermanager.h \
     ordersortfiltermodel.h \
     shareddata.h \
     structs.h \

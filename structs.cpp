@@ -269,6 +269,26 @@ QString Order::supplierInvoiceUrl() const
     return QString("https://lectronz.com/orders/%1/supplier_invoice").arg(id);
 }
 
+QString Order::itemListing() const
+{
+    QString text;
+    for (const Item &item : items) {
+        text += QString("- %1x %2\n").arg(item.qty).arg(item.product.name);
+
+        if (item.options.isEmpty())
+            continue;
+
+        for (int i = 0; i < item.options.count(); ++i) {
+            text += QString("    - %1 = %2").arg(item.options[i].name, item.options[i].choice);
+
+            if (i < item.options.count() - 1)
+                text += "\n";
+        }
+    }
+
+    return text;
+}
+
 double Order::calcWeight() const
 {
     double totalWeight = weight.base;
