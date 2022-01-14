@@ -14,10 +14,10 @@
 #include <QTimer>
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , m_nam(new QNetworkAccessManager(this))
+    : QMainWindow{parent}
+    , m_nam{new QNetworkAccessManager(this)}
     , m_orderMgr{new OrderManager(m_nam, &m_shared, this)}
-    , m_ui(new Ui::MainWindow)
+    , m_ui{new Ui::MainWindow}
 {
     m_ui->setupUi(this);
 
@@ -36,19 +36,17 @@ MainWindow::MainWindow(QWidget *parent)
     m_ui->dateFilterCustomEndEdit->setMaximumDate(today);
 
     // Order model stuff
-    m_orderModel.setHorizontalHeaderLabels({
-                                               tr("Id"),        // 0
-                                               tr("Created"),   // 1
-                                               tr("Total"),     // 2
-                                               tr("Items"),     // 3
-                                               tr("Customer"),  // 4
-                                               tr("Country"),   // 5
-                                               tr("Shipping"),  // 6
-                                               tr("Status"),    // 7
-                                               tr("Updated"),   // 8
-                                               tr("Fulfilled"), // 9
-                                               tr("Weight"),    // 10
-                                           });
+    m_orderModel.setHorizontalHeaderItem((int)ModelColumn::Id,          new QStandardItem(tr("Id")));
+    m_orderModel.setHorizontalHeaderItem((int)ModelColumn::CreatedAt,   new QStandardItem(tr("Created")));
+    m_orderModel.setHorizontalHeaderItem((int)ModelColumn::Total,       new QStandardItem(tr("Total")));
+    m_orderModel.setHorizontalHeaderItem((int)ModelColumn::Items,       new QStandardItem(tr("Items")));
+    m_orderModel.setHorizontalHeaderItem((int)ModelColumn::Customer,    new QStandardItem(tr("Customer")));
+    m_orderModel.setHorizontalHeaderItem((int)ModelColumn::Country,     new QStandardItem(tr("Country")));
+    m_orderModel.setHorizontalHeaderItem((int)ModelColumn::Shipping,    new QStandardItem(tr("Shipping")));
+    m_orderModel.setHorizontalHeaderItem((int)ModelColumn::Status,      new QStandardItem(tr("Status")));
+    m_orderModel.setHorizontalHeaderItem((int)ModelColumn::UpdatedAt,   new QStandardItem(tr("Updated")));
+    m_orderModel.setHorizontalHeaderItem((int)ModelColumn::FulfilledAt, new QStandardItem(tr("Fulfilled")));
+    m_orderModel.setHorizontalHeaderItem((int)ModelColumn::Weight,      new QStandardItem(tr("Weight")));
 
     m_orderProxyModel.setSourceModel(&m_orderModel);
     m_ui->orderTree->setModel(&m_orderProxyModel);
