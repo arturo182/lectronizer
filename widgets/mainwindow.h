@@ -25,7 +25,6 @@ class MainWindow : public QMainWindow
 
     protected:
         void closeEvent(QCloseEvent *event) override;
-        bool eventFilter(QObject *object, QEvent *event) override;
 
     private:        
         void readSettings();
@@ -33,8 +32,10 @@ class MainWindow : public QMainWindow
 
         void connectSignals();
         void openOrderWindow(const int id);
-        void orderTreeKeyPressEvent(QKeyEvent *event);
-        int orderIdFromProxyModel(const QModelIndex &proxyIndex);
+
+        int orderIdFromProxyModel(const QModelIndex &proxyIndex) const;
+        int currentOrderId() const;
+
         void syncOrderRow(const int row, const Order &order);
 
         void fetchCurrencyRates();
@@ -46,6 +47,7 @@ class MainWindow : public QMainWindow
         void updateOrder(const Order &order);
         void updateDateFilter();
         void updateOrderDetails(const QItemSelection &selected);
+        void updateOrderRelatedWidgets();
         void updateTreeStatsLabel();
         void showSettingsDialog();
         void showAboutDialog();

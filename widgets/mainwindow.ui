@@ -332,6 +332,53 @@ QTreeView::item:!selected {
     <property name="title">
      <string>&amp;Order</string>
     </property>
+    <widget class="QMenu" name="openOrderInvoiceMenu">
+     <property name="title">
+      <string>Open &amp;invoice</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../res.qrc">
+       <normaloff>:/res/icons/page_money.png</normaloff>:/res/icons/page_money.png</iconset>
+     </property>
+     <addaction name="customerOrderInvoiceAction"/>
+     <addaction name="sellerOrderInvoiceAction"/>
+    </widget>
+    <widget class="QMenu" name="copyOrderMenu">
+     <property name="title">
+      <string>&amp;Copy</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../res.qrc">
+       <normaloff>:/res/icons/page_white_copy.png</normaloff>:/res/icons/page_white_copy.png</iconset>
+     </property>
+     <addaction name="copyOrderIdAction"/>
+     <addaction name="copyOrderCustomerNameAction"/>
+     <addaction name="copyOrderCustomerEmailAction"/>
+     <addaction name="copyOrderFullAddressAction"/>
+     <addaction name="copyOrderTrackingNumberAction"/>
+    </widget>
+    <widget class="QMenu" name="orderFilterSameMenu">
+     <property name="title">
+      <string>&amp;Filter with same</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../res.qrc">
+       <normaloff>:/res/icons/funnel.png</normaloff>:/res/icons/funnel.png</iconset>
+     </property>
+     <addaction name="orderFilterCountryAction"/>
+     <addaction name="orderFilterShippingAction"/>
+     <addaction name="orderFilterStatusAction"/>
+    </widget>
+    <addaction name="openOrderAction"/>
+    <addaction name="markOrderShippedAction"/>
+    <addaction name="separator"/>
+    <addaction name="openOrderInBrowserAction"/>
+    <addaction name="openOrderTrackingUrlAction"/>
+    <addaction name="openOrderInvoiceMenu"/>
+    <addaction name="separator"/>
+    <addaction name="copyOrderMenu"/>
+    <addaction name="separator"/>
+    <addaction name="orderFilterSameMenu"/>
     <addaction name="separator"/>
     <addaction name="orderRefreshOrdersAction"/>
    </widget>
@@ -382,6 +429,120 @@ QTreeView::item:!selected {
    </property>
    <property name="shortcut">
     <string>F5</string>
+   </property>
+  </action>
+  <action name="openOrderAction">
+   <property name="text">
+    <string>&amp;Open</string>
+   </property>
+   <property name="shortcut">
+    <string>Return</string>
+   </property>
+  </action>
+  <action name="markOrderShippedAction">
+   <property name="icon">
+    <iconset resource="../res.qrc">
+     <normaloff>:/res/icons/package_go.png</normaloff>:/res/icons/package_go.png</iconset>
+   </property>
+   <property name="text">
+    <string>Mark &amp;shipped</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Return</string>
+   </property>
+  </action>
+  <action name="openOrderInBrowserAction">
+   <property name="icon">
+    <iconset resource="../res.qrc">
+     <normaloff>:/res/icons/world.png</normaloff>:/res/icons/world.png</iconset>
+   </property>
+   <property name="text">
+    <string>Open in &amp;browser</string>
+   </property>
+   <property name="shortcut">
+    <string>F2</string>
+   </property>
+  </action>
+  <action name="openOrderTrackingUrlAction">
+   <property name="icon">
+    <iconset resource="../res.qrc">
+     <normaloff>:/res/icons/package_link.png</normaloff>:/res/icons/package_link.png</iconset>
+   </property>
+   <property name="text">
+    <string>Open &amp;tracking URL</string>
+   </property>
+   <property name="shortcut">
+    <string>F4</string>
+   </property>
+  </action>
+  <action name="customerOrderInvoiceAction">
+   <property name="text">
+    <string>&amp;Customer invoice</string>
+   </property>
+  </action>
+  <action name="sellerOrderInvoiceAction">
+   <property name="text">
+    <string>&amp;Seller invoice</string>
+   </property>
+  </action>
+  <action name="copyOrderIdAction">
+   <property name="icon">
+    <iconset resource="../res.qrc">
+     <normaloff>:/res/icons/box.png</normaloff>:/res/icons/box.png</iconset>
+   </property>
+   <property name="text">
+    <string>Order &amp;Id</string>
+   </property>
+  </action>
+  <action name="copyOrderCustomerNameAction">
+   <property name="icon">
+    <iconset resource="../res.qrc">
+     <normaloff>:/res/icons/user.png</normaloff>:/res/icons/user.png</iconset>
+   </property>
+   <property name="text">
+    <string>Customer &amp;Name</string>
+   </property>
+  </action>
+  <action name="copyOrderCustomerEmailAction">
+   <property name="icon">
+    <iconset resource="../res.qrc">
+     <normaloff>:/res/icons/email.png</normaloff>:/res/icons/email.png</iconset>
+   </property>
+   <property name="text">
+    <string>Customer &amp;Email</string>
+   </property>
+  </action>
+  <action name="copyOrderFullAddressAction">
+   <property name="icon">
+    <iconset resource="../res.qrc">
+     <normaloff>:/res/icons/house.png</normaloff>:/res/icons/house.png</iconset>
+   </property>
+   <property name="text">
+    <string>Full shipping &amp;address</string>
+   </property>
+  </action>
+  <action name="copyOrderTrackingNumberAction">
+   <property name="icon">
+    <iconset resource="../res.qrc">
+     <normaloff>:/res/icons/package.png</normaloff>:/res/icons/package.png</iconset>
+   </property>
+   <property name="text">
+    <string>Copy &amp;tracking number</string>
+   </property>
+  </action>
+  <action name="orderFilterCountryAction">
+   <property name="text">
+    <string>&amp;Country</string>
+   </property>
+  </action>
+  <action name="orderFilterShippingAction">
+   <property name="text">
+    <string>&amp;Shipping</string>
+   </property>
+  </action>
+  <action name="orderFilterStatusAction">
+   <property name="text">
+    <string>S&amp;tatus</string>
    </property>
   </action>
  </widget>
