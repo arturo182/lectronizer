@@ -14,7 +14,7 @@
 
 static const int FetchSize = 50;
 
-static const QString ApiUrl{"https://lectronz.com/api/v1/orders"};
+QString OrderManager::ApiUrl{"https://lectronz.com/api/v1/orders"};
 
 OrderManager::OrderManager(QNetworkAccessManager *nam, SharedData *shared, QWidget *parent)
     : QObject(qobject_cast<QObject*>(parent))
@@ -59,7 +59,7 @@ void OrderManager::resetProgressDlg()
 {
     m_progressDlg->setValue(0);
     m_progressDlg->setMaximum(0);
-    m_progressDlg->setLabelText(tr("Refreshing orders"));
+    m_progressDlg->setLabelText(tr("Refreshing orders..."));
     m_progressDlg->setCancelButtonText(QString());
 }
 
@@ -185,4 +185,6 @@ void OrderManager::setErrorMsg(const QString &error)
 
     m_reply->deleteLater();
     m_reply = nullptr;
+
+    emit refreshFailed(error);
 }

@@ -47,10 +47,11 @@ RC_ICONS = res/cart_chip.ico
 ICON = res/cart_chip.icns
 
 # Version
-VERSION = 0.2
+VERSION = 0.2.0
 VERSION_PARTS = $$split(VERSION, ".")
 
 DEFINES += \
+    VER_PATCH="$$member(VERSION_PARTS, 2)" \
     VER_MINOR="$$member(VERSION_PARTS, 1)" \
     VER_MAJOR="$$member(VERSION_PARTS, 0)"
 

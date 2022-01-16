@@ -12,7 +12,7 @@ CurrencyFetchDialog::CurrencyFetchDialog(QNetworkAccessManager *nam, QWidget *pa
     : QProgressDialog{parent}
     , m_nam(nam)
 {
-    setLabelText(tr("Fetching currency rates"));
+    setLabelText(tr("Fetching currency rates..."));
     setCancelButtonText(QString());
 
     setWindowModality(Qt::WindowModal);

@@ -16,6 +16,9 @@ class OrderManager : public QObject
     Q_OBJECT
 
     public:
+        static QString ApiUrl;
+
+    public:
         OrderManager(QNetworkAccessManager *nam, SharedData *shared, QWidget *parent = nullptr);
         ~OrderManager() override;
 
@@ -35,6 +38,7 @@ class OrderManager : public QObject
         void orderReceived(const Order &order);
         void orderUpdated(const Order &order);
         void refreshCompleted(const int newOrder, const int updatedOrders);
+        void refreshFailed(const QString &error);
 
     private:
         QNetworkAccessManager *m_nam{};

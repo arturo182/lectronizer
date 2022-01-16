@@ -367,6 +367,10 @@ void MainWindow::connectSignals()
 
        statusBar()->showMessage(tr("Orders refreshed, %1 new, %2 updated").arg(newOrders).arg(updatedOrders), 5000);
     });
+    connect(m_orderMgr, &OrderManager::refreshFailed, this, [this](const QString &errorStr)
+    {
+        statusBar()->showMessage(tr("Order refresh failed: %1").arg(errorStr), 5000);
+    });
 }
 
 void MainWindow::readSettings()
@@ -678,10 +682,10 @@ if (_MSC_VER >= 1500) // 1500: MSVC 2008, 1600: MSVC 2010, ... (2-year release c
     verSha1 = QString("From revision <a href='https://github.com/arturo182/lectronizer/commit/%1'>%1</a><br><br>").arg(VER_SHA1);
 #endif
 
-    const QString description = tr("<h3>%1 v%2.%3</h3>"
-                                   "Based on Qt %4 (%5)<br><br>"
-                                   "Built on %6 %7<br><br>"
-                                   "%8"
+    const QString description = tr("<h3>%1 v%2</h3>"
+                                   "Based on Qt %3 (%4)<br><br>"
+                                   "Built on %5 %6<br><br>"
+                                   "%7"
                                    "Copyright &copy; 2022 <a href='http://twitter.com/arturo182'>arturo182</a>. All rights reserved.<br><br>"
                                    "The program is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE WARRANTY OF DESIGN, "
                                    "MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.");
@@ -689,8 +693,7 @@ if (_MSC_VER >= 1500) // 1500: MSVC 2008, 1600: MSVC 2010, ... (2-year release c
     QMessageBox::about(this, tr("About %1").arg(qApp->applicationName()),
                        description
                            .arg(qApp->applicationName())
-                           .arg(VER_MAJOR)
-                           .arg(VER_MINOR)
+                           .arg(qApp->applicationVersion())
                            .arg(qVersion())
                            .arg(compilerVersion())
                            .arg(__DATE__)
