@@ -9,6 +9,7 @@ SOURCES += \
     structs.cpp \
     utils.cpp \
     widgets/clickylineedit.cpp \
+    widgets/collapsiblewidgetheader.cpp \
     widgets/currencyfetchdialog.cpp \
     widgets/filtertreewidget.cpp \
     widgets/mainwindow.cpp \
@@ -24,6 +25,7 @@ HEADERS += \
     structs.h \
     utils.h \
     widgets/clickylineedit.h \
+    widgets/collapsiblewidgetheader.h \
     widgets/currencyfetchdialog.h \
     widgets/filtertreewidget.h \
     widgets/mainwindow.h \

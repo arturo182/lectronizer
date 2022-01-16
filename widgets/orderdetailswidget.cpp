@@ -14,6 +14,11 @@ OrderDetailsWidget::OrderDetailsWidget(const bool standalone, QWidget *parent)
 {
     m_ui->setupUi(this);
 
+    m_ui->addressHeader->setContainer(m_ui->addressContainer);
+    m_ui->itemsHeader->setContainer(m_ui->itemsContainer);
+    m_ui->shippingHeader->setContainer(m_ui->shippingContainer);
+    m_ui->billingHeader->setContainer(m_ui->billingContainer);
+
     if (standalone) {
         m_ui->collapseButton->hide();
         m_ui->orderPosLabel->hide();
@@ -23,8 +28,6 @@ OrderDetailsWidget::OrderDetailsWidget(const bool standalone, QWidget *parent)
         QSettings set;
         set.beginGroup("OrderDetails");
         readSettings(set);
-    } else {
-        layout()->setContentsMargins(2, 2, 2, 2);
     }
 
     // This seems to reset in Designer from time to time (bug?) so just set from code
@@ -196,9 +199,12 @@ void OrderDetailsWidget::readSettings(const QSettings &set)
     // separate widget and window settings
     if (set.group().isEmpty()) {
         m_ui->itemsTreeWidget->header()->restoreState(set.value("detailColumns").toByteArray());
+        restoreHeaderStates(set.value("detailHeaders").toList());
     } else {
+        // inside "OrderDetails" group
         restoreGeometry(set.value("geometry").toByteArray());
         setWindowState(Qt::WindowStates(set.value("state").toInt()));
+        restoreHeaderStates(set.value("headers").toList());
 
         m_ui->itemsTreeWidget->header()->restoreState(set.value("columns").toByteArray());
     }
@@ -209,9 +215,12 @@ void OrderDetailsWidget::writeSettings(QSettings &set) const
     // separate widget and window settings
     if (set.group().isEmpty()) {
         set.setValue("detailColumns", m_ui->itemsTreeWidget->header()->saveState());
+        set.setValue("detailHeaders", saveHeaderStates());
     } else {
+        // inside "OrderDetails" group
         set.setValue("geometry", saveGeometry());
         set.setValue("state", (int)windowState());
+        set.setValue("headers", saveHeaderStates());
         set.setValue("columns", m_ui->itemsTreeWidget->header()->saveState());
     }
 }
@@ -225,4 +234,31 @@ void OrderDetailsWidget::closeEvent(QCloseEvent *event)
     }
 
     QWidget::closeEvent(event);
+}
+
+QVariantList OrderDetailsWidget::saveHeaderStates() const
+{
+    QVariantList states;
+    states << m_ui->addressHeader->isExpanded();
+    states << m_ui->itemsHeader->isExpanded();
+    states << m_ui->shippingHeader->isExpanded();
+    states << m_ui->billingHeader->isExpanded();
+
+    return states;
+}
+
+void OrderDetailsWidget::restoreHeaderStates(const QVariantList &states)
+{
+    const auto restoreHeaderState = [states](const int idx, CollapsibleWidgetHeader *header)
+    {
+        if (states.size() < (idx + 1))
+            return;
+
+        header->setExpanded(states[idx].toBool());
+    };
+
+    restoreHeaderState(0, m_ui->addressHeader);
+    restoreHeaderState(1, m_ui->itemsHeader);
+    restoreHeaderState(2, m_ui->shippingHeader);
+    restoreHeaderState(3, m_ui->billingHeader);
 }

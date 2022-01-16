@@ -265,9 +265,6 @@ QTreeView::item:!selected {
        </layout>
       </widget>
       <widget class="QScrollArea" name="detailScroll">
-       <property name="frameShape">
-        <enum>QFrame::NoFrame</enum>
-       </property>
        <property name="frameShadow">
         <enum>QFrame::Plain</enum>
        </property>

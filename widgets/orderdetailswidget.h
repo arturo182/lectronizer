@@ -34,6 +34,10 @@ class OrderDetailsWidget : public QWidget
         void closeEvent(QCloseEvent *event) override;
 
     private:
+        QVariantList saveHeaderStates() const;
+        void restoreHeaderStates(const QVariantList &states);
+
+    private:
         Order m_order{};
         Ui::OrderDetailsWidget *m_ui{};
         SharedData *m_shared;

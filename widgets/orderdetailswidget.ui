@@ -14,80 +14,108 @@
    <string>Order Details</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>3</number>
+   </property>
+   <property name="topMargin">
+    <number>3</number>
+   </property>
+   <property name="rightMargin">
+    <number>3</number>
+   </property>
+   <property name="bottomMargin">
+    <number>3</number>
+   </property>
    <item>
-    <layout class="QHBoxLayout" name="numberHorizontalLayout">
-     <item>
-      <widget class="QLabel" name="orderNumberLabel">
-       <property name="font">
-        <font>
-         <pointsize>14</pointsize>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Order #xx</string>
-       </property>
-       <property name="textFormat">
-        <enum>Qt::RichText</enum>
-       </property>
-       <property name="openExternalLinks">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="collapseButton">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../res.qrc">
-         <normaloff>:/res/icons/collapse_right.png</normaloff>:/res/icons/collapse_right.png</iconset>
-       </property>
-       <property name="flat">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <widget class="QWidget" name="widget" native="true">
+     <layout class="QVBoxLayout" name="verticalLayout_4">
+      <item>
+       <layout class="QHBoxLayout" name="numberHorizontalLayout">
+        <item>
+         <widget class="QLabel" name="orderNumberLabel">
+          <property name="font">
+           <font>
+            <pointsize>14</pointsize>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Order #xx</string>
+          </property>
+          <property name="textFormat">
+           <enum>Qt::RichText</enum>
+          </property>
+          <property name="openExternalLinks">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="collapseButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../res.qrc">
+            <normaloff>:/res/icons/collapse_right.png</normaloff>:/res/icons/collapse_right.png</iconset>
+          </property>
+          <property name="flat">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QLabel" name="orderStatusLabel">
+        <property name="text">
+         <string>Status: x</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="datesHorizontalLayout">
+        <item>
+         <widget class="QLabel" name="createdAtLabel">
+          <property name="text">
+           <string>Created: 0</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="updatedAtLabel">
+          <property name="text">
+           <string>Updated: 0</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
    </item>
    <item>
-    <widget class="QLabel" name="orderStatusLabel">
-     <property name="text">
-      <string>Status: x</string>
+    <widget class="CollapsibleWidgetHeader" name="addressHeader" native="true">
+     <property name="title" stdset="0">
+      <string>Address:</string>
      </property>
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="datesHorizontalLayout">
-     <item>
-      <widget class="QLabel" name="createdAtLabel">
-       <property name="text">
-        <string>Created: 0</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="updatedAtLabel">
-       <property name="text">
-        <string>Updated: 0</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="addressGroup">
-     <property name="title">
-      <string>Address</string>
-     </property>
+    <widget class="QWidget" name="addressContainer" native="true">
      <layout class="QVBoxLayout" name="verticalLayout_5">
+      <property name="topMargin">
+       <number>0</number>
+      </property>
       <item>
        <layout class="QHBoxLayout" name="nameHorizontalLayout">
         <item>
@@ -285,13 +313,29 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="itemsGroup">
-     <property name="title">
-      <string>Items</string>
+    <widget class="CollapsibleWidgetHeader" name="itemsHeader" native="true">
+     <property name="title" stdset="0">
+      <string>Items:</string>
      </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="itemsContainer" native="true">
      <layout class="QVBoxLayout" name="verticalLayout_6">
+      <property name="topMargin">
+       <number>0</number>
+      </property>
       <item>
        <widget class="QTreeWidget" name="itemsTreeWidget">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="sizeAdjustPolicy">
+         <enum>QAbstractScrollArea::AdjustToContents</enum>
+        </property>
         <property name="editTriggers">
          <set>QAbstractItemView::NoEditTriggers</set>
         </property>
@@ -334,11 +378,32 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="shippingGroup">
-     <property name="title">
-      <string>Shipping</string>
+    <widget class="CollapsibleWidgetHeader" name="shippingHeader" native="true">
+     <property name="title" stdset="0">
+      <string>Shipping:</string>
      </property>
-     <layout class="QFormLayout" name="formLayout_2">
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="shippingContainer" native="true">
+     <layout class="QFormLayout" name="formLayout">
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="shippingWeightLabel">
+        <property name="text">
+         <string>Weight:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="shippingWeightValueLabel">
+        <property name="text">
+         <string>0 gr</string>
+        </property>
+       </widget>
+      </item>
       <item row="1" column="0">
        <widget class="QLabel" name="shippingMethodLabel">
         <property name="text">
@@ -353,24 +418,24 @@
         </property>
        </widget>
       </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="shippingTrackingLabel">
+        <property name="text">
+         <string>Tracking:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLabel" name="shippingTrackingRequiredLabel">
+        <property name="text">
+         <string>Not required</string>
+        </property>
+       </widget>
+      </item>
       <item row="3" column="0">
        <widget class="QLabel" name="shippingTrackingNoLabel">
         <property name="text">
          <string>Tracking #:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="shippingTrackingUrlLabel">
-        <property name="text">
-         <string>Tracking URL:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="1">
-       <widget class="QPushButton" name="shippingSubmitButton">
-        <property name="text">
-         <string>Mark Shipped</string>
         </property>
        </widget>
       </item>
@@ -390,6 +455,13 @@
         </property>
        </widget>
       </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="shippingTrackingUrlLabel">
+        <property name="text">
+         <string>Tracking URL:</string>
+        </property>
+       </widget>
+      </item>
       <item row="4" column="1">
        <widget class="ClickyLineEdit" name="shippingTrackingUrlEdit">
         <property name="frameShape">
@@ -406,31 +478,10 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="shippingTrackingLabel">
+      <item row="5" column="1">
+       <widget class="QPushButton" name="shippingSubmitButton">
         <property name="text">
-         <string>Tracking:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QLabel" name="shippingTrackingRequiredLabel">
-        <property name="text">
-         <string>Not required</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="shippingWeightLabel">
-        <property name="text">
-         <string>Weight:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLabel" name="shippingWeightValueLabel">
-        <property name="text">
-         <string>0 gr</string>
+         <string>Mark Shipped</string>
         </property>
        </widget>
       </item>
@@ -438,11 +489,18 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="billingGroupBox">
-     <property name="title">
-      <string>Billing</string>
+    <widget class="CollapsibleWidgetHeader" name="billingHeader" native="true">
+     <property name="title" stdset="0">
+      <string>Billing:</string>
      </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="billingContainer" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="topMargin">
+       <number>0</number>
+      </property>
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <property name="spacing">
@@ -538,6 +596,18 @@
    </item>
    <item>
     <layout class="QHBoxLayout" name="buttonHorizontalLayout">
+     <property name="leftMargin">
+      <number>3</number>
+     </property>
+     <property name="topMargin">
+      <number>3</number>
+     </property>
+     <property name="rightMargin">
+      <number>3</number>
+     </property>
+     <property name="bottomMargin">
+      <number>3</number>
+     </property>
      <item>
       <widget class="QPushButton" name="prevOrderButton">
        <property name="enabled">
@@ -579,6 +649,12 @@
    <class>ClickyLineEdit</class>
    <extends>QFrame</extends>
    <header>widgets/clickylineedit.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CollapsibleWidgetHeader</class>
+   <extends>QWidget</extends>
+   <header>widgets/collapsiblewidgetheader.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
