@@ -42,7 +42,7 @@ void FilterTreeWidget::addFilter(const ModelColumn column)
         treeItem->setCheckState(0, Qt::Checked);
     };
 
-    addItem("All");
+    addItem(tr("All"));
 
     root->setExpanded(true);
 }
