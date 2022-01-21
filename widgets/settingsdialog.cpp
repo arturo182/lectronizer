@@ -25,6 +25,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 SettingsDialog::~SettingsDialog()
 {
     delete m_ui;
+    m_ui = nullptr;
 }
 
 void SettingsDialog::setCurrencies(QStringList currencies)
