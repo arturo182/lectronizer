@@ -86,7 +86,7 @@ void OrderManager::fetch(const int offset, const int limit)
     }
 
     if (m_shared->apiKey.isEmpty()) {
-        setErrorMsg(tr("You need to fill in your API key first. Go to Tools->Settings..., paste it there and then restart the app."));
+        setErrorMsg(tr("You need to fill in your API key first. Go to Tools->Settings..., paste it there and try again."));
         return;
     }
 

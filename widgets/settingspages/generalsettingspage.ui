@@ -11,21 +11,14 @@
    </rect>
   </property>
   <layout class="QFormLayout" name="formLayout">
-   <item row="0" column="0" colspan="2">
-    <widget class="QLabel" name="restartInfoLabel">
-     <property name="text">
-      <string>Both settings require a restart for now.</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
+   <item row="0" column="0">
     <widget class="QLabel" name="apiKeyLabel">
      <property name="text">
       <string>API Key:</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
+   <item row="0" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QLineEdit" name="apiKeyEdit"/>
@@ -52,14 +45,14 @@
      </item>
     </layout>
    </item>
-   <item row="2" column="0">
+   <item row="1" column="0">
     <widget class="QLabel" name="targetCurrencyLabel">
      <property name="text">
       <string>Target Currency:</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
+   <item row="1" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="QComboBox" name="targetCurrencyCombo"/>
