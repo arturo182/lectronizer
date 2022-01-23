@@ -22,9 +22,9 @@ SqlManager::SqlManager(const QString &dbPath, QObject *parent)
     : QObject{parent}
     , m_dbPath(dbPath)
 {
-    // Make sure the directory exists
+    // Make sure the path exists
     const QFileInfo pathInfo(dbPath);
-    pathInfo.dir().mkdir(".");
+    pathInfo.dir().mkpath(".");
 }
 
 SqlManager::~SqlManager()

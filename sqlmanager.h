@@ -2,8 +2,8 @@
 
 #include <QObject>
 
-class Order;
-class Packaging;
+struct Order;
+struct Packaging;
 
 class SqlManager : public QObject
 {
