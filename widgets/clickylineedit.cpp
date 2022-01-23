@@ -19,9 +19,16 @@ ClickyLineEdit::ClickyLineEdit(QWidget *parent, Qt::WindowFlags f)
     m_lineEdit->setFrame(false);
     m_lineEdit->setReadOnly(true);
 
+    connect(m_lineEdit, &QLineEdit::textChanged, this, [this](const QString &text)
+    {
+        setText(text);
+        emit textChanged(text);
+    });
+
     m_pushButton = new QPushButton(this);
     m_pushButton->setEnabled(false);
     m_pushButton->setFlat(true);
+
     connect(m_pushButton, &QPushButton::clicked, this, [&]()
     {
         if (m_type == TypeCopy) {
@@ -52,13 +59,17 @@ QString ClickyLineEdit::text() const
 
 void ClickyLineEdit::setText(const QString &text)
 {
+    const bool isEmpty = text.isEmpty();
+    const bool validUrl = QUrl(text, QUrl::StrictMode).isValid();
+    const bool startsWithHttp = (text.startsWith("http://", Qt::CaseInsensitive)) || (text.startsWith("https://", Qt::CaseInsensitive));
+    m_pushButton->setEnabled(!isEmpty && validUrl && startsWithHttp);
+
     if (m_lineEdit->text() == text)
         return;
 
     m_lineEdit->setText(text);
-    m_pushButton->setEnabled(!text.isEmpty());
 
-    emit textChanged();
+    emit textChanged(text);
 }
 
 QString ClickyLineEdit::placeholderText() const
@@ -93,4 +104,14 @@ void ClickyLineEdit::setType(const int type)
         m_pushButton->setToolTip(tr("Open URL"));
         m_pushButton->setIcon(QIcon(":/res/icons/world.png"));
     }
+}
+
+bool ClickyLineEdit::isReadOnly() const
+{
+    return m_lineEdit->isReadOnly();
+}
+
+void ClickyLineEdit::setReadOnly(const bool readOnly)
+{
+    m_lineEdit->setReadOnly(readOnly);
 }

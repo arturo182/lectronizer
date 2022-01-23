@@ -1,11 +1,13 @@
-QT       += core gui network widgets
+QT       += core gui network widgets sql
 CONFIG   += c++20
 
 SOURCES += \
     filterbuttondelegate.cpp \
     main.cpp \
+    orderitemdelegate.cpp \
     ordermanager.cpp \
     ordersortfiltermodel.cpp \
+    sqlmanager.cpp \
     structs.cpp \
     utils.cpp \
     widgets/clickylineedit.cpp \
@@ -14,14 +16,19 @@ SOURCES += \
     widgets/filtertreewidget.cpp \
     widgets/mainwindow.cpp \
     widgets/orderdetailswidget.cpp \
-    widgets/settingsdialog.cpp
+    widgets/packaginghelperdialog.cpp \
+    widgets/settingsdialog.cpp \
+    widgets/settingspages/generalsettingspage.cpp \
+    widgets/settingspages/packagingsettingspage.cpp
 
 HEADERS += \
     enums.h \
     filterbuttondelegate.h \
+    orderitemdelegate.h \
     ordermanager.h \
     ordersortfiltermodel.h \
     shareddata.h \
+    sqlmanager.h \
     structs.h \
     utils.h \
     widgets/clickylineedit.h \
@@ -30,12 +37,18 @@ HEADERS += \
     widgets/filtertreewidget.h \
     widgets/mainwindow.h \
     widgets/orderdetailswidget.h \
-    widgets/settingsdialog.h
+    widgets/packaginghelperdialog.h \
+    widgets/settingsdialog.h \
+    widgets/settingspages/generalsettingspage.h \
+    widgets/settingspages/packagingsettingspage.h
 
 FORMS += \
     widgets/mainwindow.ui \
     widgets/orderdetailswidget.ui \
-    widgets/settingsdialog.ui
+    widgets/packaginghelperdialog.ui \
+    widgets/settingsdialog.ui \
+    widgets/settingspages/generalsettingspage.ui \
+    widgets/settingspages/packagingsettingspage.ui
 
 RESOURCES += \
     res.qrc

@@ -12,6 +12,7 @@ class ClickyLineEdit : public QFrame
     Q_PROPERTY(QString placeholderText READ placeholderText WRITE setPlaceholderText NOTIFY placeholderTextChanged)
     Q_PROPERTY(QString text READ text WRITE setText NOTIFY textChanged)
     Q_PROPERTY(int type READ type WRITE setType)
+    Q_PROPERTY(bool readOnly READ isReadOnly WRITE setReadOnly)
 
     public:
         explicit ClickyLineEdit(QWidget* parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
@@ -25,8 +26,11 @@ class ClickyLineEdit : public QFrame
         int type() const;
         void setType(const int type);
 
+        bool isReadOnly() const;
+        void setReadOnly(const bool readOnly);
+
     signals:
-        void textChanged();
+        void textChanged(const QString &text);
         void placeholderTextChanged();
 
     private:

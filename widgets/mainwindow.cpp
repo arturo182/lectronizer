@@ -2,6 +2,7 @@
 #include "enums.h"
 #include "mainwindow.h"
 #include "ordermanager.h"
+#include "packaginghelperdialog.h"
 #include "settingsdialog.h"
 #include "ui_mainwindow.h"
 #include "utils.h"
@@ -13,10 +14,11 @@
 #include <QNetworkAccessManager>
 #include <QTimer>
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(SqlManager *sqlMgr, QWidget *parent)
     : QMainWindow{parent}
     , m_nam{new QNetworkAccessManager(this)}
-    , m_orderMgr{new OrderManager(m_nam, &m_shared, this)}
+    , m_orderMgr{new OrderManager(m_nam, &m_shared, sqlMgr, this)}
+    , m_sqlMgr{sqlMgr}
     , m_ui{new Ui::MainWindow}
 {
     m_ui->setupUi(this);
@@ -224,7 +226,7 @@ void MainWindow::connectSignals()
             return;
 
         const Order &order= m_orderMgr->order(id);
-        m_ui->filterTree->setFilter(tr("Status"),   order.status);
+        m_ui->filterTree->setFilter(tr("Status"), order.statusString());
     });
     connect(m_ui->orderRefreshOrdersAction, &QAction::triggered, this, [&]() { m_orderMgr->refresh(); });
 
@@ -254,6 +256,13 @@ void MainWindow::connectSignals()
     connect(&m_orderProxyModel, &OrderSortFilterModel::layoutChanged, this, &MainWindow::updateOrderRelatedWidgets);
 
     // Dialogs
+    connect(m_ui->toolsPackagingHelperAction, &QAction::triggered, this, [this]()
+    {
+        PackagingHelperDialog dlg(m_orderMgr, m_sqlMgr, this);
+        dlg.exec();
+
+
+    });
     connect(m_ui->toolsSettingsAction, &QAction::triggered, this, &MainWindow::showSettingsDialog);
     connect(m_ui->helpAboutAction, &QAction::triggered, this, &MainWindow::showAboutDialog);
 
@@ -361,9 +370,7 @@ void MainWindow::connectSignals()
        m_ui->filterTree->refreshFilters();
 
        // refresh the details in case anything got updated
-       QItemSelectionModel *selection = m_ui->orderTree->selectionModel();
-       if (selection->hasSelection())
-           updateOrderDetails(selection->selection());
+       updateOrderRelatedWidgets();
 
        statusBar()->showMessage(tr("Orders refreshed, %1 new, %2 updated").arg(newOrders).arg(updatedOrders), 5000);
     });
@@ -468,7 +475,7 @@ void MainWindow::syncOrderRow(const int row, const Order &order)
 
     setColumn(ModelColumn::Shipping, order.shipping.method);
 
-    setColumn(ModelColumn::Status, order.status);
+    setColumn(ModelColumn::Status, order.statusString());
 
     setColumn(ModelColumn::UpdatedAt, friendlyDate(order.updatedAt), order.updatedAt);
 
@@ -530,6 +537,17 @@ void MainWindow::updateOrder(const Order &order)
         syncOrderRow(row, order);
 
         break;
+    }
+
+    if (!m_ui->detailScroll->isVisible())
+        return;
+
+    QItemSelectionModel *selection = m_ui->orderTree->selectionModel();
+    if (selection->hasSelection()) {
+        const QModelIndex proxyCurrent = selection->selection().indexes().first();
+        const int id = orderIdFromProxyModel(proxyCurrent);
+        if (id == order.id)
+            updateOrderDetails(selection->selection());
     }
 }
 
@@ -642,15 +660,24 @@ void MainWindow::updateTreeStatsLabel()
 
 void MainWindow::showSettingsDialog()
 {
-    SettingsDialog dlg(this);
-    dlg.setCurrencies(m_shared.currencyRates.keys());
-    dlg.setTargetCurrency(m_shared.targetCurrency);
-    dlg.setApiKey(m_shared.apiKey);
+    SettingsDialog dlg(m_orderMgr, m_sqlMgr, this);
+    connect(&dlg, &SettingsDialog::applied, this, [this, &dlg]()
+    {
+        m_shared = dlg.data();
 
-    if (dlg.exec() == QDialog::Accepted) {
-        m_shared.apiKey = dlg.apiKey();
-        m_shared.targetCurrency = dlg.targetCurrency();
-    }
+        // resync all order rows
+        for (int row = 0; row < m_orderModel.rowCount(); ++row) {
+            QStandardItem *idItem = m_orderModel.item(row, 0);
+            const int id = idItem->text().toInt();
+
+            syncOrderRow(row, m_orderMgr->order(id));
+        }
+
+        updateOrderRelatedWidgets();
+    });
+
+    dlg.setData(m_shared);
+    dlg.exec();
 }
 
 void MainWindow::showAboutDialog()

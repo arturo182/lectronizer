@@ -10,6 +10,7 @@ class QNetworkReply;
 class QProgressDialog;
 
 class SharedData;
+class SqlManager;
 
 class OrderManager : public QObject
 {
@@ -19,14 +20,16 @@ class OrderManager : public QObject
         static QString ApiUrl;
 
     public:
-        OrderManager(QNetworkAccessManager *nam, SharedData *shared, QWidget *parent = nullptr);
+        OrderManager(QNetworkAccessManager *nam, SharedData *shared, SqlManager *sqlMgr, QWidget *parent = nullptr);
         ~OrderManager() override;
 
         void refresh();
 
         bool contains(const int id) const;
 
-        const Order &order(const int id);
+        Order &order(const int id);
+
+        QList<int> orderIds() const;
 
     private:
         void resetProgressDlg();
@@ -47,6 +50,7 @@ class OrderManager : public QObject
         QProgressDialog *m_progressDlg{};
         QNetworkReply *m_reply{};
         SharedData *m_shared{};
+        SqlManager *m_sqlMgr{};
         int m_updatedOrders{};
 };
 

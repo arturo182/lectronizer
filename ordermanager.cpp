@@ -1,5 +1,6 @@
 #include "ordermanager.h"
 #include "shareddata.h"
+#include "sqlmanager.h"
 
 #include <QApplication>
 #include <QJsonArray>
@@ -16,21 +17,28 @@ static const int FetchSize = 50;
 
 QString OrderManager::ApiUrl{"https://lectronz.com/api/v1/orders"};
 
-OrderManager::OrderManager(QNetworkAccessManager *nam, SharedData *shared, QWidget *parent)
+OrderManager::OrderManager(QNetworkAccessManager *nam, SharedData *shared, SqlManager *sqlMgr, QWidget *parent)
     : QObject(qobject_cast<QObject*>(parent))
     , m_nam{nam}
     , m_shared{shared}
+    , m_sqlMgr{sqlMgr}
 {
     m_progressDlg = new QProgressDialog(parent);
     m_progressDlg->setWindowModality(Qt::WindowModal);
     m_progressDlg->setAutoClose(false);
     m_progressDlg->setAutoReset(false);
     resetProgressDlg();
+
+    connect(this, &OrderManager::orderUpdated, this, [this](const Order &order)
+    {
+        m_sqlMgr->save(order);
+    });
 }
 
 OrderManager::~OrderManager()
 {
-
+    delete m_progressDlg;
+    m_progressDlg = nullptr;
 }
 
 void OrderManager::refresh()
@@ -50,9 +58,14 @@ bool OrderManager::contains(const int id) const
     return m_orders.contains(id);
 }
 
-const Order &OrderManager::order(const int id)
+Order &OrderManager::order(const int id)
 {
     return m_orders[id];
+}
+
+QList<int> OrderManager::orderIds() const
+{
+    return m_orders.keys();
 }
 
 void OrderManager::resetProgressDlg()
@@ -141,7 +154,8 @@ void OrderManager::processFetch(const QJsonObject &root)
     const int lastOrderNum = offset + count;
 
     for (const QJsonValue &val : jsonOrders) {
-        const Order order = parseJsonOrder(val);
+        Order order = parseJsonOrder(val);
+        m_sqlMgr->restore(order);
 
         if (!contains(order.id)) {
             m_orders.insert(order.id, order);

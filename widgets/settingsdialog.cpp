@@ -1,25 +1,57 @@
 #include "settingsdialog.h"
+#include "settingspages/generalsettingspage.h"
+#include "settingspages/packagingsettingspage.h"
 #include "ui_settingsdialog.h"
 
-#include <QToolTip>
+#include <QSettings>
+#include <QStyledItemDelegate>
 
-SettingsDialog::SettingsDialog(QWidget *parent)
+
+class CategoryListDelegate : public QStyledItemDelegate
+{
+    public:
+        explicit CategoryListDelegate(QObject *parent)
+            : QStyledItemDelegate{parent}
+        {
+
+        }
+
+        QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override
+        {
+            QSize size = QStyledItemDelegate::sizeHint(option, index);
+            size.setHeight(qMax(size.height(), 32));
+            return size;
+        }
+};
+
+SettingsDialog::SettingsDialog(OrderManager *orderMgr, SqlManager *sqlMgr, QWidget *parent)
     : QDialog(parent)
+    , m_orderMgr{orderMgr}
+    , m_sqlMgr{sqlMgr}
     , m_ui(new Ui::SettingsDialog)
 {
     m_ui->setupUi(this);
+    m_ui->categoryList->setItemDelegate(new CategoryListDelegate(this));
 
-    const auto showToolTip = [&]()
+    connect(m_ui->buttonBox, &QDialogButtonBox::accepted, this, [this]()
     {
-        QPushButton *button = qobject_cast<QPushButton*>(sender());
+        emit applied();
+        accept();
+    });
 
-        QToolTip::showText(button->mapToGlobal(QPoint()), button->toolTip());
-    };
-
-    connect(m_ui->apiKeyHelpButton, &QPushButton::pressed, this, showToolTip);
-    connect(m_ui->targetCurrencyHelpButton, &QPushButton::pressed, this, showToolTip);
+    connect(m_ui->categoryList, &QListWidget::currentRowChanged, this, [this](const int idx)
+    {
+        m_ui->stackedWidget->setCurrentIndex(idx);
+    });
 
     // TODO: Add Shipping URL template with wildcard so it's auto-filled with tracking number
+
+    addPage(new GeneralSettingsPage(this));
+    addPage(new PackagingSettingsPage(this));
+
+    m_ui->categoryList->setCurrentRow(0);
+
+    readSettings();
 }
 
 SettingsDialog::~SettingsDialog()
@@ -28,29 +60,64 @@ SettingsDialog::~SettingsDialog()
     m_ui = nullptr;
 }
 
-void SettingsDialog::setCurrencies(QStringList currencies)
+SharedData SettingsDialog::data()
 {
-    std::sort(currencies.begin(), currencies.end());
+    for (int i = 0; i < m_ui->stackedWidget->count(); ++i) {
+        SettingPage *page = qobject_cast<SettingPage*>(m_ui->stackedWidget->widget(i));
+        if (!page)
+            continue;
 
-    m_ui->targetCurrencyCombo->addItems(currencies);
+        page->writeSettings(m_data);
+    }
+
+    return m_data;
 }
 
-QString SettingsDialog::apiKey() const
+void SettingsDialog::setData(const SharedData &data)
 {
-    return m_ui->apiKeyEdit->text();
+    m_data = data;
+
+    for (int i = 0; i < m_ui->stackedWidget->count(); ++i) {
+        SettingPage *page = qobject_cast<SettingPage*>(m_ui->stackedWidget->widget(i));
+        if (!page)
+            continue;
+
+        page->readSettings(m_data);
+    }
 }
 
-void SettingsDialog::setApiKey(const QString &apiKey)
+void SettingsDialog::addPage(SettingPage *page)
 {
-    m_ui->apiKeyEdit->setText(apiKey);
+    QListWidgetItem *listItem = new QListWidgetItem(m_ui->categoryList);
+    listItem->setText(page->pageName());
+    listItem->setIcon(page->pageIcon());
+
+    m_ui->stackedWidget->addWidget(page);
+
+    page->init(m_orderMgr, m_sqlMgr);
 }
 
-QString SettingsDialog::targetCurrency() const
+void SettingsDialog::closeEvent(QCloseEvent *event)
 {
-    return m_ui->targetCurrencyCombo->currentText();
+    writeSettings();
+
+    QWidget::closeEvent(event);
 }
 
-void SettingsDialog::setTargetCurrency(const QString &targetCurrency)
+void SettingsDialog::readSettings()
 {
-    m_ui->targetCurrencyCombo->setCurrentText(targetCurrency);
+    QSettings set;
+
+    set.beginGroup("SettingsDialog");
+    restoreGeometry(set.value("geometry").toByteArray());
+    setWindowState(Qt::WindowStates(set.value("state").toInt()));
+}
+
+void SettingsDialog::writeSettings() const
+{
+    QSettings set;
+
+    set.beginGroup("SettingsDialog");
+    set.setValue("geometry", saveGeometry());
+    set.setValue("state", (int)windowState());
 }

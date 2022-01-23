@@ -14,19 +14,20 @@ class QCloseEvent;
 class QNetworkAccessManager;
 
 class OrderManager;
+class SqlManager;
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
     public:
-        MainWindow(QWidget *parent = nullptr);
+        MainWindow(SqlManager *sqlMgr, QWidget *parent = nullptr);
         ~MainWindow() override;
 
     protected:
         void closeEvent(QCloseEvent *event) override;
 
-    private:        
+    private:
         void readSettings();
         void writeSettings() const;
 
@@ -58,5 +59,6 @@ class MainWindow : public QMainWindow
         QStandardItemModel m_orderModel{};
         OrderManager *m_orderMgr{};
         SharedData m_shared{};
+        SqlManager *m_sqlMgr{};
         Ui::MainWindow *m_ui{};
 };

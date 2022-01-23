@@ -20,5 +20,14 @@
         <file>res/icons/package_link.png</file>
         <file>res/icons/package_go.png</file>
         <file>res/icons/arrow_refresh.png</file>
+        <file>res/icons/package_wrench.png</file>
+        <file>res/icons/tick.png</file>
+        <file>res/icons/add.png</file>
+        <file>res/icons/bin.png</file>
+        <file>res/icons/decline.png</file>
+        <file>res/icons/exclamation.png</file>
+        <file>res/icons/question.png</file>
+        <file>res/icons/cross.png</file>
+        <file>res/icons/exclamation_green.png</file>
     </qresource>
 </RCC>

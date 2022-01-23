@@ -276,8 +276,8 @@ QTreeView::item:!selected {
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>174</width>
-          <height>591</height>
+          <width>69</width>
+          <height>589</height>
          </rect>
         </property>
        </widget>
@@ -323,6 +323,8 @@ QTreeView::item:!selected {
     <property name="title">
      <string>&amp;Tools</string>
     </property>
+    <addaction name="toolsPackagingHelperAction"/>
+    <addaction name="separator"/>
     <addaction name="toolsSettingsAction"/>
    </widget>
    <widget class="QMenu" name="orderMenu">
@@ -540,6 +542,21 @@ QTreeView::item:!selected {
   <action name="orderFilterStatusAction">
    <property name="text">
     <string>S&amp;tatus</string>
+   </property>
+  </action>
+  <action name="toolsPackagingHelperAction">
+   <property name="icon">
+    <iconset resource="../res.qrc">
+     <normaloff>:/res/icons/package_wrench.png</normaloff>:/res/icons/package_wrench.png</iconset>
+   </property>
+   <property name="text">
+    <string>Packaging &amp;Helper</string>
+   </property>
+   <property name="toolTip">
+    <string>Packaging Helper</string>
+   </property>
+   <property name="shortcut">
+    <string>F6</string>
    </property>
   </action>
  </widget>

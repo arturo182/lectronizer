@@ -85,7 +85,7 @@ void OrderDetailsWidget::setOrder(const Order &order)
 
     // Header
     m_ui->orderNumberLabel->setText(tr("<a href='%1'>Order #%2</a>").arg(order.editUrl(), QString::number(order.id)));
-    m_ui->orderStatusLabel->setText(tr("Status: %1").arg(order.status));
+    m_ui->orderStatusLabel->setText(tr("Status: %1").arg(order.statusString()));
     m_ui->createdAtLabel->setText(tr("Created: %1").arg(friendlyDate(order.createdAt)));
     m_ui->updatedAtLabel->setText(tr("Updated: %1").arg(friendlyDate(order.updatedAt)));
 
@@ -104,6 +104,7 @@ void OrderDetailsWidget::setOrder(const Order &order)
     QFont boldFont = m_ui->itemsTreeWidget->font();
     boldFont.setBold(true);
 
+    // TODO: use custom delegate and draw options smaller under
     m_ui->itemsTreeWidget->clear();
     for (const Item &orderItem : order.items) {
         QTreeWidgetItem *itemItem = new QTreeWidgetItem(m_ui->itemsTreeWidget);

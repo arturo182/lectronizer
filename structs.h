@@ -7,18 +7,18 @@
 
 struct Address
 {
-    QString firstName;
-    QString lastName;
-    QString organization;
+    QString firstName{};
+    QString lastName{};
+    QString organization{};
 
-    QString street;
-    QString streetExtension;
+    QString street{};
+    QString streetExtension{};
 
-    QString postalCode;
-    QString city;
-    QString state;
-    QString country;
-    QString countryCode;
+    QString postalCode{};
+    QString city{};
+    QString state{};
+    QString country{};
+    QString countryCode{};
 
     bool operator==(const Address &other) const
     {
@@ -32,10 +32,10 @@ QDebug operator<<(QDebug debug, const Address &a);
 
 struct ItemOption
 {
-    QString sku;
-    QString name;
-    QString choice;
-    double weight;
+    QString sku{};
+    QString name{};
+    QString choice{};
+    double weight{};
 
     bool operator==(const ItemOption &other) const
     {
@@ -49,10 +49,10 @@ struct Item
 {
     struct Product
     {
-        int id;
-        QString name;
-        QString sku;
-        QString description;
+        int id{};
+        QString name{};
+        QString sku{};
+        QString description{};
 
         bool operator==(const Product &other) const
         {
@@ -60,118 +60,133 @@ struct Item
             return std::tie(id, name, sku, description)
                     == std::tie(other.id, other.name, other.sku, other.description);
         }
-    } product;
-    QList<ItemOption> options;
-    int qty;
-    double price;
-    double weight;
+    } product{};
+    QList<ItemOption> options{};
+    int qty{};
+    double price{};
+    double weight{};
+
+    bool packaged{}; // non-api
 
     bool operator==(const Item &other) const
     {
-        return std::tie(product, options, qty, price, weight) ==
-                    std::tie(other.product, other.options, other.qty, other.price, other.weight);
+        return std::tie(product, options, qty, price, weight, packaged) ==
+                    std::tie(other.product, other.options, other.qty, other.price, other.weight, other.packaged);
     }
 };
 QDebug operator<<(QDebug debug, const Item &it);
+
+enum class OrderStatus
+{
+    Unknown = 0,
+    Paid,
+    Packaged,
+    Shipped,
+    // TODO: Delivered,
+};
 
 struct Order
 {
     struct Billing
     {
-        Address address;
-        bool useShippingAddress;
+        Address address{};
+        bool useShippingAddress{};
 
         bool operator==(const Billing &other) const
         {
             return std::tie(address, useShippingAddress) ==
                         std::tie(other.address, other.useShippingAddress);
         }
-    } billing;
+    } billing{};
 
-    int id;
+    int id{};
 
-    QString currency;
-    double subtotal;
-    double taxableAmount;
-    double total;
-    double payout;
-    double lectronzFee;
-    double paymentFee;
+    QString currency{};
+    double subtotal{};
+    double taxableAmount{};
+    double total{};
+    double payout{};
+    double lectronzFee{};
+    double paymentFee{};
 
     struct Payment
     {
-        QString provider;
-        QString reference;
+        QString provider{};
+        QString reference{};
 
         bool operator==(const Payment &other) const
         {
             return std::tie(provider, reference) ==
                         std::tie(other.provider, other.reference);
         }
-    } payment;
+    } payment{};
 
-    QDateTime createdAt;
-    QDateTime updatedAt;
-    QDateTime fulfilledAt;
+    QDateTime createdAt{};
+    QDateTime updatedAt{};
+    QDateTime fulfilledAt{};
 
-    QString status;
-    QString storeUrl;
-    QString customerEmail;
-    QString customerPhone;
-    QList<Item> items;
+    QString status{};
+    QString storeUrl{};
+    QString customerEmail{};
+    QString customerPhone{};
+    QList<Item> items{};
 
     struct Tax
     {
-        bool appliesToShipping;
-        double rate;
-        double total;
-        double collected;
+        bool appliesToShipping{};
+        double rate{};
+        double total{};
+        double collected{};
 
         bool operator==(const Tax &other) const
         {
             return std::tie(appliesToShipping, rate, total, collected) ==
                         std::tie(other.appliesToShipping, other.rate, other.total, other.collected);
         }
-    } tax;
+    } tax{};
 
     struct Shipping
     {
-        Address address;
-        double cost;
-        QString method;
+        Address address{};
+        double cost{};
+        QString method{};
 
         bool operator==(const Shipping &other) const
         {
             return std::tie(address, cost, method) ==
                         std::tie(other.address, other.cost, other.method);
         }
-    } shipping;
+    } shipping{};
 
     struct Tracking
     {
-        bool required;
-        QString code;
-        QString url;
+        bool required{};
+        QString code{};
+        QString url{};
 
         bool operator==(const Tracking &other) const
         {
             return std::tie(required, code, url) ==
                         std::tie(other.required, other.code, other.url);
         }
-    } tracking;
+    } tracking{};
 
     struct Weight
     {
-        QString unit;
-        double total;
-        double base;
+        QString unit{};
+        double total{};
+        double base{};
 
         bool operator==(const Weight &other) const
         {
             return std::tie(unit, total, base) ==
                         std::tie(other.unit, other.total, other.base);
         }
-    } weight;
+    } weight{};
+
+    int packaging{-1}; // non-api
+
+    QString statusString() const;
 
     QString editUrl() const;
     QString customerInvoiceUrl() const;
@@ -187,15 +202,23 @@ struct Order
     {
         return std::tie(billing, id, currency, subtotal, taxableAmount, total, payout, lectronzFee,
                         paymentFee, payment, createdAt, updatedAt, fulfilledAt, status, storeUrl,
-                        customerEmail, customerPhone, items, tax, shipping, tracking, weight) ==
+                        customerEmail, customerPhone, items, tax, shipping, tracking, weight, packaging) ==
                     std::tie(other.billing, other.id, other.currency, other.subtotal, other.taxableAmount,
                              other.total, other.payout, other.lectronzFee, other. paymentFee, other.payment,
                              other.createdAt, other.updatedAt, other.fulfilledAt, other.status, other.storeUrl,
                              other.customerEmail, other.customerPhone, other.items, other.tax, other.shipping,
-                             other.tracking, other.weight);
+                             other.tracking, other.weight, other.packaging);
     }
     bool operator!=(const Order &other) const { return !(*this == other); };
 };
 QDebug operator<<(QDebug debug, const Order &o);
 
 Order parseJsonOrder(const QJsonValue &val);
+
+struct Packaging
+{
+    int id{};
+    QString name{};
+    int stock{};
+    QString restockUrl{};
+};
