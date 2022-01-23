@@ -4,6 +4,7 @@ env:
     QT_VERSION: '6.2.2' # MacOS and Windows
     QT_MAC_ARCH: 'clang_64'
     QT_WIN_ARCH: 'win64_mingw'
+    QT_WIN_TOOLS: 'tools_mingw90,qt.tools.win64_mingw900'
 
 on: [push, pull_request]
 
@@ -19,10 +20,11 @@ jobs:
         steps:
             - name: Install Windows Qt
               if: startsWith(matrix.os, 'windows')
-              uses: jurplel/install-qt-action@v2
+              uses: jurplel/install-qt-action@v3
               with:
                 version: ${{ env.QT_VERSION }}
                 arch: ${{ env.QT_WIN_ARCH }}
+                tools: ${{ env.QT_WIN_TOOLS }}
 
             - name: Install MacOS Qt
               if: startsWith(matrix.os, 'macos')
@@ -48,16 +50,16 @@ jobs:
             - name: Build and copy on Windows
               if: startsWith(matrix.os, 'windows')
               run: |
-                qmake.exe VER_SHA1=${{ steps.short_sha1.outputs.value }} lectronizer.pro
+                qmake.exe VER_SHA1=${{ steps.short_sha1.outputs.value }} QMAKE_CXX="${{ env.IQTA_TOOLS }}\mingw900_64\bin\g++.exe" lectronizer.pro
                 mingw32-make.exe -j
                 mkdir output
                 copy release/lectronizer.exe output
                 windeployqt.exe output/lectronizer.exe --no-translations --no-system-d3d-compiler
-                copy "C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\opt\bin\libwinpthread-1.dll" output
+                copy "${{ env.IQTA_TOOLS }}\opt\bin\libwinpthread-1.dll" output
                 copy "C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\opt\bin\libeay32.dll" output
                 copy "C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\opt\bin\ssleay32.dll" output
-                copy "${{ env.Qt6_DIR }}/bin/libgcc_s_seh-1.dll" output
-                copy "${{ env.Qt6_DIR }}/bin/libstdc++-6.dll" output
+                copy "${{ env.Qt6_DIR }}\bin\libgcc_s_seh-1.dll" output
+                copy "${{ env.Qt6_DIR }}\bin\libstdc++-6.dll" output
 
             - name: Build and copy on MacOS
               if: startsWith(matrix.os, 'macos')
