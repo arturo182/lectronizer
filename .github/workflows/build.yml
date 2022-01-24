@@ -18,6 +18,14 @@ jobs:
                 os: [ubuntu-latest, macos-latest, windows-latest]
 
         steps:
+            - name: 'Cache Qt'
+              if: startsWith(matrix.os, 'windows') || startsWith(matrix.os, 'macos')
+              id: cache-qt
+              uses: actions/cache@v1
+              with:
+                path: ../Qt
+                key: ${{runner.os}}-QtCache
+
             - name: Install Windows Qt
               if: startsWith(matrix.os, 'windows')
               uses: jurplel/install-qt-action@v3
@@ -25,6 +33,7 @@ jobs:
                 version: ${{ env.QT_VERSION }}
                 arch: ${{ env.QT_WIN_ARCH }}
                 tools: ${{ env.QT_WIN_TOOLS }}
+                cached: ${{steps.cache-qt.outputs.cache-hit}}
 
             - name: Install MacOS Qt
               if: startsWith(matrix.os, 'macos')
@@ -32,6 +41,7 @@ jobs:
               with:
                 version: ${{ env.QT_VERSION }}
                 arch: ${{ env.QT_MAC_ARCH }}
+                cached: ${{steps.cache-qt.outputs.cache-hit}}
 
             - name: Install Ubuntu packages
               if: startsWith(matrix.os, 'ubuntu')
@@ -68,6 +78,8 @@ jobs:
                 make -j
                 mkdir output
                 macdeployqt lectronizer.app
+                chmod +x lectronizer.app/Contents/MacOS/lectronizer
+                xattr -d -r com.apple.quarantine lectronizer.app
                 cp -R lectronizer.app output
 
             - name: Build and copy on Ubuntu
