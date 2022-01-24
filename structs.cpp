@@ -237,6 +237,7 @@ Order parseJsonOrder(const QJsonValue &val)
     order.tax.rate                   = object.value("tax_rate").toDouble();
     order.tax.total                  = object.value("total_tax").toDouble();
     order.tax.collected              = object.value("tax_collected").toDouble();
+    order.tax.number                 = object.value("customer_tax_id").toString();
 
     order.shipping.address           = parseJsonAddress(object.value("shipping_address"));
     order.shipping.cost              = object.value("shipping_cost").toDouble();

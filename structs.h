@@ -137,11 +137,12 @@ struct Order
         double rate{};
         double total{};
         double collected{};
+        QString number{};
 
         bool operator==(const Tax &other) const
         {
-            return std::tie(appliesToShipping, rate, total, collected) ==
-                        std::tie(other.appliesToShipping, other.rate, other.total, other.collected);
+            return std::tie(appliesToShipping, rate, total, collected, number) ==
+                        std::tie(other.appliesToShipping, other.rate, other.total, other.collected, other.number);
         }
     } tax{};
 
