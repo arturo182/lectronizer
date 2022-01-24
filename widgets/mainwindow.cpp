@@ -240,6 +240,7 @@ void MainWindow::connectSignals()
 
         QMenu menu;
         menu.addAction(m_ui->openOrderAction);
+        menu.addMenu(m_ui->markOrderPackagedMenu);
         menu.addAction(m_ui->markOrderShippedAction);
         menu.addSeparator();
         menu.addAction(m_ui->openOrderInBrowserAction);
@@ -621,28 +622,61 @@ void MainWindow::updateOrderRelatedWidgets()
     bool hasTrackingUrl = false;
     bool hasTrackingCode = false;
     bool isFulfilled = false;
+    int packagingId = -1;
 
     QItemSelectionModel *selection = m_ui->orderTree->selectionModel();
-    if (!selection->hasSelection()) {
+    if (!selection->hasSelection()) { // no order, just hide details
         m_ui->detailScroll->hide();
     } else {
         updateOrderDetails(selection->selection());
 
+        // get selected order and determine needed properties
         const QModelIndex proxyCurrent = selection->selection().indexes().first();
-        const int id = orderIdFromProxyModel(proxyCurrent);
-        if (id >= 0) {
-            const Order &order = m_orderMgr->order(id);
+        const int orderId = orderIdFromProxyModel(proxyCurrent);
+        if (orderId >= 0) {
+            const Order &order = m_orderMgr->order(orderId);
 
             trackingRequired = order.tracking.required;
             hasTrackingCode  = order.tracking.code.isEmpty();
             hasTrackingUrl   = order.tracking.url.isEmpty();
             isFulfilled      = order.fulfilledAt.isValid();
+            packagingId      = order.packaging;
             hasSelection     = true;
+        }
+
+        // generate packaging menu actions
+        m_ui->markOrderPackagedMenu->clear();
+        if (packagingId < 0) {
+            const auto packageOrder = [this, orderId](const int packId)
+            {
+                if (packId > 0) {
+                    const int stock = m_sqlMgr->packagingStock(packId);
+                    m_sqlMgr->setPackagingStock(packId, (stock > 0) ? (stock - 1) : stock);
+                }
+
+                Order &order = m_orderMgr->order(orderId);
+                order.packaging = packId;
+                emit m_orderMgr->orderUpdated(order);
+            };
+
+            // default packaging
+            m_ui->markOrderPackagedMenu->addAction(tr("Default packaging"), this, [packageOrder]() { packageOrder(0); });
+
+            // user packagings
+            const QList<Packaging> packagingTypes = m_sqlMgr->packagings();
+            for (int i = 0; i < packagingTypes.size(); ++i) {
+                const Packaging &pack = packagingTypes[i];
+                const int packId = pack.id;
+
+                m_ui->markOrderPackagedMenu->addAction(tr("%1 (%2 left)").arg(pack.name).arg(pack.stock), this, [packageOrder, packId]() { packageOrder(packId); });
+            }
         }
     }
 
+    // update menu actions as needed
     m_ui->openOrderAction->setEnabled(hasSelection);
     m_ui->markOrderShippedAction->setEnabled(hasSelection && !isFulfilled);
+    m_ui->markOrderPackagedMenu->setEnabled(hasSelection && (packagingId < 0));
     m_ui->openOrderInBrowserAction->setEnabled(hasSelection);
     m_ui->openOrderTrackingUrlAction->setEnabled(hasSelection && trackingRequired && hasTrackingUrl);
     m_ui->openOrderInvoiceMenu->setEnabled(hasSelection);

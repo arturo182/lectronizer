@@ -371,7 +371,17 @@ QTreeView::item:!selected {
      <addaction name="orderFilterShippingAction"/>
      <addaction name="orderFilterStatusAction"/>
     </widget>
+    <widget class="QMenu" name="markOrderPackagedMenu">
+     <property name="title">
+      <string>Mark &amp;packaged</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../res.qrc">
+       <normaloff>:/res/icons/package.png</normaloff>:/res/icons/package.png</iconset>
+     </property>
+    </widget>
     <addaction name="openOrderAction"/>
+    <addaction name="markOrderPackagedMenu"/>
     <addaction name="markOrderShippedAction"/>
     <addaction name="separator"/>
     <addaction name="openOrderInBrowserAction"/>
