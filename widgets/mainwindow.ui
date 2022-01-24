@@ -193,7 +193,10 @@
            <bool>false</bool>
           </property>
           <property name="styleSheet">
-           <string notr="true">QTreeView::item:selected { 
+           <string notr="true">QTreeView::item {
+	height: 30px;
+}
+QTreeView::item:selected { 
 	border-right: 0.5px; 
 	border-bottom: 0.5px; 
 	border-style: solid ; 

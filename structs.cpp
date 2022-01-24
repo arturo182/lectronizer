@@ -285,21 +285,19 @@ QString Order::supplierInvoiceUrl() const
 
 QString Order::itemListing() const
 {
-    QString text;
+    QStringList itemValues;
     for (int i = 0; i < items.count(); ++i) {
         const Item &item = items[i];
 
-        text += QString("- %1x %2").arg(item.qty).arg(item.product.name);
+        QString value = QString("%1x %2").arg(item.qty).arg(item.product.name);
+        if (item.options.size())
+            value += " (+options)";
 
-        for (int j = 0; j < item.options.count(); ++j) {
-            text += QString("\n    - %1 = %2").arg(item.options[j].name, item.options[j].choice);
-        }
 
-        if (i < items.count() - 1)
-            text += "\n";
+        itemValues << value;
     }
 
-    return text;
+    return itemValues.join(", ");
 }
 
 double Order::calcWeight() const
