@@ -9,6 +9,7 @@ namespace Ui { class OrderDetailsWidget; }
 
 class OrderManager;
 struct SharedData;
+class SqlManager;
 
 class OrderDetailsWidget : public QWidget
 {
@@ -20,6 +21,7 @@ class OrderDetailsWidget : public QWidget
 
         void setSharedData(SharedData *shared);
         void setOrderManager(OrderManager *orderMgr);
+        void setSqlManager(SqlManager *sqlMgr);
         void setOrder(const Order &order);
 
     public slots:
@@ -42,5 +44,6 @@ class OrderDetailsWidget : public QWidget
     private:
         Order m_order{};
         Ui::OrderDetailsWidget *m_ui{};
-        SharedData *m_shared;
+        SharedData *m_shared{};
+        SqlManager *m_sqlMgr{};
 };

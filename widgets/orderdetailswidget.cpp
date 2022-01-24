@@ -1,6 +1,7 @@
 #include "orderdetailswidget.h"
 #include "orderitemdelegate.h"
 #include "shareddata.h"
+#include "sqlmanager.h"
 #include "ui_orderdetailswidget.h"
 #include "utils.h"
 
@@ -80,6 +81,11 @@ void OrderDetailsWidget::setOrderManager(OrderManager *orderMgr)
     m_ui->itemsTreeWidget->setItemDelegateForColumn(0, new OrderItemDelegate(orderMgr, this));
 }
 
+void OrderDetailsWidget::setSqlManager(SqlManager *sqlMgr)
+{
+    m_sqlMgr = sqlMgr;
+}
+
 void OrderDetailsWidget::setOrder(const Order &order)
 {
     m_order = order;
@@ -110,7 +116,6 @@ void OrderDetailsWidget::setOrder(const Order &order)
     QFont boldFont = m_ui->itemsTreeWidget->font();
     boldFont.setBold(true);
 
-    // TODO: use custom delegate and draw options smaller under
     m_ui->itemsTreeWidget->clear();
     for (int i = 0; i < order.items.size(); ++i) {
         const Item &orderItem = order.items[i];
@@ -146,6 +151,19 @@ void OrderDetailsWidget::setOrder(const Order &order)
     m_ui->itemsTotalLabel->setText(totalText);
 
     // Shipping
+    QString packaging = tr("Not packaged");
+    if (order.packaging >= 0) {
+        packaging = tr("Default packaging");
+
+        for (const Packaging &pack : m_sqlMgr->packagings()) {
+            if (pack.id != order.packaging)
+                continue;
+
+            packaging = pack.name;
+        }
+    }
+
+    m_ui->shippingPackagingValueLabel->setText(packaging);
     m_ui->shippingWeightValueLabel->setText(tr("%1 %2").arg(order.calcWeight(), 0, 'f', 1).arg(order.weight.unit));
     m_ui->shippingTrackingRequiredLabel->setText(order.tracking.required ? tr("Required") : tr("Not required"));
     m_ui->shippingTrackingRequiredLabel->setStyleSheet(order.tracking.required ? "font-weight: bold; color: red;" : "");
