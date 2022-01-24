@@ -594,6 +594,23 @@
     </widget>
    </item>
    <item>
+    <widget class="CollapsibleWidgetHeader" name="notesHeader" native="true">
+     <property name="title" stdset="0">
+      <string>Notes:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPlainTextEdit" name="noteTextEdit">
+     <property name="sizeAdjustPolicy">
+      <enum>QAbstractScrollArea::AdjustToContents</enum>
+     </property>
+     <property name="placeholderText">
+      <string>Put any extra info about the order here, it's only saved locally</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>

@@ -29,5 +29,6 @@
         <file>res/icons/question.png</file>
         <file>res/icons/cross.png</file>
         <file>res/icons/exclamation_green.png</file>
+        <file>res/icons/script.png</file>
     </qresource>
 </RCC>

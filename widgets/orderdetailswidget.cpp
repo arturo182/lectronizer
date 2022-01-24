@@ -1,5 +1,6 @@
 #include "orderdetailswidget.h"
 #include "orderitemdelegate.h"
+#include "ordermanager.h"
 #include "shareddata.h"
 #include "sqlmanager.h"
 #include "ui_orderdetailswidget.h"
@@ -7,6 +8,7 @@
 
 #include <QClipboard>
 #include <QDesktopServices>
+#include <QElapsedTimer>
 #include <QMessageBox>
 #include <QUrl>
 
@@ -20,6 +22,7 @@ OrderDetailsWidget::OrderDetailsWidget(const bool standalone, QWidget *parent)
     m_ui->itemsHeader->setContainer(m_ui->itemsContainer);
     m_ui->shippingHeader->setContainer(m_ui->shippingContainer);
     m_ui->billingHeader->setContainer(m_ui->billingContainer);
+    m_ui->notesHeader->setContainer(m_ui->noteTextEdit);
 
     if (standalone) {
         m_ui->collapseButton->hide();
@@ -63,6 +66,18 @@ OrderDetailsWidget::OrderDetailsWidget(const bool standalone, QWidget *parent)
     {
         QDesktopServices::openUrl(QUrl(m_order.supplierInvoiceUrl()));
     });
+
+    connect(m_ui->noteTextEdit, &QPlainTextEdit::textChanged, this, [this]()
+    {
+        const QString note = m_ui->noteTextEdit->toPlainText();
+
+        Order &order = m_orderMgr->order(m_order.id);
+        if (order.note == note)
+            return;
+
+        order.note = note;
+        m_sqlMgr->save(order);
+    });
 }
 
 OrderDetailsWidget::~OrderDetailsWidget()
@@ -78,7 +93,9 @@ void OrderDetailsWidget::setSharedData(SharedData *shared)
 
 void OrderDetailsWidget::setOrderManager(OrderManager *orderMgr)
 {
-    m_ui->itemsTreeWidget->setItemDelegateForColumn(0, new OrderItemDelegate(orderMgr, this));
+    m_orderMgr = orderMgr;
+
+    m_ui->itemsTreeWidget->setItemDelegateForColumn(0, new OrderItemDelegate(m_orderMgr, this));
 }
 
 void OrderDetailsWidget::setSqlManager(SqlManager *sqlMgr)
@@ -198,6 +215,9 @@ void OrderDetailsWidget::setOrder(const Order &order)
 
     m_ui->billingLabel->setText(billingText);
     m_ui->billingLinkLabel->setText(QString("<a href='https://dashboard.stripe.com/payments/%1'>See payment on Stripe</a>").arg(order.payment.reference));
+
+    // note
+    m_ui->noteTextEdit->setPlainText(order.note);
 }
 
 void OrderDetailsWidget::updateOrderButtons(const int row, const int rowCount)

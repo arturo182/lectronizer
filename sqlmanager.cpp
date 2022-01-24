@@ -71,6 +71,8 @@ QPair<bool, QString> SqlManager::setTableVersion(const QString &tableName, const
 void SqlManager::restore(Order &order)
 {
     QSqlQuery query;
+
+    // packaging
     query.prepare("SELECT * FROM order_packaging WHERE order_id = :order_id;");
     query.bindValue(":order_id", order.id);
     if (!query.exec()) {
@@ -82,7 +84,19 @@ void SqlManager::restore(Order &order)
         order.packaging = query.value("packaging_id").toInt();
     }
 
+    // order properties
+    query.prepare("SELECT * FROM order_properties WHERE order_id = :order_id;");
+    query.bindValue(":order_id", order.id);
+    if (!query.exec()) {
+        qDebug() << query.lastQuery() << "failed" << query.lastError().text();
+        return;
+    }
 
+    while (query.next()) {
+        order.note = query.value("note").toString();
+    }
+
+    // order item properties
     query.prepare("SELECT * FROM order_item_properties WHERE order_id = :order_id;");
     query.bindValue(":order_id", order.id);
     if (!query.exec()) {
@@ -100,6 +114,7 @@ void SqlManager::restore(Order &order)
 
 void SqlManager::save(const Order &order)
 {
+    // order packaging
     if (order.packaging > -1) {
         QSqlQuery query;
         query.prepare("INSERT OR REPLACE INTO order_packaging (`order_id`, `packaging_id`) VALUES (:order_id, :packaging_id);");
@@ -111,6 +126,17 @@ void SqlManager::save(const Order &order)
         }
     }
 
+    // order properties
+    QSqlQuery query;
+    query.prepare("INSERT OR REPLACE INTO order_properties (`order_id`, `note`) VALUES (:order_id, :note);");
+    query.bindValue(":order_id", order.id);
+    query.bindValue(":note", order.note);
+    if (!query.exec()) {
+        qDebug() << query.lastQuery() << "failed" << query.lastError().text();
+        return;
+    }
+
+    // order item properties
     for (int i = 0; i < order.items.count(); ++i) {
         const Item &item = order.items[i];
 

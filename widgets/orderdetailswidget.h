@@ -43,6 +43,7 @@ class OrderDetailsWidget : public QWidget
 
     private:
         Order m_order{};
+        OrderManager *m_orderMgr{};
         Ui::OrderDetailsWidget *m_ui{};
         SharedData *m_shared{};
         SqlManager *m_sqlMgr{};

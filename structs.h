@@ -185,6 +185,7 @@ struct Order
     } weight{};
 
     int packaging{-1}; // non-api
+    QString note{}; // non-api
 
     QString statusString() const;
 
@@ -202,12 +203,12 @@ struct Order
     {
         return std::tie(billing, id, currency, subtotal, taxableAmount, total, payout, lectronzFee,
                         paymentFee, payment, createdAt, updatedAt, fulfilledAt, status, storeUrl,
-                        customerEmail, customerPhone, items, tax, shipping, tracking, weight, packaging) ==
+                        customerEmail, customerPhone, items, tax, shipping, tracking, weight, packaging, note) ==
                     std::tie(other.billing, other.id, other.currency, other.subtotal, other.taxableAmount,
                              other.total, other.payout, other.lectronzFee, other. paymentFee, other.payment,
                              other.createdAt, other.updatedAt, other.fulfilledAt, other.status, other.storeUrl,
                              other.customerEmail, other.customerPhone, other.items, other.tax, other.shipping,
-                             other.tracking, other.weight, other.packaging);
+                             other.tracking, other.weight, other.packaging, other.note);
     }
     bool operator!=(const Order &other) const { return !(*this == other); };
 };

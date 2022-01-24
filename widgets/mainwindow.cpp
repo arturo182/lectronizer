@@ -204,6 +204,15 @@ void MainWindow::connectSignals()
         const Order &order= m_orderMgr->order(id);
         qApp->clipboard()->setText(order.tracking.code);
     });
+    connect(m_ui->copyOrderNotesAction, &QAction::triggered, this, [this]()
+    {
+        const int id = currentOrderId();
+        if (id < 0)
+            return;
+
+        const Order &order= m_orderMgr->order(id);
+        qApp->clipboard()->setText(order.note);
+    });
     connect(m_ui->orderFilterCountryAction, &QAction::triggered, this, [this]()
     {
         const int id = currentOrderId();
@@ -624,6 +633,7 @@ void MainWindow::updateOrderRelatedWidgets()
     bool trackingRequired = false;
     bool hasTrackingUrl = false;
     bool hasTrackingCode = false;
+    bool hasNote = false;
     bool isFulfilled = false;
     int packagingId = -1;
 
@@ -640,8 +650,9 @@ void MainWindow::updateOrderRelatedWidgets()
             const Order &order = m_orderMgr->order(orderId);
 
             trackingRequired = order.tracking.required;
-            hasTrackingCode  = order.tracking.code.isEmpty();
-            hasTrackingUrl   = order.tracking.url.isEmpty();
+            hasTrackingCode  = !order.tracking.code.isEmpty();
+            hasTrackingUrl   = !order.tracking.url.isEmpty();
+            hasNote          = !order.note.isEmpty();
             isFulfilled      = order.fulfilledAt.isValid();
             packagingId      = order.packaging;
             hasSelection     = true;
@@ -685,6 +696,7 @@ void MainWindow::updateOrderRelatedWidgets()
     m_ui->openOrderInvoiceMenu->setEnabled(hasSelection);
     m_ui->copyOrderMenu->setEnabled(hasSelection);
     m_ui->copyOrderTrackingNumberAction->setEnabled(hasSelection && trackingRequired && hasTrackingCode);
+    m_ui->copyOrderNotesAction->setEnabled(hasSelection && hasNote);
     m_ui->orderFilterSameMenu->setEnabled(hasSelection);
 
     updateTreeStatsLabel();

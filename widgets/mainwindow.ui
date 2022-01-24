@@ -358,6 +358,7 @@ QTreeView::item:!selected {
      <addaction name="copyOrderCustomerEmailAction"/>
      <addaction name="copyOrderFullAddressAction"/>
      <addaction name="copyOrderTrackingNumberAction"/>
+     <addaction name="copyOrderNotesAction"/>
     </widget>
     <widget class="QMenu" name="orderFilterSameMenu">
      <property name="title">
@@ -539,7 +540,10 @@ QTreeView::item:!selected {
      <normaloff>:/res/icons/package.png</normaloff>:/res/icons/package.png</iconset>
    </property>
    <property name="text">
-    <string>Copy &amp;tracking number</string>
+    <string>&amp;Tracking number</string>
+   </property>
+   <property name="toolTip">
+    <string>Tracking number</string>
    </property>
   </action>
   <action name="orderFilterCountryAction">
@@ -570,6 +574,18 @@ QTreeView::item:!selected {
    </property>
    <property name="shortcut">
     <string>F6</string>
+   </property>
+  </action>
+  <action name="copyOrderNotesAction">
+   <property name="icon">
+    <iconset resource="../res.qrc">
+     <normaloff>:/res/icons/script.png</normaloff>:/res/icons/script.png</iconset>
+   </property>
+   <property name="text">
+    <string>N&amp;otes</string>
+   </property>
+   <property name="toolTip">
+    <string>Notes</string>
    </property>
   </action>
  </widget>
