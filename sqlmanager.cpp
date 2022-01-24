@@ -199,7 +199,6 @@ int SqlManager::ordersWithPackaging(const int id)
 
 int SqlManager::packagingStock(const int id)
 {
-    qDebug() << Q_FUNC_INFO << id;
     QSqlQuery query;
     query.prepare("SELECT stock FROM packaging_types WHERE id = :id;");
     query.bindValue(":id", id);
@@ -219,7 +218,6 @@ int SqlManager::packagingStock(const int id)
 
 bool SqlManager::setPackagingStock(const int id, const int stock)
 {
-    qDebug() << Q_FUNC_INFO << id << stock;
     QSqlQuery query;
     query.prepare("UPDATE packaging_types SET stock = :stock WHERE id = :id;");
     query.bindValue(":stock", stock);
