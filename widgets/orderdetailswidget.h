@@ -7,6 +7,7 @@
 
 namespace Ui { class OrderDetailsWidget; }
 
+class OrderManager;
 struct SharedData;
 
 class OrderDetailsWidget : public QWidget
@@ -18,6 +19,7 @@ class OrderDetailsWidget : public QWidget
         ~OrderDetailsWidget() override;
 
         void setSharedData(SharedData *shared);
+        void setOrderManager(OrderManager *orderMgr);
         void setOrder(const Order &order);
 
     public slots:

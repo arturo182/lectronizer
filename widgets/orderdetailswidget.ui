@@ -339,14 +339,12 @@
         <property name="editTriggers">
          <set>QAbstractItemView::NoEditTriggers</set>
         </property>
+        <property name="indentation">
+         <number>10</number>
+        </property>
         <column>
          <property name="text">
           <string>Product</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Qty</string>
          </property>
         </column>
         <column>

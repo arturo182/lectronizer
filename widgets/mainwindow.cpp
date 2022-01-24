@@ -27,6 +27,7 @@ MainWindow::MainWindow(SqlManager *sqlMgr, QWidget *parent)
     m_ui->splitter->setStretchFactor(1, 4);
     m_ui->splitter->setStretchFactor(2, 1);
 
+    m_ui->detailWidget->setOrderManager(m_orderMgr);
     m_ui->detailWidget->setSharedData(&m_shared);
     m_ui->detailScroll->hide();
 
@@ -417,6 +418,7 @@ void MainWindow::openOrderWindow(const int id)
 
     OrderDetailsWidget *orderWidget = new OrderDetailsWidget(true);
     orderWidget->setAttribute(Qt::WA_DeleteOnClose);
+    orderWidget->setOrderManager(m_orderMgr);
     orderWidget->setSharedData(&m_shared);
     orderWidget->setOrder(m_orderMgr->order(id));
     orderWidget->show();

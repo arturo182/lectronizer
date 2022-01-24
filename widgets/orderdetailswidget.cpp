@@ -1,4 +1,5 @@
 #include "orderdetailswidget.h"
+#include "orderitemdelegate.h"
 #include "shareddata.h"
 #include "ui_orderdetailswidget.h"
 #include "utils.h"
@@ -74,6 +75,11 @@ void OrderDetailsWidget::setSharedData(SharedData *shared)
     m_shared = shared;
 }
 
+void OrderDetailsWidget::setOrderManager(OrderManager *orderMgr)
+{
+    m_ui->itemsTreeWidget->setItemDelegateForColumn(0, new OrderItemDelegate(orderMgr, this));
+}
+
 void OrderDetailsWidget::setOrder(const Order &order)
 {
     m_order = order;
@@ -106,20 +112,15 @@ void OrderDetailsWidget::setOrder(const Order &order)
 
     // TODO: use custom delegate and draw options smaller under
     m_ui->itemsTreeWidget->clear();
-    for (const Item &orderItem : order.items) {
-        QTreeWidgetItem *itemItem = new QTreeWidgetItem(m_ui->itemsTreeWidget);
-        itemItem->setText(0, orderItem.product.name + " (" + orderItem.product.sku + ")");
-        itemItem->setFont(0, boldFont);
-        itemItem->setText(1, QString::number(orderItem.qty));
-        itemItem->setText(2, QString::number(orderItem.price) + " " + order.currency);
-        itemItem->setText(3, QString::number(orderItem.qty * orderItem.price, 'g', 4) + " " + order.currency);
+    for (int i = 0; i < order.items.size(); ++i) {
+        const Item &orderItem = order.items[i];
 
-        for (int i = 0; i < orderItem.options.count(); ++i) {
-            QTreeWidgetItem *optionItem = new QTreeWidgetItem(itemItem);
-            optionItem->setText(0, orderItem.options[i].name + " = " + orderItem.options[i].choice);
-        }
+        QTreeWidgetItem *treeItem = new QTreeWidgetItem(m_ui->itemsTreeWidget);
+        treeItem->setData(0, Qt::UserRole + 0, order.id);
+        treeItem->setData(0, Qt::UserRole + 1, i);
+        treeItem->setText(1, QString::number(orderItem.price) + " " + order.currency);
+        treeItem->setText(2, QString::number(orderItem.qty * orderItem.price, 'g', 4) + " " + order.currency);
     }
-    m_ui->itemsTreeWidget->expandAll();
 
     // Totals
     QString totalText;
