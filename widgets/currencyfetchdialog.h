@@ -27,4 +27,3 @@ class CurrencyFetchDialog : public QProgressDialog
         QHash<QString, qreal> m_rates{};
         QNetworkReply *m_reply{};
 };
-

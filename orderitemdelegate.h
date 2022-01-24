@@ -29,4 +29,3 @@ class OrderItemDelegate : public QItemDelegate
         mutable QTextOption m_textOption{};
         mutable QTextLayout m_textLayout{};
 };
-

@@ -9,7 +9,7 @@ class QNetworkAccessManager;
 class QNetworkReply;
 class QProgressDialog;
 
-class SharedData;
+struct SharedData;
 class SqlManager;
 
 class OrderManager : public QObject
@@ -53,4 +53,3 @@ class OrderManager : public QObject
         SqlManager *m_sqlMgr{};
         int m_updatedOrders{};
 };
-

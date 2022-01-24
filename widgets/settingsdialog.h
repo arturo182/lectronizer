@@ -55,4 +55,3 @@ class SettingsDialog : public QDialog
         SqlManager *m_sqlMgr{};
         Ui::SettingsDialog *m_ui{};
 };
-

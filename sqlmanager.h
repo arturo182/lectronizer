@@ -46,4 +46,3 @@ class SqlManager : public QObject
     private:
         QString m_dbPath{};
 };
-

@@ -33,4 +33,3 @@ class CollapsibleWidgetHeader : public QWidget
         bool m_expanded{true};
         QString m_title{};
 };
-

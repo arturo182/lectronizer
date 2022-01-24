@@ -38,4 +38,3 @@ class ClickyLineEdit : public QFrame
         QLineEdit *m_lineEdit{};
         QPushButton *m_pushButton{};
 };
-
