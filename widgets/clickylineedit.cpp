@@ -60,9 +60,13 @@ QString ClickyLineEdit::text() const
 void ClickyLineEdit::setText(const QString &text)
 {
     const bool isEmpty = text.isEmpty();
-    const bool validUrl = QUrl(text, QUrl::StrictMode).isValid();
-    const bool startsWithHttp = (text.startsWith("http://", Qt::CaseInsensitive)) || (text.startsWith("https://", Qt::CaseInsensitive));
-    m_pushButton->setEnabled(!isEmpty && validUrl && startsWithHttp);
+    if (m_type == TypeCopy) {
+        m_pushButton->setEnabled(!isEmpty);
+    } else {
+        const bool validUrl = QUrl(text, QUrl::StrictMode).isValid();
+        const bool startsWithHttp = (text.startsWith("http://", Qt::CaseInsensitive)) || (text.startsWith("https://", Qt::CaseInsensitive));
+        m_pushButton->setEnabled(!isEmpty && validUrl && startsWithHttp);
+    }
 
     if (m_lineEdit->text() == text)
         return;
