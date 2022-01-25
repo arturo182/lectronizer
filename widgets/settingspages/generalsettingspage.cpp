@@ -18,6 +18,8 @@ GeneralSettingsPage::GeneralSettingsPage(QWidget *parent)
 
     connect(m_ui->apiKeyHelpButton, &QPushButton::pressed, this, showToolTip);
     connect(m_ui->targetCurrencyHelpButton, &QPushButton::pressed, this, showToolTip);
+
+    connect(m_ui->autoFetchCheckBox, &QCheckBox::stateChanged, m_ui->autoFetchIntervalSpinBox, &QSpinBox::setEnabled);
 }
 
 GeneralSettingsPage::~GeneralSettingsPage()
@@ -43,10 +45,16 @@ void GeneralSettingsPage::readSettings(const SharedData &shared)
     m_ui->targetCurrencyCombo->addItems(currencies);
     m_ui->apiKeyEdit->setText(shared.apiKey);
     m_ui->targetCurrencyCombo->setCurrentText(shared.targetCurrency);
+    m_ui->closeToTrayCheckBox->setChecked(shared.closeToSystemTray);
+    m_ui->autoFetchCheckBox->setChecked(shared.autoFetchWhenMinimized);
+    m_ui->autoFetchIntervalSpinBox->setValue(shared.autoFetchIntervalMin);
 }
 
 void GeneralSettingsPage::writeSettings(SharedData &shared)
 {
     shared.apiKey = m_ui->apiKeyEdit->text();
     shared.targetCurrency = m_ui->targetCurrencyCombo->currentText();
+    shared.closeToSystemTray = m_ui->closeToTrayCheckBox->isChecked();
+    shared.autoFetchWhenMinimized = m_ui->autoFetchCheckBox->isChecked();
+    shared.autoFetchIntervalMin = m_ui->autoFetchIntervalSpinBox->value();
 }

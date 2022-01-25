@@ -25,6 +25,7 @@ int main(int argc, char *argv[])
                                           QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/sqlite.db");
 
     QApplication app(argc, argv);
+    app.setQuitOnLastWindowClosed(false);
 
     // setup command line
     QCommandLineParser parser;

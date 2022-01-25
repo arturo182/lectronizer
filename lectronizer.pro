@@ -53,6 +53,10 @@ FORMS += \
 RESOURCES += \
     res.qrc
 
+# App details
+QMAKE_TARGET_COMPANY = arturo182
+QMAKE_TARGET_DESCRIPTION = Lectronizer
+
 # Window icon
 RC_ICONS = res/cart_chip.ico
 

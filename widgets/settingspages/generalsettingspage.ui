@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>544</width>
-    <height>275</height>
+    <height>335</height>
    </rect>
   </property>
   <layout class="QFormLayout" name="formLayout">
@@ -78,6 +78,52 @@
       </widget>
      </item>
     </layout>
+   </item>
+   <item row="2" column="0" colspan="2">
+    <widget class="QGroupBox" name="behaviorGroupBox">
+     <property name="title">
+      <string>Behavior</string>
+     </property>
+     <layout class="QFormLayout" name="formLayout_2">
+      <item row="0" column="0" colspan="2">
+       <widget class="QCheckBox" name="closeToTrayCheckBox">
+        <property name="text">
+         <string>Close Lectronizer to system tray</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="2">
+       <widget class="QCheckBox" name="autoFetchCheckBox">
+        <property name="text">
+         <string>Automatically fetch new orders when minimized</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="autoFetchIntervalLabel">
+        <property name="text">
+         <string>Fetch every:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QSpinBox" name="autoFetchIntervalSpinBox">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="suffix">
+         <string> min</string>
+        </property>
+        <property name="minimum">
+         <number>5</number>
+        </property>
+        <property name="maximum">
+         <number>1440</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
   </layout>
  </widget>

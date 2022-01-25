@@ -23,7 +23,7 @@ class OrderManager : public QObject
         OrderManager(QNetworkAccessManager *nam, SharedData *shared, SqlManager *sqlMgr, QWidget *parent = nullptr);
         ~OrderManager() override;
 
-        void refresh();
+        void refresh(const bool hidden);
 
         bool contains(const int id) const;
 

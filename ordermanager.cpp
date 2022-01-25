@@ -27,6 +27,7 @@ OrderManager::OrderManager(QNetworkAccessManager *nam, SharedData *shared, SqlMa
     m_progressDlg->setWindowModality(Qt::WindowModal);
     m_progressDlg->setAutoClose(false);
     m_progressDlg->setAutoReset(false);
+    m_progressDlg->setMinimumDuration(0);
     resetProgressDlg();
 
     connect(this, &OrderManager::orderUpdated, this, [this](const Order &order)
@@ -41,10 +42,12 @@ OrderManager::~OrderManager()
     m_progressDlg = nullptr;
 }
 
-void OrderManager::refresh()
+void OrderManager::refresh(const bool hidden)
 {
     resetProgressDlg();
-    m_progressDlg->show();
+
+    m_progressDlg->setAutoClose(hidden);
+    m_progressDlg->setHidden(hidden);
 
     m_newOrders = 0;
     m_updatedOrders = 0;
@@ -180,7 +183,8 @@ void OrderManager::processFetch(const QJsonObject &root)
     } else {
         // we're done
         m_progressDlg->setValue(m_progressDlg->maximum());
-        m_progressDlg->accept();
+        if (m_progressDlg->isVisible())
+            m_progressDlg->hide();
 
         emit refreshCompleted(m_newOrders, m_updatedOrders);
     }
@@ -191,6 +195,7 @@ void OrderManager::setErrorMsg(const QString &error)
     m_progressDlg->setValue(m_progressDlg->maximum());
     m_progressDlg->setLabelText(tr("Failed to fetch orders, reason:\n\"%1\"\n\nTry again, maybe wait some time, or check if the website is up,\notherwise complain on Discord I guess.").arg(error));
     m_progressDlg->setCancelButtonText(tr("OK"));
+    m_progressDlg->show();
 
     if (!m_reply) {
         qDebug() << Q_FUNC_INFO << "called with m_reply == nullptr, highly sus";

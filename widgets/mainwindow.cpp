@@ -13,13 +13,17 @@
 #include <QDesktopServices>
 #include <QMessageBox>
 #include <QNetworkAccessManager>
+#include <QSystemTrayIcon>
 #include <QTimer>
 
 MainWindow::MainWindow(SqlManager *sqlMgr, QWidget *parent)
     : QMainWindow{parent}
+    , m_firstFetch{true}
     , m_nam{new QNetworkAccessManager(this)}
     , m_orderMgr{new OrderManager(m_nam, &m_shared, sqlMgr, this)}
     , m_sqlMgr{sqlMgr}
+    , m_tray(new QSystemTrayIcon(this))
+    , m_trayMenu(new QMenu)
     , m_ui{new Ui::MainWindow}
 {
     m_ui->setupUi(this);
@@ -70,6 +74,7 @@ MainWindow::MainWindow(SqlManager *sqlMgr, QWidget *parent)
     m_ui->orderTree->setContextMenuPolicy(Qt::CustomContextMenu);
     m_ui->orderTree->header()->setContextMenuPolicy(Qt::CustomContextMenu);
 
+    setupTrayIcon();
     connectSignals();
     readSettings();
 
@@ -83,15 +88,78 @@ MainWindow::~MainWindow()
 {
     delete m_ui;
     m_ui = nullptr;
+
+    delete m_trayMenu;
+    m_trayMenu = nullptr;
+
+    delete m_tray;
+    m_tray = nullptr;
+
+    delete m_orderMgr;
+    m_orderMgr = nullptr;
+
+    delete m_nam;
+    m_nam = nullptr;
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+    // hide to tray, if enabled
+    if (m_shared.closeToSystemTray && !isHidden()) {
+        event->ignore();
+
+        QTimer::singleShot(0, this, &MainWindow::hide);
+
+        if (!m_shared.showedTrayHint) {
+            m_tray->showMessage(tr("Lectronizer was closed to system tray"), tr("You can change this in the Settings. This message won't be shown again."));
+
+            m_shared.showedTrayHint = true;
+        }
+
+        return;
+    }
+
     writeSettings();
-
     QMainWindow::closeEvent(event);
-
     qApp->quit();
+}
+
+bool MainWindow::event(QEvent *event)
+{
+    switch (event->type()) {
+    case QEvent::WindowStateChange:
+    {
+        if (isMinimized()) {
+            if (m_shared.autoFetchWhenMinimized) {
+                m_autoFetchTimer.start();
+            }
+        } else {
+            m_autoFetchTimer.stop();
+        }
+
+        break;
+    }
+
+    case QEvent::Show:
+    {
+        m_autoFetchTimer.stop();
+
+        break;
+    }
+
+    case QEvent::Hide:
+    {
+        if (m_shared.autoFetchWhenMinimized)
+            m_autoFetchTimer.start();
+
+        break;
+    }
+
+    default:
+        break;
+    }
+
+    return QMainWindow::event(event);
 }
 
 void MainWindow::fetchCurrencyRates()
@@ -107,7 +175,50 @@ void MainWindow::fetchCurrencyRates()
 
     m_shared.currencyRates = dlg.rates();
 
-    QTimer::singleShot(100, this, [&]() { statusBar()->showMessage(tr("Refreshing orders...")); m_orderMgr->refresh(); });
+    QTimer::singleShot(100, m_ui->orderRefreshOrdersAction, &QAction::trigger);
+}
+
+void MainWindow::setupTrayIcon()
+{
+    QAction *showAction = m_trayMenu->addAction(tr("&Hide"));
+    m_trayMenu->addAction(QIcon(":/res/icons/arrow_refresh.png"), tr("&Refresh orders"), m_ui->orderRefreshOrdersAction, &QAction::trigger);
+    m_trayMenu->addSeparator();
+    m_trayMenu->addAction(QIcon(":/res/icons/door.png"), tr("&Exit"), this, [this]()
+    {
+        writeSettings();
+        qApp->quit();
+    });
+
+    m_trayMenu->setDefaultAction(showAction);
+
+    connect(showAction, &QAction::triggered, this, [this, showAction]()
+    {
+        if (isHidden()) {
+            // make sure we're not minimized
+            setWindowState((windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
+
+            show();
+            raise();
+            activateWindow();
+        } else {
+            hide();
+        }
+
+        showAction->setText(isVisible() ? tr("&Hide") : tr("&Show"));
+    });
+    connect(m_tray, &QSystemTrayIcon::messageClicked, showAction, &QAction::trigger);
+
+    connect(m_tray, &QSystemTrayIcon::activated, this, [showAction](const QSystemTrayIcon::ActivationReason &reason)
+    {
+        if (reason != QSystemTrayIcon::Trigger)
+            return;
+
+        showAction->trigger();
+    });
+
+    m_tray->setIcon(QIcon(":/res/cart_chip.png"));
+    m_tray->setContextMenu(m_trayMenu);
+    m_tray->show();
 }
 
 void MainWindow::connectSignals()
@@ -240,7 +351,11 @@ void MainWindow::connectSignals()
         const Order &order= m_orderMgr->order(id);
         m_ui->filterTree->setFilter(tr("Status"), order.statusString());
     });
-    connect(m_ui->orderRefreshOrdersAction, &QAction::triggered, this, [&]() { m_orderMgr->refresh(); });
+    connect(m_ui->orderRefreshOrdersAction, &QAction::triggered, this, [this]()
+    {
+        statusBar()->showMessage(tr("Refreshing orders..."));
+        m_orderMgr->refresh(isHidden() || isMinimized());
+    });
 
     // Order context menu
     connect(m_ui->orderTree, &QHeaderView::customContextMenuRequested, this, [this](const QPoint &pos)
@@ -273,8 +388,6 @@ void MainWindow::connectSignals()
     {
         PackagingHelperDialog dlg(m_orderMgr, m_sqlMgr, this);
         dlg.exec();
-
-
     });
     connect(m_ui->toolsSettingsAction, &QAction::triggered, this, &MainWindow::showSettingsDialog);
     connect(m_ui->helpAboutAction, &QAction::triggered, this, &MainWindow::showAboutDialog);
@@ -386,11 +499,30 @@ void MainWindow::connectSignals()
        updateOrderRelatedWidgets();
 
        statusBar()->showMessage(tr("Orders refreshed, %1 new, %2 updated").arg(newOrders).arg(updatedOrders), 5000);
+
+       if (!m_firstFetch) {
+           if (newOrders > 0) {
+               m_tray->showMessage((newOrders == 1) ? tr("New order!") : tr("New orders!"),
+                                   tr("%n new order(s) received", "", newOrders),
+                                   QSystemTrayIcon::Information,
+                                   5000);
+           } else if (updatedOrders > 0) {
+               m_tray->showMessage((newOrders == 1) ? tr("Order updated!") : tr("Orders updated!"),
+                                   tr("%n order(s) have been updated", "", updatedOrders),
+                                   QSystemTrayIcon::Information,
+                                   5000);
+           }
+       }
+
+       m_firstFetch = false;
     });
     connect(m_orderMgr, &OrderManager::refreshFailed, this, [this](const QString &errorStr)
     {
         statusBar()->showMessage(tr("Order refresh failed: %1").arg(errorStr), 5000);
     });
+
+    // Auto refresh timer
+    connect(&m_autoFetchTimer, &QTimer::timeout, m_ui->orderRefreshOrdersAction, &QAction::trigger);
 }
 
 void MainWindow::readSettings()
@@ -403,10 +535,16 @@ void MainWindow::readSettings()
     m_ui->orderTree->header()->restoreState(set.value("orderColumns").toByteArray());
     m_ui->splitter->restoreState(set.value("splitter").toByteArray());
 
-    m_shared.apiKey = set.value("apiKey").toString();
-    m_shared.targetCurrency = set.value("targetCurrency", "EUR").toString();
+    m_shared.apiKey                 = set.value("apiKey").toString();
+    m_shared.targetCurrency         = set.value("targetCurrency", "EUR").toString();
+    m_shared.closeToSystemTray      = set.value("closeToSystemTray", true).toBool();
+    m_shared.showedTrayHint         = set.value("showedTrayHint").toBool();
+    m_shared.autoFetchWhenMinimized = set.value("autoFetchWhenMinimized").toBool();
+    m_shared.autoFetchIntervalMin   = set.value("autoFetchIntervalMin").toInt();
 
     m_ui->detailWidget->readSettings(set);
+
+    updateAutoFetchTimer();
 }
 
 void MainWindow::writeSettings() const
@@ -417,8 +555,13 @@ void MainWindow::writeSettings() const
     set.setValue("state",    saveState());
     set.setValue("orderColumns",  m_ui->orderTree->header()->saveState());
     set.setValue("splitter",  m_ui->splitter->saveState());
-    set.setValue("apiKey", m_shared.apiKey);
-    set.setValue("targetCurrency", m_shared.targetCurrency);
+
+    set.setValue("apiKey",                  m_shared.apiKey);
+    set.setValue("targetCurrency",          m_shared.targetCurrency);
+    set.setValue("closeToSystemTray",       m_shared.closeToSystemTray);
+    set.setValue("showedTrayHint",          m_shared.showedTrayHint);
+    set.setValue("autoFetchWhenMinimized",  m_shared.autoFetchWhenMinimized);
+    set.setValue("autoFetchIntervalMin",    m_shared.autoFetchIntervalMin);
 
     m_ui->detailWidget->writeSettings(set);
 }
@@ -709,6 +852,12 @@ void MainWindow::updateTreeStatsLabel()
                                     .arg(m_orderModel.rowCount()));
 }
 
+void MainWindow::updateAutoFetchTimer()
+{
+    m_autoFetchTimer.setInterval(m_shared.autoFetchIntervalMin * 60 * 1000);
+    m_autoFetchTimer.setSingleShot(false);
+}
+
 void MainWindow::showSettingsDialog()
 {
     SettingsDialog dlg(m_orderMgr, m_sqlMgr, this);
@@ -725,6 +874,7 @@ void MainWindow::showSettingsDialog()
         }
 
         updateOrderRelatedWidgets();
+        updateAutoFetchTimer();
     });
 
     dlg.setData(m_shared);
