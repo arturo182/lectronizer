@@ -20,7 +20,7 @@ bool OrderSortFilterModel::lessThan(const QModelIndex &left, const QModelIndex &
     if ((column == 1) || (column == 8) || (column == 9)) // Created at, Updated at, Fulfilled on
         return left.data(Qt::UserRole + 1).toDateTime() < right.data(Qt::UserRole + 1).toDateTime();
 
-    if (column == 2) // Total
+    if ((column == 2) || (column == 10)) // Total, Weight
         return left.data(Qt::UserRole + 1).toDouble() < right.data(Qt::UserRole + 1).toDouble();
 
     return QSortFilterProxyModel::lessThan(left, right);
