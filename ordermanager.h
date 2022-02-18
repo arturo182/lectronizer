@@ -31,6 +31,8 @@ class OrderManager : public QObject
 
         QList<int> orderIds() const;
 
+        void markShipped(const int id, const QString &trackingNo = QString(), const QString &trackingUrl = QString());
+
     private:
         void resetProgressDlg();
         void fetch(const int offset, const int limit);

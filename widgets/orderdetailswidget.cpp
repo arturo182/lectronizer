@@ -1,3 +1,4 @@
+#include "markshippeddialog.h"
 #include "orderdetailswidget.h"
 #include "orderitemdelegate.h"
 #include "ordermanager.h"
@@ -47,7 +48,13 @@ OrderDetailsWidget::OrderDetailsWidget(const bool standalone, QWidget *parent)
     // Mark shipped
     connect(m_ui->shippingSubmitButton, &QPushButton::clicked, this, [&]()
     {
-       QMessageBox::information(this, tr("Not implemented"), tr("Not implemented yet, sorry"));
+        if (m_order.tracking.required) {
+            MarkShippedDialog dlg(m_order, m_shared, this);
+            if (dlg.exec() == QDialog::Accepted)
+                m_orderMgr->markShipped(m_order.id, dlg.trackingNo(), dlg.trackingUrl());
+        } else {
+            m_orderMgr->markShipped(m_order.id);
+        }
     });
 
     // Process Prev/Next order buttons
@@ -183,7 +190,12 @@ void OrderDetailsWidget::setOrder(const Order &order)
     m_ui->shippingPackagingValueLabel->setText(packaging);
     m_ui->shippingWeightValueLabel->setText(tr("%1 %2").arg(order.calcWeight(), 0, 'f', 1).arg(order.weight.unit));
     m_ui->shippingTrackingRequiredLabel->setText(order.tracking.required ? tr("Required") : tr("Not required"));
-    m_ui->shippingTrackingRequiredLabel->setStyleSheet(order.tracking.required ? "font-weight: bold; color: red;" : "");
+    if (!order.fulfilledAt.isValid())
+        m_ui->shippingTrackingRequiredLabel->setStyleSheet(order.tracking.required ? "font-weight: bold; color: red;" : "");
+    m_ui->shippingTrackingNoEdit->setPlaceholderText(order.tracking.required ? "Mark Shipped to specify" : "Untracked");
+    m_ui->shippingTrackingNoEdit->setText(order.tracking.code);
+    m_ui->shippingTrackingUrlEdit->setPlaceholderText(order.tracking.required ? "Mark Shipped to specify" : "Untracked");
+    m_ui->shippingTrackingUrlEdit->setText(order.tracking.url);
     m_ui->shippingMethodValueLabel->setText(order.shipping.method);
     m_ui->shippingSubmitButton->setDisabled(order.fulfilledAt.isValid());
     m_ui->shippingSubmitButton->setText(order.fulfilledAt.isValid() ? tr("Shipped %1").arg(friendlyDate(order.fulfilledAt)) : tr("Mark Shipped"));

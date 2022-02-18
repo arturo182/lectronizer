@@ -28,7 +28,7 @@ SettingsDialog::SettingsDialog(OrderManager *orderMgr, SqlManager *sqlMgr, QWidg
     : QDialog(parent)
     , m_orderMgr{orderMgr}
     , m_sqlMgr{sqlMgr}
-    , m_ui(new Ui::SettingsDialog)
+    , m_ui{new Ui::SettingsDialog}
 {
     m_ui->setupUi(this);
     m_ui->categoryList->setItemDelegate(new CategoryListDelegate(this));
@@ -43,8 +43,6 @@ SettingsDialog::SettingsDialog(OrderManager *orderMgr, SqlManager *sqlMgr, QWidg
     {
         m_ui->stackedWidget->setCurrentIndex(idx);
     });
-
-    // TODO: Add Shipping URL template with wildcard so it's auto-filled with tracking number
 
     addPage(new GeneralSettingsPage(this));
     addPage(new PackagingSettingsPage(this));

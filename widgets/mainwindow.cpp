@@ -1,6 +1,7 @@
 #include "currencyfetchdialog.h"
 #include "enums.h"
 #include "mainwindow.h"
+#include "markshippeddialog.h"
 #include "ordermanager.h"
 #include "packaginghelperdialog.h"
 #include "settingsdialog.h"
@@ -238,7 +239,18 @@ void MainWindow::connectSignals()
 
     // Order MenuBar menu
     connect(m_ui->openOrderAction, &QAction::triggered, this, [this]() { openOrderWindow(currentOrderId()); });
-    connect(m_ui->markOrderShippedAction, &QAction::triggered, this, [this]() { QMessageBox::information(this, tr("Not implemented"), tr("Not implemented yet, sorry")); });
+    connect(m_ui->markOrderShippedAction, &QAction::triggered, this, [this]()
+    {
+        const Order &order= m_orderMgr->order(currentOrderId());
+
+        if (order.tracking.required) {
+            MarkShippedDialog dlg(order, &m_shared, this);
+            if (dlg.exec() == QDialog::Accepted)
+                m_orderMgr->markShipped(order.id, dlg.trackingNo(), dlg.trackingUrl());
+        } else {
+            m_orderMgr->markShipped(order.id);
+        }
+    });
     connect(m_ui->openOrderInBrowserAction, &QAction::triggered, this, [this]()
     {
         const int id = currentOrderId();
@@ -541,6 +553,7 @@ void MainWindow::readSettings()
     m_shared.showedTrayHint         = set.value("showedTrayHint").toBool();
     m_shared.autoFetchWhenMinimized = set.value("autoFetchWhenMinimized").toBool();
     m_shared.autoFetchIntervalMin   = set.value("autoFetchIntervalMin").toInt();
+    m_shared.trackingUrl            = set.value("trackingUrl").toString();
 
     m_ui->detailWidget->readSettings(set);
 
@@ -562,6 +575,7 @@ void MainWindow::writeSettings() const
     set.setValue("showedTrayHint",          m_shared.showedTrayHint);
     set.setValue("autoFetchWhenMinimized",  m_shared.autoFetchWhenMinimized);
     set.setValue("autoFetchIntervalMin",    m_shared.autoFetchIntervalMin);
+    set.setValue("trackingUrl",             m_shared.trackingUrl);
 
     m_ui->detailWidget->writeSettings(set);
 }

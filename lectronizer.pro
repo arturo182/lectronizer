@@ -15,6 +15,7 @@ SOURCES += \
     widgets/currencyfetchdialog.cpp \
     widgets/filtertreewidget.cpp \
     widgets/mainwindow.cpp \
+    widgets/markshippeddialog.cpp \
     widgets/orderdetailswidget.cpp \
     widgets/packaginghelperdialog.cpp \
     widgets/settingsdialog.cpp \
@@ -36,6 +37,7 @@ HEADERS += \
     widgets/currencyfetchdialog.h \
     widgets/filtertreewidget.h \
     widgets/mainwindow.h \
+    widgets/markshippeddialog.h \
     widgets/orderdetailswidget.h \
     widgets/packaginghelperdialog.h \
     widgets/settingsdialog.h \
@@ -44,6 +46,7 @@ HEADERS += \
 
 FORMS += \
     widgets/mainwindow.ui \
+    widgets/markshippeddialog.ui \
     widgets/orderdetailswidget.ui \
     widgets/packaginghelperdialog.ui \
     widgets/settingsdialog.ui \

@@ -12,4 +12,5 @@ struct SharedData
     bool closeToSystemTray{};
     bool autoFetchWhenMinimized{};
     int autoFetchIntervalMin{};
+    QString trackingUrl{};
 };

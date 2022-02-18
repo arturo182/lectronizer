@@ -18,6 +18,7 @@ GeneralSettingsPage::GeneralSettingsPage(QWidget *parent)
 
     connect(m_ui->apiKeyHelpButton, &QPushButton::pressed, this, showToolTip);
     connect(m_ui->targetCurrencyHelpButton, &QPushButton::pressed, this, showToolTip);
+    connect(m_ui->shippingTrackingUrlHelpButton, &QPushButton::pressed, this, showToolTip);
 
     connect(m_ui->autoFetchCheckBox, &QCheckBox::stateChanged, m_ui->autoFetchIntervalSpinBox, &QSpinBox::setEnabled);
 }
@@ -48,6 +49,7 @@ void GeneralSettingsPage::readSettings(const SharedData &shared)
     m_ui->closeToTrayCheckBox->setChecked(shared.closeToSystemTray);
     m_ui->autoFetchCheckBox->setChecked(shared.autoFetchWhenMinimized);
     m_ui->autoFetchIntervalSpinBox->setValue(shared.autoFetchIntervalMin);
+    m_ui->shippingTrackingUrlEdit->setText(shared.trackingUrl);
 }
 
 void GeneralSettingsPage::writeSettings(SharedData &shared)
@@ -57,4 +59,5 @@ void GeneralSettingsPage::writeSettings(SharedData &shared)
     shared.closeToSystemTray = m_ui->closeToTrayCheckBox->isChecked();
     shared.autoFetchWhenMinimized = m_ui->autoFetchCheckBox->isChecked();
     shared.autoFetchIntervalMin = m_ui->autoFetchIntervalSpinBox->value();
+    shared.trackingUrl = m_ui->shippingTrackingUrlEdit->text();
 }

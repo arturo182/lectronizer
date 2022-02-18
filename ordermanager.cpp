@@ -7,6 +7,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonParseError>
+#include <QMessageBox>
 #include <QNetworkReply>
 #include <QProgressDialog>
 #include <QThread>
@@ -69,6 +70,89 @@ Order &OrderManager::order(const int id)
 QList<int> OrderManager::orderIds() const
 {
     return m_orders.keys();
+}
+
+void OrderManager::markShipped(const int id, const QString &trackingNo, const QString &trackingUrl)
+{
+    if (!contains(id)) {
+        QMessageBox::warning(nullptr, tr("Bad order"), tr("Order doesn't exist."));
+        return;
+    }
+
+    if (m_reply) {
+        QMessageBox::warning(nullptr, tr("Bad state"), tr("Can't do while refreshing orders. Please retry after it's done."));
+        return;
+    }
+
+    resetProgressDlg();
+    m_progressDlg->setAutoClose(false);
+    m_progressDlg->setHidden(false);
+
+    QUrl url(ApiUrl + "/" + QString::number(id));
+
+    QNetworkRequest req(url);
+    req.setRawHeader("Content-Type", "application/json");
+    req.setRawHeader("Accept", "*/*");
+    req.setRawHeader("Authorization", QString("Bearer %1").arg(m_shared->apiKey).toUtf8());
+
+    const QJsonObject rootObj({
+        { "status",        "fulfilled" },
+        { "tracking_code", trackingNo  },
+        { "tracking_url",  trackingUrl },
+    });
+
+    m_reply = m_nam->put(req, QJsonDocument(rootObj).toJson(QJsonDocument::Compact));
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+    connect(m_reply, &QNetworkReply::errorOccurred, m_reply, [this]()
+#else
+    connect(m_reply, qOverload<QNetworkReply::NetworkError>(&QNetworkReply::error), m_reply, [this]()
+#endif
+    {
+        if (m_reply->error() == QNetworkReply::AuthenticationRequiredError) {
+            setErrorMsg(tr("Authorization error, maybe double-check your API key!"));
+        } else {
+            setErrorMsg(m_reply->errorString());
+        }
+    });
+
+    connect(m_reply, &QNetworkReply::sslErrors, m_reply, [this](const QList<QSslError> &errors)
+    {
+        setErrorMsg(errors[0].errorString());
+    });
+
+    connect(m_reply, &QNetworkReply::finished, m_reply, [this]()
+    {
+        if(!m_reply)
+            return;
+
+        const QByteArray json = m_reply->readAll();
+        qDebug() << "finished" << json;
+
+        QJsonParseError error = {};
+        QJsonDocument doc = QJsonDocument::fromJson(json, &error);
+        if (error.error != QJsonParseError::NoError) {
+            setErrorMsg(error.errorString());
+            return;
+        }
+
+        const QJsonObject root = doc.object();
+
+        // update the order
+        Order order = parseJsonOrder(root);
+        m_sqlMgr->restore(order);
+        m_orders.insert(order.id, order);
+        emit orderUpdated(order);
+
+        // cleanup reply
+        m_reply->deleteLater();
+        m_reply = nullptr;
+
+        // close the dialog
+        m_progressDlg->setValue(m_progressDlg->maximum());
+        if (m_progressDlg->isVisible())
+            m_progressDlg->hide();
+    });
 }
 
 void OrderManager::resetProgressDlg()
@@ -193,7 +277,7 @@ void OrderManager::processFetch(const QJsonObject &root)
 void OrderManager::setErrorMsg(const QString &error)
 {
     m_progressDlg->setValue(m_progressDlg->maximum());
-    m_progressDlg->setLabelText(tr("Failed to fetch orders, reason:\n\"%1\"\n\nTry again, maybe wait some time, or check if the website is up,\notherwise complain on Discord I guess.").arg(error));
+    m_progressDlg->setLabelText(tr("Failed to finish request, reason:\n\"%1\"\n\nTry again, maybe wait some time, or check if the website is up,\notherwise complain on Discord I guess.").arg(error));
     m_progressDlg->setCancelButtonText(tr("OK"));
     m_progressDlg->show();
 
