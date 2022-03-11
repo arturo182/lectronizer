@@ -6,6 +6,7 @@ OrderSortFilterModel::OrderSortFilterModel(QObject *parent)
     : QSortFilterProxyModel(parent)
 {
     setDynamicSortFilter(true);
+    setSortCaseSensitivity(Qt::CaseInsensitive);
     setFilterCaseSensitivity(Qt::CaseInsensitive);
     setFilterKeyColumn(-1);
 }
