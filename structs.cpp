@@ -305,12 +305,8 @@ double Order::calcWeight() const
 {
     double totalWeight = weight.base;
 
-    for (const Item &item : items) {
+    for (const Item &item : items)
         totalWeight += item.qty * item.weight;
-
-        for (const ItemOption &option : item.options)
-            totalWeight += option.weight;
-    }
 
     return totalWeight;
 }
