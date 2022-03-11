@@ -711,6 +711,8 @@ void MainWindow::updateOrder(const Order &order)
         break;
     }
 
+    m_ui->filterTree->refreshFilters();
+
     if (!m_ui->detailScroll->isVisible())
         return;
 
