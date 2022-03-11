@@ -103,6 +103,12 @@ void OrderDetailsWidget::setOrderManager(OrderManager *orderMgr)
     m_orderMgr = orderMgr;
 
     m_ui->itemsTreeWidget->setItemDelegateForColumn(0, new OrderItemDelegate(m_orderMgr, this));
+
+    connect(m_orderMgr, &OrderManager::orderUpdated, this, [this](const Order &order)
+    {
+        if (order.id == m_order.id)
+            setOrder(order);
+    });
 }
 
 void OrderDetailsWidget::setSqlManager(SqlManager *sqlMgr)
@@ -114,16 +120,28 @@ void OrderDetailsWidget::setOrder(const Order &order)
 {
     m_order = order;
 
-    if (!parent())
-        setWindowTitle(tr("Order details - #%1").arg(order.id));
+    updateOrderDetails();
+}
 
-    const Address &address = order.shipping.address;
+void OrderDetailsWidget::updateOrderButtons(const int row, const int rowCount)
+{
+    m_ui->prevOrderButton->setEnabled(row > 0);
+    m_ui->nextOrderButton->setEnabled(row < (rowCount - 1));
+    m_ui->orderPosLabel->setText(QString("%1/%2").arg(row + 1).arg(rowCount));
+}
+
+void OrderDetailsWidget::updateOrderDetails()
+{
+    if (!parent())
+        setWindowTitle(tr("Order details - #%1").arg(m_order.id));
+
+    const Address &address = m_order.shipping.address;
 
     // Header
-    m_ui->orderNumberLabel->setText(tr("<a href='%1'>Order #%2</a>").arg(order.editUrl(), QString::number(order.id)));
-    m_ui->orderStatusLabel->setText(tr("Status: %1").arg(order.statusString()));
-    m_ui->createdAtLabel->setText(tr("Created: %1").arg(friendlyDate(order.createdAt)));
-    m_ui->updatedAtLabel->setText(tr("Updated: %1").arg(friendlyDate(order.updatedAt)));
+    m_ui->orderNumberLabel->setText(tr("<a href='%1'>Order #%2</a>").arg(m_order.editUrl(), QString::number(m_order.id)));
+    m_ui->orderStatusLabel->setText(tr("Status: %1").arg(m_order.statusString()));
+    m_ui->createdAtLabel->setText(tr("Created: %1").arg(friendlyDate(m_order.createdAt)));
+    m_ui->updatedAtLabel->setText(tr("Updated: %1").arg(friendlyDate(m_order.updatedAt)));
 
     // Address
     m_ui->addressNameEdit->setText(address.firstName + " " + address.lastName);
@@ -133,54 +151,54 @@ void OrderDetailsWidget::setOrder(const Order &order)
     m_ui->addressCityEdit->setText(QString("%1%2%3").arg(address.city, address.state.isEmpty() ? "" : ", ", address.state));
     m_ui->addressZipEdit->setText(address.postalCode);
     m_ui->addressCountryEdit->setText(address.country);
-    m_ui->addressPhoneEdit->setText(order.customerPhone);
-    m_ui->addressEmailEdit->setText(order.customerEmail);
+    m_ui->addressPhoneEdit->setText(m_order.customerPhone);
+    m_ui->addressEmailEdit->setText(m_order.customerEmail);
 
     // Items
     QFont boldFont = m_ui->itemsTreeWidget->font();
     boldFont.setBold(true);
 
     m_ui->itemsTreeWidget->clear();
-    for (int i = 0; i < order.items.size(); ++i) {
-        const Item &orderItem = order.items[i];
+    for (int i = 0; i < m_order.items.size(); ++i) {
+        const Item &orderItem = m_order.items[i];
 
         QTreeWidgetItem *treeItem = new QTreeWidgetItem(m_ui->itemsTreeWidget);
-        treeItem->setData(0, Qt::UserRole + 0, order.id);
+        treeItem->setData(0, Qt::UserRole + 0, m_order.id);
         treeItem->setData(0, Qt::UserRole + 1, i);
-        treeItem->setText(1, QString::number(orderItem.price) + " " + order.currency);
-        treeItem->setText(2, QString::number(orderItem.qty * orderItem.price, 'g', 4) + " " + order.currency);
+        treeItem->setText(1, QString::number(orderItem.price) + " " + m_order.currency);
+        treeItem->setText(2, QString::number(orderItem.qty * orderItem.price, 'g', 4) + " " + m_order.currency);
     }
 
     // Totals
     QString totalText;
     totalText += tr("Subtotal %1 %2\n")
-            .arg(order.subtotal, 7, 'f', 2)
-            .arg(order.currency);
+            .arg(m_order.subtotal, 7, 'f', 2)
+            .arg(m_order.currency);
     totalText += tr("Shipping (%1 Tax/VAT) %2 %3\n")
-            .arg(order.tax.appliesToShipping ? "included in" : "excluded from")
-            .arg(order.shipping.cost, 7, 'f', 2)
-            .arg(order.currency);
+            .arg(m_order.tax.appliesToShipping ? "included in" : "excluded from")
+            .arg(m_order.shipping.cost, 7, 'f', 2)
+            .arg(m_order.currency);
     totalText += tr("VAT (%1 %) %2 %3\n")
-            .arg(order.tax.rate).arg(order.tax.total, 7, 'f', 2)
-            .arg(order.currency);
+            .arg(m_order.tax.rate).arg(m_order.tax.total, 7, 'f', 2)
+            .arg(m_order.currency);
     totalText += tr("Total %1 %2")
-            .arg(order.total, 7, 'f', 2)
-            .arg(order.currency);
+            .arg(m_order.total, 7, 'f', 2)
+            .arg(m_order.currency);
 
     if (m_shared->targetCurrency != "EUR" && (m_shared->currencyRates.size() > 1))
         totalText += QString("\n%1 %2")
-                        .arg(order.total * m_shared->currencyRates[m_shared->targetCurrency], 7, 'f', 2)
+                        .arg(m_order.total * m_shared->currencyRates[m_shared->targetCurrency], 7, 'f', 2)
                         .arg(m_shared->targetCurrency);
 
     m_ui->itemsTotalLabel->setText(totalText);
 
     // Shipping
     QString packaging = tr("Not packaged");
-    if (order.packaging >= 0) {
+    if (m_order.packaging >= 0) {
         packaging = tr("Default packaging");
 
         for (const Packaging &pack : m_sqlMgr->packagings()) {
-            if (pack.id != order.packaging)
+            if (pack.id != m_order.packaging)
                 continue;
 
             packaging = pack.name;
@@ -188,55 +206,48 @@ void OrderDetailsWidget::setOrder(const Order &order)
     }
 
     m_ui->shippingPackagingValueLabel->setText(packaging);
-    m_ui->shippingWeightValueLabel->setText(tr("%1 %2").arg(order.calcWeight(), 0, 'f', 1).arg(order.weight.unit));
-    m_ui->shippingTrackingRequiredLabel->setText(order.tracking.required ? tr("Required") : tr("Not required"));
-    if (!order.fulfilledAt.isValid())
-        m_ui->shippingTrackingRequiredLabel->setStyleSheet(order.tracking.required ? "font-weight: bold; color: red;" : "");
-    m_ui->shippingTrackingNoEdit->setPlaceholderText(order.tracking.required ? "Mark Shipped to specify" : "Untracked");
-    m_ui->shippingTrackingNoEdit->setText(order.tracking.code);
-    m_ui->shippingTrackingUrlEdit->setPlaceholderText(order.tracking.required ? "Mark Shipped to specify" : "Untracked");
-    m_ui->shippingTrackingUrlEdit->setText(order.tracking.url);
-    m_ui->shippingMethodValueLabel->setText(order.shipping.method);
-    m_ui->shippingSubmitButton->setDisabled(order.fulfilledAt.isValid());
-    m_ui->shippingSubmitButton->setText(order.fulfilledAt.isValid() ? tr("Shipped %1").arg(friendlyDate(order.fulfilledAt)) : tr("Mark Shipped"));
+    m_ui->shippingWeightValueLabel->setText(tr("%1 %2").arg(m_order.calcWeight(), 0, 'f', 1).arg(m_order.weight.unit));
+    m_ui->shippingTrackingRequiredLabel->setText(m_order.tracking.required ? tr("Required") : tr("Not required"));
+    if (!m_order.fulfilledAt.isValid())
+        m_ui->shippingTrackingRequiredLabel->setStyleSheet(m_order.tracking.required ? "font-weight: bold; color: red;" : "");
+    m_ui->shippingTrackingNoEdit->setPlaceholderText(m_order.tracking.required ? "Mark Shipped to specify" : "Untracked");
+    m_ui->shippingTrackingNoEdit->setText(m_order.tracking.code);
+    m_ui->shippingTrackingUrlEdit->setPlaceholderText(m_order.tracking.required ? "Mark Shipped to specify" : "Untracked");
+    m_ui->shippingTrackingUrlEdit->setText(m_order.tracking.url);
+    m_ui->shippingMethodValueLabel->setText(m_order.shipping.method);
+    m_ui->shippingSubmitButton->setDisabled(m_order.fulfilledAt.isValid());
+    m_ui->shippingSubmitButton->setText(m_order.fulfilledAt.isValid() ? tr("Shipped %1").arg(friendlyDate(m_order.fulfilledAt)) : tr("Mark Shipped"));
 
     // Billing
     QString billingText;
     billingText += tr("Total %1 %2\n")
-            .arg(order.total, 7, 'f', 2)
-            .arg(order.currency);
+            .arg(m_order.total, 7, 'f', 2)
+            .arg(m_order.currency);
     billingText += tr("Lectronz fee (%1%) %2 %3\n")
-            .arg(order.lectronzFee * 100 / order.total, 0, 'f', 2)
-            .arg(order.lectronzFee, 7, 'f', 2)
-            .arg(order.currency);
+            .arg(m_order.lectronzFee * 100 / m_order.total, 0, 'f', 2)
+            .arg(m_order.lectronzFee, 7, 'f', 2)
+            .arg(m_order.currency);
     billingText += tr("Payment proc. fee (%1%) %2 %3\n")
-            .arg(order.paymentFee * 100 / order.total, 0, 'f', 2)
-            .arg(order.paymentFee, 7, 'f', 2)
-            .arg(order.currency);
+            .arg(m_order.paymentFee * 100 / m_order.total, 0, 'f', 2)
+            .arg(m_order.paymentFee, 7, 'f', 2)
+            .arg(m_order.currency);
     billingText += tr("Tax to collect %1 %2\n")
-            .arg(order.tax.total, 7, 'f', 2)
-            .arg(order.currency);
+            .arg(m_order.tax.total, 7, 'f', 2)
+            .arg(m_order.currency);
     billingText += tr("Payout %1 %2")
-            .arg(order.total - order.lectronzFee - order.paymentFee, 7, 'f', 2)
-            .arg(order.currency);
+            .arg(m_order.total - m_order.lectronzFee - m_order.paymentFee, 7, 'f', 2)
+            .arg(m_order.currency);
 
     if (m_shared->targetCurrency != "EUR" && (m_shared->currencyRates.size() > 1))
         billingText += QString("\n%1 %2")
-                        .arg(order.payout, 7, 'f', 2)
+                        .arg(m_order.payout, 7, 'f', 2)
                         .arg(m_shared->targetCurrency);
 
     m_ui->billingLabel->setText(billingText);
-    m_ui->billingLinkLabel->setText(QString("<a href='https://dashboard.stripe.com/payments/%1'>See payment on Stripe</a>").arg(order.payment.reference));
+    m_ui->billingLinkLabel->setText(QString("<a href='https://dashboard.stripe.com/payments/%1'>See payment on Stripe</a>").arg(m_order.payment.reference));
 
     // note
-    m_ui->noteTextEdit->setPlainText(order.note);
-}
-
-void OrderDetailsWidget::updateOrderButtons(const int row, const int rowCount)
-{
-    m_ui->prevOrderButton->setEnabled(row > 0);
-    m_ui->nextOrderButton->setEnabled(row < (rowCount - 1));
-    m_ui->orderPosLabel->setText(QString("%1/%2").arg(row + 1).arg(rowCount));
+    m_ui->noteTextEdit->setPlainText(m_order.note);
 }
 
 void OrderDetailsWidget::processOrderButton()

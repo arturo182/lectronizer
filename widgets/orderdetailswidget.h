@@ -26,6 +26,7 @@ class OrderDetailsWidget : public QWidget
 
     public slots:
         void updateOrderButtons(const int row, const int rowCount);
+        void updateOrderDetails();
         void processOrderButton();
         void readSettings(const QSettings &set);
         void writeSettings(QSettings &set) const;
