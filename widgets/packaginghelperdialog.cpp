@@ -243,6 +243,9 @@ PackagingHelperDialog::PackagingHelperDialog(OrderManager *orderMgr, SqlManager 
     connect(m_ui->packagingComboBox, qOverload<int>(&QComboBox::currentIndexChanged), this, [this](const int idx)
     {
         QTreeWidgetItem *orderItem = m_ui->orderListTree->currentItem();
+        if (!orderItem)
+            return;
+
         const QVariant orderIdVar = orderItem->data(0, Qt::UserRole + 0);
         if (!orderIdVar.isValid())
             return;
