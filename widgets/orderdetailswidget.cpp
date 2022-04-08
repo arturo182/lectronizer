@@ -306,6 +306,7 @@ QVariantList OrderDetailsWidget::saveHeaderStates() const
     states << m_ui->itemsHeader->isExpanded();
     states << m_ui->shippingHeader->isExpanded();
     states << m_ui->billingHeader->isExpanded();
+    states << m_ui->notesHeader->isExpanded();
 
     return states;
 }
@@ -324,4 +325,5 @@ void OrderDetailsWidget::restoreHeaderStates(const QVariantList &states)
     restoreHeaderState(1, m_ui->itemsHeader);
     restoreHeaderState(2, m_ui->shippingHeader);
     restoreHeaderState(3, m_ui->billingHeader);
+    restoreHeaderState(4, m_ui->notesHeader);
 }
