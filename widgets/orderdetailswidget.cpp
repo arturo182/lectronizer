@@ -231,11 +231,12 @@ void OrderDetailsWidget::updateOrderDetails()
             .arg(m_order.paymentFee * 100 / m_order.total, 0, 'f', 2)
             .arg(m_order.paymentFee, 7, 'f', 2)
             .arg(m_order.currency);
-    billingText += tr("Tax to collect %1 %2\n")
+    billingText += QString("%1 %2 %3\n")
+            .arg(m_order.tax.collected ? tr("Tax collected") : tr("Tax to collect"))
             .arg(m_order.tax.total, 7, 'f', 2)
             .arg(m_order.currency);
     billingText += tr("Payout %1 %2")
-            .arg(m_order.total - m_order.lectronzFee - m_order.paymentFee, 7, 'f', 2)
+            .arg(m_order.total - m_order.lectronzFee - m_order.paymentFee - m_order.tax.collected, 7, 'f', 2)
             .arg(m_order.currency);
 
     if (m_shared->targetCurrency != "EUR" && (m_shared->currencyRates.size() > 1))
