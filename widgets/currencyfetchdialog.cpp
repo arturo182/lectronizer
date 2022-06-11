@@ -14,6 +14,7 @@ CurrencyFetchDialog::CurrencyFetchDialog(QNetworkAccessManager *nam, QWidget *pa
 {
     setLabelText(tr("Fetching currency rates..."));
     setCancelButtonText(QString());
+    setMinimumDuration(0);
 
     setWindowModality(Qt::WindowModal);
     setAutoClose(false);
