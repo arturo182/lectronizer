@@ -34,6 +34,7 @@ jobs:
                 arch: ${{ env.QT_WIN_ARCH }}
                 tools: ${{ env.QT_WIN_TOOLS }}
                 cached: ${{steps.cache-qt.outputs.cache-hit}}
+                modules: qtcharts
 
             - name: Install MacOS Qt
               if: startsWith(matrix.os, 'macos')
@@ -42,12 +43,13 @@ jobs:
                 version: ${{ env.QT_VERSION }}
                 arch: ${{ env.QT_MAC_ARCH }}
                 cached: ${{steps.cache-qt.outputs.cache-hit}}
+                modules: qtcharts
 
             - name: Install Ubuntu packages
               if: startsWith(matrix.os, 'ubuntu')
               run: |
                 sudo apt-get update
-                sudo apt-get install -y build-essential qtbase5-dev qt5-qmake qtchooser
+                sudo apt-get install -y build-essential qtbase5-dev libqt5charts5-dev qt5-qmake qtchooser
 
             - name: Clone repo
               uses: actions/checkout@v2
