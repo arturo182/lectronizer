@@ -65,6 +65,7 @@ class MainWindow : public QMainWindow
         OrderSortFilterModel m_orderProxyModel{};
         QStandardItemModel m_orderModel{};
         OrderManager *m_orderMgr{};
+        bool m_reallyExit{false};
         SharedData m_shared{};
         SqlManager *m_sqlMgr{};
         QSystemTrayIcon *m_tray{};

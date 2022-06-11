@@ -107,7 +107,7 @@ MainWindow::~MainWindow()
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     // hide to tray, if enabled
-    if (m_shared.closeToSystemTray && !isHidden()) {
+    if (m_shared.closeToSystemTray && !isHidden() && !m_reallyExit) {
         event->ignore();
 
         QTimer::singleShot(0, this, &MainWindow::hide);
@@ -187,6 +187,7 @@ void MainWindow::setupTrayIcon()
     m_trayMenu->addSeparator();
     m_trayMenu->addAction(QIcon(":/res/icons/door.png"), tr("&Exit"), this, [this]()
     {
+        m_reallyExit = true;
         writeSettings();
         qApp->quit();
     });
