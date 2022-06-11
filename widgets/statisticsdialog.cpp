@@ -10,6 +10,11 @@
 #include <QProgressDialog>
 #include <QValueAxis>
 
+// Qt 5 quirk
+#ifdef QT_CHARTS_USE_NAMESPACE
+QT_CHARTS_USE_NAMESPACE
+#endif
+
 StatisticsDialog::StatisticsDialog(OrderManager *orderMgr, SqlManager *sqlMgr, QWidget *parent)
     : QDialog{parent}
     , m_orderMgr{orderMgr}
@@ -176,7 +181,7 @@ void StatisticsDialog::processCountries()
         return left.second >= right.second;
     });
 
-    connect(m_ui->countriesTypeCombo, &QComboBox::currentIndexChanged, this, [&](const int &idx)
+    connect(m_ui->countriesTypeCombo, qOverload<int>(&QComboBox::currentIndexChanged), this, [&](const int &idx)
     {
         const QString title = tr("Orders per country");
 
@@ -288,7 +293,7 @@ void StatisticsDialog::processProducts()
         return left.second >= right.second;
     });
 
-    connect(m_ui->productsTypeCombo, &QComboBox::currentIndexChanged, this, [&](const int &idx)
+    connect(m_ui->productsTypeCombo, qOverload<int>(&QComboBox::currentIndexChanged), this, [&](const int &idx)
     {
         const QString title = tr("Total quantity sold per product");
 
@@ -336,7 +341,7 @@ void StatisticsDialog::processWeight()
     for (const auto &pair : buckets)
         m_weightCounts << qMakePair(QString("%1-%2%3").arg(pair.first).arg(pair.first + 9).arg(unit), pair.second);
 
-    connect(m_ui->weightTypeCombo, &QComboBox::currentIndexChanged, this, [&](const int &idx)
+    connect(m_ui->weightTypeCombo, qOverload<int>(&QComboBox::currentIndexChanged), this, [&](const int &idx)
     {
         const QString title = tr("Order weight distribution");
 
@@ -385,7 +390,7 @@ void StatisticsDialog::processPackaging()
         return left.second >= right.second;
     });
 
-    connect(m_ui->packagingTypeCombo, &QComboBox::currentIndexChanged, this, [&](const int &idx)
+    connect(m_ui->packagingTypeCombo, qOverload<int>(&QComboBox::currentIndexChanged), this, [&](const int &idx)
     {
         const QString title = tr("Orders per packaging");
 
@@ -433,7 +438,7 @@ void StatisticsDialog::processValue()
     for (const auto &pair : buckets)
         m_valueCounts << qMakePair(QString("%1-%2 %3").arg(pair.first).arg(pair.first + 9).arg(currency), pair.second);
 
-    connect(m_ui->valueTypeCombo, &QComboBox::currentIndexChanged, this, [&](const int &idx)
+    connect(m_ui->valueTypeCombo, qOverload<int>(&QComboBox::currentIndexChanged), this, [&](const int &idx)
     {
         const QString title = tr("Order value distribution");
 

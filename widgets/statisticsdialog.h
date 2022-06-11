@@ -1,13 +1,17 @@
 #pragma once
 
+#include <QChartView>
 #include <QDialog>
 
 namespace Ui { class StatisticsDialog; }
 
-class QChartView;
-
 class OrderManager;
 class SqlManager;
+
+// Qt 5 quirk
+#ifdef QT_CHARTS_USE_NAMESPACE
+QT_CHARTS_USE_NAMESPACE
+#endif
 
 class StatisticsDialog : public QDialog
 {
