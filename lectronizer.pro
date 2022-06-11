@@ -1,4 +1,4 @@
-QT       += core gui network widgets sql
+QT       += charts core gui network widgets sql
 CONFIG   += c++20
 
 SOURCES += \
@@ -20,7 +20,8 @@ SOURCES += \
     widgets/packaginghelperdialog.cpp \
     widgets/settingsdialog.cpp \
     widgets/settingspages/generalsettingspage.cpp \
-    widgets/settingspages/packagingsettingspage.cpp
+    widgets/settingspages/packagingsettingspage.cpp \
+    widgets/statisticsdialog.cpp
 
 HEADERS += \
     enums.h \
@@ -42,7 +43,8 @@ HEADERS += \
     widgets/packaginghelperdialog.h \
     widgets/settingsdialog.h \
     widgets/settingspages/generalsettingspage.h \
-    widgets/settingspages/packagingsettingspage.h
+    widgets/settingspages/packagingsettingspage.h \
+    widgets/statisticsdialog.h
 
 FORMS += \
     widgets/mainwindow.ui \
@@ -51,7 +53,8 @@ FORMS += \
     widgets/packaginghelperdialog.ui \
     widgets/settingsdialog.ui \
     widgets/settingspages/generalsettingspage.ui \
-    widgets/settingspages/packagingsettingspage.ui
+    widgets/settingspages/packagingsettingspage.ui \
+    widgets/statisticsdialog.ui
 
 RESOURCES += \
     res.qrc

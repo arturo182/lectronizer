@@ -327,6 +327,7 @@ QTreeView::item:!selected {
      <string>&amp;Tools</string>
     </property>
     <addaction name="toolsPackagingHelperAction"/>
+    <addaction name="toolsStatisticsAction"/>
     <addaction name="separator"/>
     <addaction name="toolsSettingsAction"/>
    </widget>
@@ -429,7 +430,7 @@ QTreeView::item:!selected {
      <normaloff>:/res/icons/cog.png</normaloff>:/res/icons/cog.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Settings...</string>
+    <string>&amp;Settings</string>
    </property>
   </action>
   <action name="orderRefreshOrdersAction">
@@ -586,6 +587,18 @@ QTreeView::item:!selected {
    </property>
    <property name="toolTip">
     <string>Notes</string>
+   </property>
+  </action>
+  <action name="toolsStatisticsAction">
+   <property name="icon">
+    <iconset resource="../res.qrc">
+     <normaloff>:/res/icons/chart_bar.png</normaloff>:/res/icons/chart_bar.png</iconset>
+   </property>
+   <property name="text">
+    <string>S&amp;tatistics...</string>
+   </property>
+   <property name="shortcut">
+    <string>F7</string>
    </property>
   </action>
  </widget>

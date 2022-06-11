@@ -6,6 +6,7 @@
 #include "packaginghelperdialog.h"
 #include "settingsdialog.h"
 #include "sqlmanager.h"
+#include "statisticsdialog.h"
 #include "ui_mainwindow.h"
 #include "utils.h"
 
@@ -399,6 +400,16 @@ void MainWindow::connectSignals()
     connect(m_ui->toolsPackagingHelperAction, &QAction::triggered, this, [this]()
     {
         PackagingHelperDialog dlg(m_orderMgr, m_sqlMgr, this);
+        dlg.exec();
+    });
+    connect(m_ui->toolsStatisticsAction, &QAction::triggered, this, [this]()
+    {
+        if (m_orderMgr->orderIds().size() == 0) {
+            QMessageBox::information(this, tr("Not enough data"), tr("Sorry, can't show stats until there is at least one order."));
+            return;
+        }
+
+        StatisticsDialog dlg(m_orderMgr, m_sqlMgr, this);
         dlg.exec();
     });
     connect(m_ui->toolsSettingsAction, &QAction::triggered, this, &MainWindow::showSettingsDialog);
