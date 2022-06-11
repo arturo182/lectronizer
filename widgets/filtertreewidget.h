@@ -21,6 +21,9 @@ class FilterTreeWidget : public QTreeWidget
 
         void refreshFilters();
 
+        void readSettings();
+        void writeSettings() const;
+
     private:
         void expandClickedItem(QTreeWidgetItem *item);
         void processCheckBox(QTreeWidgetItem *item, int column);

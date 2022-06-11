@@ -2,6 +2,7 @@
 #include "filtertreewidget.h"
 
 #include <QApplication>
+#include <QSettings>
 #include <QStandardItemModel>
 
 static const int ColumnRole = Qt::UserRole + 0;
@@ -124,6 +125,34 @@ void FilterTreeWidget::refreshFilters()
             // after insertChild() so processCheckBox() is called
             childItem->setCheckState(0, Qt::Checked);
         }
+    }
+}
+
+void FilterTreeWidget::readSettings()
+{
+    QSettings set;
+
+    set.beginGroup("FilterTreeWidget");
+
+    for (int i = 0; i < topLevelItemCount(); ++i) {
+        QTreeWidgetItem *categoryItem = topLevelItem(i);
+        const int column = categoryItem->data(0, ColumnRole).toInt();
+
+        categoryItem->setExpanded(set.value(QString::number(column), true).toBool());
+    }
+}
+
+void FilterTreeWidget::writeSettings() const
+{
+    QSettings set;
+
+    set.beginGroup("FilterTreeWidget");
+
+    for (int i = 0; i < topLevelItemCount(); ++i) {
+        QTreeWidgetItem *categoryItem = topLevelItem(i);
+        const int column = categoryItem->data(0, ColumnRole).toInt();
+
+        set.setValue(QString::number(column), categoryItem->isExpanded());
     }
 }
 
