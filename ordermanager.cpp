@@ -11,6 +11,7 @@
 #include <QNetworkReply>
 #include <QProgressDialog>
 #include <QThread>
+#include <QTimer>
 #include <QUrl>
 #include <QUrlQuery>
 
@@ -35,6 +36,9 @@ OrderManager::OrderManager(QNetworkAccessManager *nam, SharedData *shared, SqlMa
     {
         m_sqlMgr->save(order);
     });
+
+    // Workaround for a bug where the progress dialog is visible on start
+    QTimer::singleShot(1, [this]() { m_progressDlg->hide(); });
 }
 
 OrderManager::~OrderManager()
