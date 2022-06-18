@@ -68,7 +68,7 @@ class OrderListDelegate : public QItemDelegate
             painter->drawText(rect, Qt::AlignBottom, text, &boundingRect);
 
             // draw tick
-            if (order.packaging >= 0) {
+            if (order.isPackaged()) {
                 const QPixmap tick = QPixmap(":/res/icons/tick.png").scaled(boundingRect.height() - 2, boundingRect.height() - 2, Qt::KeepAspectRatio, Qt::SmoothTransformation);
                 painter->drawPixmap(QPoint(boundingRect.right() + margin + 1, boundingRect.top() + 1), tick);
             }
@@ -376,7 +376,7 @@ void PackagingHelperDialog::fillShippingTree()
 
     for (const int id : m_orderMgr->orderIds()) {
         const Order &order = m_orderMgr->order(id);
-        if (order.fulfilledAt.isValid() || (order.packaging >= 0))
+        if (order.isShipped() || order.isPackaged())
             continue;
 
         methods << order.shipping.method;
@@ -402,7 +402,7 @@ void PackagingHelperDialog::fillProductTree()
         const Order &order = m_orderMgr->order(id);
 
         // skip fulfilled and packaged orders
-        if (order.fulfilledAt.isValid() || (order.packaging >= 0))
+        if (order.isShipped() || order.isPackaged())
             continue;
 
         for (const Item &item : order.items) {
@@ -769,7 +769,7 @@ QList<int> PackagingHelperDialog::filteredOrders() const
         const Order &order = m_orderMgr->order(id);
 
         // is fulfilled or packaged, skip order
-        if (order.fulfilledAt.isValid() || (order.packaging >= 0))
+        if (order.isShipped() || order.isPackaged())
             continue;
 
         // wrong shipping, skip order

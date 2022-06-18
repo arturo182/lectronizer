@@ -806,6 +806,7 @@ void MainWindow::updateOrderRelatedWidgets()
     bool hasTrackingCode = false;
     bool hasNote = false;
     bool isFulfilled = false;
+    bool isRefunded = false;
     int packagingId = -1;
 
     QItemSelectionModel *selection = m_ui->orderTree->selectionModel();
@@ -824,7 +825,8 @@ void MainWindow::updateOrderRelatedWidgets()
             hasTrackingCode  = !order.tracking.code.isEmpty();
             hasTrackingUrl   = !order.tracking.url.isEmpty();
             hasNote          = !order.note.isEmpty();
-            isFulfilled      = order.fulfilledAt.isValid();
+            isFulfilled      = order.isShipped();
+            isRefunded       = order.isRefunded();
             packagingId      = order.packaging;
             hasSelection     = true;
         }
@@ -860,7 +862,7 @@ void MainWindow::updateOrderRelatedWidgets()
 
     // update menu actions as needed
     m_ui->openOrderAction->setEnabled(hasSelection);
-    m_ui->markOrderShippedAction->setEnabled(hasSelection && !isFulfilled);
+    m_ui->markOrderShippedAction->setEnabled(hasSelection && !isFulfilled && !isRefunded);
     m_ui->markOrderPackagedMenu->setEnabled(hasSelection && (packagingId < 0));
     m_ui->openOrderInBrowserAction->setEnabled(hasSelection);
     m_ui->openOrderTrackingUrlAction->setEnabled(hasSelection && trackingRequired && hasTrackingUrl);

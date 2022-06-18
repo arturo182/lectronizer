@@ -194,7 +194,7 @@ void OrderDetailsWidget::updateOrderDetails()
 
     // Shipping
     QString packaging = tr("Not packaged");
-    if (m_order.packaging >= 0) {
+    if (m_order.isPackaged()) {
         packaging = tr("Default packaging");
 
         for (const Packaging &pack : m_sqlMgr->packagings()) {
@@ -208,15 +208,21 @@ void OrderDetailsWidget::updateOrderDetails()
     m_ui->shippingPackagingValueLabel->setText(packaging);
     m_ui->shippingWeightValueLabel->setText(tr("%1 %2").arg(m_order.calcWeight(), 0, 'f', 1).arg(m_order.weight.unit));
     m_ui->shippingTrackingRequiredLabel->setText(m_order.tracking.required ? tr("Required") : tr("Not required"));
-    if (!m_order.fulfilledAt.isValid())
+    if (!m_order.isShipped())
         m_ui->shippingTrackingRequiredLabel->setStyleSheet(m_order.tracking.required ? "font-weight: bold; color: red;" : "");
     m_ui->shippingTrackingNoEdit->setPlaceholderText(m_order.tracking.required ? "Mark Shipped to specify" : "Untracked");
     m_ui->shippingTrackingNoEdit->setText(m_order.tracking.code);
     m_ui->shippingTrackingUrlEdit->setPlaceholderText(m_order.tracking.required ? "Mark Shipped to specify" : "Untracked");
     m_ui->shippingTrackingUrlEdit->setText(m_order.tracking.url);
     m_ui->shippingMethodValueLabel->setText(m_order.shipping.method);
-    m_ui->shippingSubmitButton->setDisabled(m_order.fulfilledAt.isValid());
-    m_ui->shippingSubmitButton->setText(m_order.fulfilledAt.isValid() ? tr("Shipped %1").arg(friendlyDate(m_order.fulfilledAt)) : tr("Mark Shipped"));
+    m_ui->shippingSubmitButton->setDisabled(m_order.isShipped() || m_order.isRefunded());
+    if (m_order.isShipped()) {
+        m_ui->shippingSubmitButton->setText(tr("Shipped %1").arg(friendlyDate(m_order.fulfilledAt)));
+    } else if (m_order.isRefunded()) {
+        m_ui->shippingSubmitButton->setText(tr("Order Refunded"));
+    } else {
+        m_ui->shippingSubmitButton->setText(tr("Mark Shipped"));
+    }
 
     // Billing
     QString billingText;

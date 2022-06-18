@@ -531,7 +531,7 @@ void StatisticsDialog::processMisc()
         processOrder(id, order.total, valueStats, valueOrders, valueAvg);
         processOrder(id, order.calcWeight(), weightStats, weightOrders, weightAvg);
 
-        if (!order.fulfilledAt.isNull()) {
+        if (order.isShipped()) {
             processOrder(id, order.createdAt.secsTo(order.fulfilledAt), shipTimeStats, shipTimeOrders, shipTimeAvg);
 
             shippedOrderCount += 1;

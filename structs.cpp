@@ -255,12 +255,30 @@ Order parseJsonOrder(const QJsonValue &val)
     return order;
 }
 
+bool Order::isRefunded() const
+{
+    return status == "refunded";
+}
+
+bool Order::isShipped() const
+{
+    return !fulfilledAt.isNull();
+}
+
+bool Order::isPackaged() const
+{
+    return packaging >= 0;
+}
+
 QString Order::statusString() const
 {
-    if (!fulfilledAt.isNull())
+    if (isRefunded())
+        return QObject::tr("Refunded");
+
+    if (isShipped())
         return QObject::tr("Shipped");
 
-    if (packaging >= 0)
+    if (isPackaged())
         return QObject::tr("Packaged");
 
     if (status == "payment_success")

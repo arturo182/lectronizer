@@ -188,6 +188,10 @@ struct Order
     int packaging{-1}; // non-api
     QString note{}; // non-api
 
+    bool isRefunded() const;
+    bool isShipped() const;
+    bool isPackaged() const;
+
     QString statusString() const;
 
     QString editUrl() const;
