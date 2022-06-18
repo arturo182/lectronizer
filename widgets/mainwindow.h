@@ -42,6 +42,7 @@ class MainWindow : public QMainWindow
         int currentOrderId() const;
 
         void syncOrderRow(const int row, const Order &order);
+        void syncAllOrderRows();
 
         void fetchCurrencyRates();
         double convertCurrency(const double eur);
@@ -60,6 +61,7 @@ class MainWindow : public QMainWindow
 
     private:
         QTimer m_autoFetchTimer{};
+        QTimer m_dailySyncTimer{};
         bool m_firstFetch{};
         QNetworkAccessManager *m_nam{};
         OrderSortFilterModel m_orderProxyModel{};

@@ -76,6 +76,9 @@ MainWindow::MainWindow(SqlManager *sqlMgr, QWidget *parent)
     m_ui->orderTree->setContextMenuPolicy(Qt::CustomContextMenu);
     m_ui->orderTree->header()->setContextMenuPolicy(Qt::CustomContextMenu);
 
+    // Don't repeat, we adjust manually every time
+    m_dailySyncTimer.setSingleShot(true);
+
     setupTrayIcon();
     connectSignals();
     readSettings();
@@ -84,6 +87,9 @@ MainWindow::MainWindow(SqlManager *sqlMgr, QWidget *parent)
     updateDateFilter();
 
     QTimer::singleShot(100, this, [&]() { fetchCurrencyRates(); });
+
+    // Force the timer to calculate midnight
+    m_dailySyncTimer.start(100);
 }
 
 MainWindow::~MainWindow()
@@ -547,6 +553,19 @@ void MainWindow::connectSignals()
 
     // Auto refresh timer
     connect(&m_autoFetchTimer, &QTimer::timeout, m_ui->orderRefreshOrdersAction, &QAction::trigger);
+
+    // Daily row sync timer
+    connect(&m_dailySyncTimer, &QTimer::timeout, [this]()
+    {
+        syncAllOrderRows();
+
+        const QDateTime midnight(QDate::currentDate().addDays(1), QTime(0, 0));
+        const QDateTime now = QDateTime::currentDateTime();
+
+        const qint64 msecs = midnight.toMSecsSinceEpoch() - now.toMSecsSinceEpoch();
+
+        m_dailySyncTimer.start(msecs);
+    });
 }
 
 void MainWindow::readSettings()
@@ -670,6 +689,16 @@ void MainWindow::syncOrderRow(const int row, const Order &order)
     }
 
     setColumn(ModelColumn::Weight, tr("%1 %2").arg(order.calcWeight(), 0, 'f', 1).arg(order.weight.unit), order.calcWeight());
+}
+
+void MainWindow::syncAllOrderRows()
+{
+    for (int row = 0; row < m_orderModel.rowCount(); ++row) {
+        QStandardItem *idItem = m_orderModel.item(row, 0);
+        const int id = idItem->text().toInt();
+
+        syncOrderRow(row, m_orderMgr->order(id));
+    }
 }
 
 double MainWindow::convertCurrency(const double eur)
@@ -895,14 +924,7 @@ void MainWindow::showSettingsDialog()
     {
         m_shared = dlg.data();
 
-        // resync all order rows
-        for (int row = 0; row < m_orderModel.rowCount(); ++row) {
-            QStandardItem *idItem = m_orderModel.item(row, 0);
-            const int id = idItem->text().toInt();
-
-            syncOrderRow(row, m_orderMgr->order(id));
-        }
-
+        syncAllOrderRows();
         updateOrderRelatedWidgets();
         updateAutoFetchTimer();
     });
