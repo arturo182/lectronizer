@@ -537,7 +537,7 @@ void MainWindow::connectSignals()
                                    QSystemTrayIcon::Information,
                                    5000);
            } else if (updatedOrders > 0) {
-               m_tray->showMessage((newOrders == 1) ? tr("Order updated!") : tr("Orders updated!"),
+               m_tray->showMessage((updatedOrders == 1) ? tr("Order updated!") : tr("Orders updated!"),
                                    tr("%n order(s) have been updated", "", updatedOrders),
                                    QSystemTrayIcon::Information,
                                    5000);
