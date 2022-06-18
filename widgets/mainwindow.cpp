@@ -587,6 +587,7 @@ void MainWindow::readSettings()
     m_shared.trackingUrl            = set.value("trackingUrl").toString();
 
     m_ui->detailWidget->readSettings(set);
+    m_ui->filterTree->readSettings();
 
     updateAutoFetchTimer();
 }
@@ -609,6 +610,7 @@ void MainWindow::writeSettings() const
     set.setValue("trackingUrl",             m_shared.trackingUrl);
 
     m_ui->detailWidget->writeSettings(set);
+    m_ui->filterTree->writeSettings();
 }
 
 void MainWindow::openOrderWindow(const int id)
