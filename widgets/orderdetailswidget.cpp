@@ -208,8 +208,11 @@ void OrderDetailsWidget::updateOrderDetails()
     m_ui->shippingPackagingValueLabel->setText(packaging);
     m_ui->shippingWeightValueLabel->setText(tr("%1 %2").arg(m_order.calcWeight(), 0, 'f', 1).arg(m_order.weight.unit));
     m_ui->shippingTrackingRequiredLabel->setText(m_order.tracking.required ? tr("Required") : tr("Not required"));
-    if (!m_order.isShipped())
+    if (!m_order.isShipped()) {
         m_ui->shippingTrackingRequiredLabel->setStyleSheet(m_order.tracking.required ? "font-weight: bold; color: red;" : "");
+    } else {
+        m_ui->shippingTrackingRequiredLabel->setStyleSheet("");
+    }
     m_ui->shippingTrackingNoEdit->setPlaceholderText(m_order.tracking.required ? "Mark Shipped to specify" : "Untracked");
     m_ui->shippingTrackingNoEdit->setText(m_order.tracking.code);
     m_ui->shippingTrackingUrlEdit->setPlaceholderText(m_order.tracking.required ? "Mark Shipped to specify" : "Untracked");
