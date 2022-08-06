@@ -376,7 +376,7 @@ void PackagingHelperDialog::fillShippingTree()
 
     for (const int id : m_orderMgr->orderIds()) {
         const Order &order = m_orderMgr->order(id);
-        if (order.isShipped() || order.isPackaged())
+        if (order.isShipped() || order.isPackaged() || order.isRefunded())
             continue;
 
         methods << order.shipping.method;
@@ -402,7 +402,7 @@ void PackagingHelperDialog::fillProductTree()
         const Order &order = m_orderMgr->order(id);
 
         // skip fulfilled and packaged orders
-        if (order.isShipped() || order.isPackaged())
+        if (order.isShipped() || order.isPackaged() || order.isRefunded())
             continue;
 
         for (const Item &item : order.items) {
@@ -769,7 +769,7 @@ QList<int> PackagingHelperDialog::filteredOrders() const
         const Order &order = m_orderMgr->order(id);
 
         // is fulfilled or packaged, skip order
-        if (order.isShipped() || order.isPackaged())
+        if (order.isShipped() || order.isPackaged() || order.isRefunded())
             continue;
 
         // wrong shipping, skip order
