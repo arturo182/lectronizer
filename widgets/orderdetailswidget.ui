@@ -185,39 +185,7 @@
        </widget>
       </item>
       <item>
-       <widget class="ClickyLineEdit" name="addressCityEdit">
-        <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
-        </property>
-        <property name="placeholderText" stdset="0">
-         <string>City, State</string>
-        </property>
-        <property name="type" stdset="0">
-         <number>0</number>
-        </property>
-       </widget>
-      </item>
-      <item>
        <layout class="QHBoxLayout" name="zipHorizontalLayout">
-        <item>
-         <widget class="ClickyLineEdit" name="addressCountryEdit">
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
-          </property>
-          <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
-          </property>
-          <property name="placeholderText" stdset="0">
-           <string>Country</string>
-          </property>
-          <property name="type" stdset="0">
-           <number>0</number>
-          </property>
-         </widget>
-        </item>
         <item>
          <widget class="ClickyLineEdit" name="addressZipEdit">
           <property name="frameShape">
@@ -234,7 +202,39 @@
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="ClickyLineEdit" name="addressCityEdit">
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
+          </property>
+          <property name="placeholderText" stdset="0">
+           <string>City, State</string>
+          </property>
+          <property name="type" stdset="0">
+           <number>0</number>
+          </property>
+         </widget>
+        </item>
        </layout>
+      </item>
+      <item>
+       <widget class="ClickyLineEdit" name="addressCountryEdit">
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Raised</enum>
+        </property>
+        <property name="placeholderText" stdset="0">
+         <string>Country</string>
+        </property>
+        <property name="type" stdset="0">
+         <number>0</number>
+        </property>
+       </widget>
       </item>
       <item>
        <layout class="QHBoxLayout" name="emailHorizontalLayout">
