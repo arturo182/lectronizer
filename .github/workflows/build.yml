@@ -19,14 +19,6 @@ jobs:
                 os: [ubuntu-latest, macos-latest, windows-latest]
 
         steps:
-            - name: 'Cache Qt'
-              if: startsWith(matrix.os, 'windows') || startsWith(matrix.os, 'macos')
-              id: cache-qt
-              uses: actions/cache@v1
-              with:
-                path: ../Qt
-                key: ${{runner.os}}-QtCache
-
             - name: Install Windows Qt
               if: startsWith(matrix.os, 'windows')
               uses: jurplel/install-qt-action@v3
@@ -34,7 +26,7 @@ jobs:
                 version: ${{ env.QT_VERSION }}
                 arch: ${{ env.QT_WIN_ARCH }}
                 tools: ${{ env.QT_WIN_TOOLS }}
-                cached: ${{steps.cache-qt.outputs.cache-hit}}
+                cache: true
                 modules: qtcharts
 
             - name: Install MacOS Qt
@@ -43,7 +35,7 @@ jobs:
               with:
                 version: ${{ env.QT_VERSION }}
                 arch: ${{ env.QT_MAC_ARCH }}
-                cached: ${{steps.cache-qt.outputs.cache-hit}}
+                cache: true
                 modules: qtcharts
 
             - name: Install Ubuntu packages
@@ -70,8 +62,8 @@ jobs:
                 copy release/lectronizer.exe output
                 windeployqt.exe output/lectronizer.exe --no-translations --no-system-d3d-compiler
                 copy "${{ env.IQTA_TOOLS }}\mingw1120_64\opt\bin\libwinpthread-1.dll" output
-                copy "C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\opt\bin\libeay32.dll" output
-                copy "C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\opt\bin\ssleay32.dll" output
+                copy "C:\Program Files\Docker\libeay32.dll" output
+                copy "C:\Program Files\Docker\ssleay32.dll" output
                 copy "${{ env.Qt6_DIR }}\bin\libgcc_s_seh-1.dll" output
                 copy "${{ env.Qt6_DIR }}\bin\libstdc++-6.dll" output
 
