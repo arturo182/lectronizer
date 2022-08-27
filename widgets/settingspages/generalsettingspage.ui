@@ -125,7 +125,7 @@
      </layout>
     </widget>
    </item>
-   <item row="3" column="0" colspan="2">
+   <item row="4" column="0" colspan="2">
     <widget class="QGroupBox" name="shippingGroupBox">
      <property name="title">
       <string>Shipping</string>
@@ -168,6 +168,22 @@
          </widget>
         </item>
        </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="2">
+    <widget class="QGroupBox" name="displayGroupBox">
+     <property name="title">
+      <string>Display</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QCheckBox" name="friendlyDateCheckBox">
+        <property name="text">
+         <string>Use friendly date format (&quot;Today&quot;, &quot;Yesterday&quot;, etc.)</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>

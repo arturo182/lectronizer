@@ -11,6 +11,7 @@ struct SharedData
     bool showedTrayHint{};
     bool closeToSystemTray{};
     bool autoFetchWhenMinimized{};
+    bool friendlyDate{};
     int autoFetchIntervalMin{};
     QString trackingUrl{};
 };

@@ -48,6 +48,7 @@ void GeneralSettingsPage::readSettings(const SharedData &shared)
     m_ui->targetCurrencyCombo->setCurrentText(shared.targetCurrency);
     m_ui->closeToTrayCheckBox->setChecked(shared.closeToSystemTray);
     m_ui->autoFetchCheckBox->setChecked(shared.autoFetchWhenMinimized);
+    m_ui->friendlyDateCheckBox->setChecked(shared.friendlyDate);
     m_ui->autoFetchIntervalSpinBox->setValue(shared.autoFetchIntervalMin);
     m_ui->shippingTrackingUrlEdit->setText(shared.trackingUrl);
 }
@@ -58,6 +59,7 @@ void GeneralSettingsPage::writeSettings(SharedData &shared)
     shared.targetCurrency = m_ui->targetCurrencyCombo->currentText();
     shared.closeToSystemTray = m_ui->closeToTrayCheckBox->isChecked();
     shared.autoFetchWhenMinimized = m_ui->autoFetchCheckBox->isChecked();
+    shared.friendlyDate = m_ui->friendlyDateCheckBox->isChecked();
     shared.autoFetchIntervalMin = m_ui->autoFetchIntervalSpinBox->value();
     shared.trackingUrl = m_ui->shippingTrackingUrlEdit->text();
 }

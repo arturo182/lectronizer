@@ -2,4 +2,4 @@
 
 #include <QDateTime>
 
-QString friendlyDate(const QDateTime &date);
+QString textDate(const QDateTime &date, bool friendly);

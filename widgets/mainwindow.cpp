@@ -583,6 +583,7 @@ void MainWindow::readSettings()
     m_shared.closeToSystemTray      = set.value("closeToSystemTray", true).toBool();
     m_shared.showedTrayHint         = set.value("showedTrayHint").toBool();
     m_shared.autoFetchWhenMinimized = set.value("autoFetchWhenMinimized").toBool();
+    m_shared.friendlyDate           = set.value("friendlyDate", true).toBool();
     m_shared.autoFetchIntervalMin   = set.value("autoFetchIntervalMin").toInt();
     m_shared.trackingUrl            = set.value("trackingUrl").toString();
 
@@ -606,6 +607,7 @@ void MainWindow::writeSettings() const
     set.setValue("closeToSystemTray",       m_shared.closeToSystemTray);
     set.setValue("showedTrayHint",          m_shared.showedTrayHint);
     set.setValue("autoFetchWhenMinimized",  m_shared.autoFetchWhenMinimized);
+    set.setValue("friendlyDate",            m_shared.friendlyDate);
     set.setValue("autoFetchIntervalMin",    m_shared.autoFetchIntervalMin);
     set.setValue("trackingUrl",             m_shared.trackingUrl);
 
@@ -664,7 +666,7 @@ void MainWindow::syncOrderRow(const int row, const Order &order)
 
     setColumn(ModelColumn::Id, QString::number(order.id));
 
-    setColumn(ModelColumn::CreatedAt, friendlyDate(order.createdAt), order.createdAt);
+    setColumn(ModelColumn::CreatedAt, textDate(order.createdAt, m_shared.friendlyDate), order.createdAt);
 
     const QString converted = convertCurrencyString(order.total);
     setColumn(ModelColumn::Total, QString("%1 %2%3")
@@ -682,10 +684,10 @@ void MainWindow::syncOrderRow(const int row, const Order &order)
 
     setColumn(ModelColumn::Status, order.statusString());
 
-    setColumn(ModelColumn::UpdatedAt, friendlyDate(order.updatedAt), order.updatedAt);
+    setColumn(ModelColumn::UpdatedAt, textDate(order.updatedAt, m_shared.friendlyDate), order.updatedAt);
 
     if (order.fulfilledAt.isValid()) {
-        setColumn(ModelColumn::FulfilledAt, friendlyDate(order.fulfilledAt), order.fulfilledAt);
+        setColumn(ModelColumn::FulfilledAt, textDate(order.fulfilledAt, m_shared.friendlyDate), order.fulfilledAt);
     } else {
         setColumn(ModelColumn::FulfilledAt, "-");
     }
