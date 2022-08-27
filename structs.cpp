@@ -294,12 +294,12 @@ QString Order::editUrl() const
 
 QString Order::customerInvoiceUrl() const
 {
-    return QString("https://lectronz.com/orders/%1/customer_invoice").arg(id);
+    return QString("https://lectronz.com/orders/%1/customer_invoice.pdf").arg(id);
 }
 
 QString Order::supplierInvoiceUrl() const
 {
-    return QString("https://lectronz.com/orders/%1/supplier_invoice").arg(id);
+    return QString("https://lectronz.com/orders/%1/supplier_invoice.pdf").arg(id);
 }
 
 QString Order::itemListing() const
