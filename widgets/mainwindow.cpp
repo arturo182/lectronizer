@@ -931,6 +931,7 @@ void MainWindow::showSettingsDialog()
         syncAllOrderRows();
         updateOrderRelatedWidgets();
         updateAutoFetchTimer();
+        writeSettings();
     });
 
     dlg.setData(m_shared);
