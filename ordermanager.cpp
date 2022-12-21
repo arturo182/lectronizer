@@ -15,7 +15,7 @@
 #include <QUrl>
 #include <QUrlQuery>
 
-static const int FetchSize = 50;
+static const int FetchSize = 150;
 
 QString OrderManager::ApiUrl{"https://lectronz.com/api/v1/orders"};
 
