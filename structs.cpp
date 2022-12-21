@@ -182,7 +182,7 @@ Item parseJsonItem(const QJsonValue &val)
     JsonObjectTracker object(val.toObject(), __func__);
     item.product.id          = object.value("product_id").toInt();
     item.product.name        = object.value("product_name").toString();
-    item.product.sku         = object.value("sku").toString();
+    item.product.sku         = object.value("sku", true).toString();
     item.product.description = object.value("product_description").toString();
     item.qty                 = object.value("quantity").toInt();
     item.price               = object.value("price").toDouble();
