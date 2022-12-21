@@ -26,6 +26,7 @@ GeneralSettingsPage::GeneralSettingsPage(QWidget *parent)
 GeneralSettingsPage::~GeneralSettingsPage()
 {
     delete m_ui;
+    m_ui = nullptr;
 }
 
 QString GeneralSettingsPage::pageName() const
