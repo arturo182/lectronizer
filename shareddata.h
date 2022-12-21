@@ -14,4 +14,10 @@ struct SharedData
     bool friendlyDate{};
     int autoFetchIntervalMin{};
     QString trackingUrl{};
+
+    // Phone number sanitization
+    bool phoneRemoveDashes{};
+    bool phoneRemoveSpaces{};
+    bool phoneAddCountryCode{};
+    bool phoneUsePlusPrefix{};
 };

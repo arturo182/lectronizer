@@ -1,5 +1,6 @@
 #include "settingsdialog.h"
 #include "settingspages/generalsettingspage.h"
+#include "settingspages/ordersettingspage.h"
 #include "settingspages/packagingsettingspage.h"
 #include "ui_settingsdialog.h"
 
@@ -45,6 +46,7 @@ SettingsDialog::SettingsDialog(OrderManager *orderMgr, SqlManager *sqlMgr, QWidg
     });
 
     addPage(new GeneralSettingsPage(this));
+    addPage(new OrderSettingsPage(this));
     addPage(new PackagingSettingsPage(this));
 
     m_ui->categoryList->setCurrentRow(0);

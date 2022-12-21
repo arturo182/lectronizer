@@ -151,7 +151,7 @@ void OrderDetailsWidget::updateOrderDetails()
     m_ui->addressCityEdit->setText(QString("%1%2%3").arg(address.city, address.state.isEmpty() ? "" : ", ", address.state));
     m_ui->addressZipEdit->setText(address.postalCode);
     m_ui->addressCountryEdit->setText(address.country);
-    m_ui->addressPhoneEdit->setText(m_order.customerPhone);
+    m_ui->addressPhoneEdit->setText(sanitizePhoneNumber(m_order.customerPhone, address.country, *m_shared));
     m_ui->addressEmailEdit->setText(m_order.customerEmail);
 
     // Items

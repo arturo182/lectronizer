@@ -587,6 +587,11 @@ void MainWindow::readSettings()
     m_shared.autoFetchIntervalMin   = set.value("autoFetchIntervalMin").toInt();
     m_shared.trackingUrl            = set.value("trackingUrl").toString();
 
+    m_shared.phoneRemoveDashes      = set.value("phoneRemoveDashes", true).toBool();
+    m_shared.phoneRemoveSpaces      = set.value("phoneRemoveSpaces", true).toBool();
+    m_shared.phoneAddCountryCode    = set.value("phoneAddCountryCode", true).toBool();
+    m_shared.phoneUsePlusPrefix     = set.value("phoneUsePlusPrefix", true).toBool();
+
     m_ui->detailWidget->readSettings(set);
     m_ui->filterTree->readSettings();
 
@@ -610,6 +615,11 @@ void MainWindow::writeSettings() const
     set.setValue("friendlyDate",            m_shared.friendlyDate);
     set.setValue("autoFetchIntervalMin",    m_shared.autoFetchIntervalMin);
     set.setValue("trackingUrl",             m_shared.trackingUrl);
+
+    set.setValue("phoneRemoveDashes", m_shared.phoneRemoveDashes);
+    set.setValue("phoneRemoveSpaces", m_shared.phoneRemoveSpaces);
+    set.setValue("phoneAddCountryCode", m_shared.phoneAddCountryCode);
+    set.setValue("phoneUsePlusPrefix", m_shared.phoneUsePlusPrefix);
 
     m_ui->detailWidget->writeSettings(set);
     m_ui->filterTree->writeSettings();

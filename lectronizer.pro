@@ -20,6 +20,7 @@ SOURCES += \
     widgets/packaginghelperdialog.cpp \
     widgets/settingsdialog.cpp \
     widgets/settingspages/generalsettingspage.cpp \
+    widgets/settingspages/ordersettingspage.cpp \
     widgets/settingspages/packagingsettingspage.cpp \
     widgets/statisticsdialog.cpp
 
@@ -43,6 +44,7 @@ HEADERS += \
     widgets/packaginghelperdialog.h \
     widgets/settingsdialog.h \
     widgets/settingspages/generalsettingspage.h \
+    widgets/settingspages/ordersettingspage.h \
     widgets/settingspages/packagingsettingspage.h \
     widgets/statisticsdialog.h
 
@@ -53,6 +55,7 @@ FORMS += \
     widgets/packaginghelperdialog.ui \
     widgets/settingsdialog.ui \
     widgets/settingspages/generalsettingspage.ui \
+    widgets/settingspages/ordersettingspage.ui \
     widgets/settingspages/packagingsettingspage.ui \
     widgets/statisticsdialog.ui
 
