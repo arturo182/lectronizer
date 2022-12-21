@@ -388,56 +388,56 @@
       <property name="topMargin">
        <number>0</number>
       </property>
-      <item row="1" column="0">
+      <item row="2" column="0">
        <widget class="QLabel" name="shippingWeightLabel">
         <property name="text">
          <string>Weight:</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
+      <item row="2" column="1">
        <widget class="QLabel" name="shippingWeightValueLabel">
         <property name="text">
          <string>0 gr</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
+      <item row="3" column="0">
        <widget class="QLabel" name="shippingMethodLabel">
         <property name="text">
          <string>Method:</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
+      <item row="3" column="1">
        <widget class="QLabel" name="shippingMethodValueLabel">
         <property name="text">
          <string>Method</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="0">
+      <item row="4" column="0">
        <widget class="QLabel" name="shippingTrackingLabel">
         <property name="text">
          <string>Tracking:</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="1">
+      <item row="4" column="1">
        <widget class="QLabel" name="shippingTrackingRequiredLabel">
         <property name="text">
          <string>Not required</string>
         </property>
        </widget>
       </item>
-      <item row="4" column="0">
+      <item row="5" column="0">
        <widget class="QLabel" name="shippingTrackingNoLabel">
         <property name="text">
          <string>Tracking #:</string>
         </property>
        </widget>
       </item>
-      <item row="4" column="1">
+      <item row="5" column="1">
        <widget class="ClickyLineEdit" name="shippingTrackingNoEdit">
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
@@ -453,14 +453,14 @@
         </property>
        </widget>
       </item>
-      <item row="5" column="0">
+      <item row="6" column="0">
        <widget class="QLabel" name="shippingTrackingUrlLabel">
         <property name="text">
          <string>Tracking URL:</string>
         </property>
        </widget>
       </item>
-      <item row="5" column="1">
+      <item row="6" column="1">
        <widget class="ClickyLineEdit" name="shippingTrackingUrlEdit">
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
@@ -476,24 +476,38 @@
         </property>
        </widget>
       </item>
-      <item row="6" column="1">
+      <item row="7" column="1">
        <widget class="QPushButton" name="shippingSubmitButton">
         <property name="text">
          <string>Mark Shipped</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="0">
+      <item row="1" column="0">
        <widget class="QLabel" name="shippingPackagingLabel">
         <property name="text">
          <string>Packaging:</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
+      <item row="1" column="1">
        <widget class="QLabel" name="shippingPackagingValueLabel">
         <property name="text">
          <string>Not packaged</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="shippingDeadlineLabel">
+        <property name="text">
+         <string>Deadline:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="shippingDeadlineValueLabel">
+        <property name="text">
+         <string/>
         </property>
        </widget>
       </item>

@@ -217,12 +217,13 @@ Order parseJsonOrder(const QJsonValue &val)
     order.paymentFee                 = object.value("payment_fees").toDouble();
 
     const QJsonObject payment        = object.value("payment").toObject();
-    order.payment.provider  = payment.value("provider").toString();
-    order.payment.reference = payment.value("reference").toString();
+    order.payment.provider           = payment.value("provider").toString();
+    order.payment.reference          = payment.value("reference").toString();
 
     order.createdAt                  = QDateTime::fromString(object.value("created_at").toString(), Qt::ISODateWithMs).toLocalTime();
     order.updatedAt                  = QDateTime::fromString(object.value("updated_at").toString(), Qt::ISODateWithMs).toLocalTime();
     order.fulfilledAt                = QDateTime::fromString(object.value("fulfilled_at", true).toString(), Qt::ISODateWithMs).toLocalTime();
+    order.fulfillUntil               = QDateTime::fromString(object.value("fulfill_until", true).toString(), Qt::ISODateWithMs).toLocalTime();
 
     order.status                     = object.value("status").toString();
     order.storeUrl                   = object.value("store_url").toString();

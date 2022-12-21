@@ -124,6 +124,7 @@ struct Order
     QDateTime createdAt{};
     QDateTime updatedAt{};
     QDateTime fulfilledAt{};
+    QDateTime fulfillUntil{};
 
     QString status{};
     QString storeUrl{};

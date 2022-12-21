@@ -205,6 +205,7 @@ void OrderDetailsWidget::updateOrderDetails()
         }
     }
 
+    m_ui->shippingDeadlineValueLabel->setText(textDate(m_order.fulfillUntil, m_shared->friendlyDate));
     m_ui->shippingPackagingValueLabel->setText(packaging);
     m_ui->shippingWeightValueLabel->setText(tr("%1 %2").arg(m_order.calcWeight(), 0, 'f', 1).arg(m_order.weight.unit));
     m_ui->shippingTrackingRequiredLabel->setText(m_order.tracking.required ? tr("Required") : tr("Not required"));
