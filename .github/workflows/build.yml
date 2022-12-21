@@ -62,10 +62,12 @@ jobs:
                 copy release/lectronizer.exe output
                 windeployqt.exe output/lectronizer.exe --no-translations --no-system-d3d-compiler
                 copy "${{ env.IQTA_TOOLS }}\mingw1120_64\opt\bin\libwinpthread-1.dll" output
-                copy "C:\Program Files\Docker\libeay32.dll" output
-                copy "C:\Program Files\Docker\ssleay32.dll" output
                 copy "${{ env.Qt6_DIR }}\bin\libgcc_s_seh-1.dll" output
                 copy "${{ env.Qt6_DIR }}\bin\libstdc++-6.dll" output
+                Invoke-WebRequest -Uri https://indy.fulgan.com/SSL/openssl-1.0.2u-x64_86-win64.zip -OutFile openssl.zip
+                Expand-Archive -Path openssl.zip -DestinationPath openssl
+                copy "openssl\libeay32.dll" output
+                copy "openssl\ssleay32.dll" output
 
             - name: Build and copy on MacOS
               if: startsWith(matrix.os, 'macos')
