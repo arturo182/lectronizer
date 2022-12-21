@@ -256,24 +256,40 @@ static const QMap<QString, QString> phoneCodes =
     { "Zimbabwe", "263" },
 };
 
-// Friendly: Use "Today" for today, "Yesterday" for yesterday, day name for the last 7 days,
-// and a full date for older dates
+// Friendly:
+//  - "Yesterday" for yesterday
+//  - "Today" for today
+//  - "Tomorrow" for tomorrow
+//  - <day name> for this week
+//  - "Last <day name>" for last week
+//  - "Next <day name>" for next week
+// and a full date everything else
 QString textDate(const QDateTime &date, bool friendly)
 {
     const QDateTime now = QDateTime::currentDateTime();
     const int days = date.daysTo(now);
+    const int dowNow = now.date().dayOfWeek();
+    const int dowDate = dowNow + -days; // 1 - Monday, 7 - Sunday
     const QString timeStr = date.time().toString("hh:mm");
 
-    if (!friendly || (days >= 7))
+    if (!friendly || (dowDate < -6) || (dowDate > 14))
         return date.toString("dd MMMM, hh:mm");
 
+    if (days == -1)
+        return QObject::tr("Tomorrow, ") + timeStr;
+
     if (days == 0)
-        return "Today, " + timeStr;
+        return QObject::tr("Today, ") + timeStr;
 
     if (days == 1)
-        return "Yesterday, " + timeStr;
+        return QObject::tr("Yesterday, ") + timeStr;
 
-    // days < 7
+    if ((dowDate >= -6) && (dowDate <= 0))
+        return QObject::tr("Last ") + date.toString("dddd, hh:mm");
+
+    if ((dowDate > 7) && (dowDate <= 14))
+        return QObject::tr("Next ") + date.toString("dddd, hh:mm");
+
     return date.toString("dddd, hh:mm");
 }
 
