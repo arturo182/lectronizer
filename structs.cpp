@@ -186,6 +186,7 @@ Item parseJsonItem(const QJsonValue &val)
     item.product.description = object.value("product_description").toString();
     item.qty                 = object.value("quantity").toInt();
     item.price               = object.value("price").toDouble();
+    item.discount            = object.value("discount", true).toDouble();
     item.weight              = object.value("weight").toDouble();
 
     const QJsonArray options = object.value("options").toArray();
@@ -233,6 +234,10 @@ Order parseJsonOrder(const QJsonValue &val)
     const QJsonArray items = object.value("items").toArray();
     for (const QJsonValue &item : items)
         order.items << parseJsonItem(item);
+
+    const QJsonArray codes = object.value("discount_codes", true).toArray();
+    for (const QJsonValue &code : codes)
+        order.discountCodes << code.toString();
 
     order.tax.appliesToShipping      = object.value("tax_applies_to_shipping").toBool();
     order.tax.rate                   = object.value("tax_rate").toDouble();

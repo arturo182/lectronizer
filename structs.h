@@ -64,6 +64,7 @@ struct Item
     QList<ItemOption> options{};
     int qty{};
     double price{};
+    double discount{};
     double weight{};
 
     bool packaged{}; // non-api
@@ -131,6 +132,8 @@ struct Order
     QString customerEmail{};
     QString customerPhone{};
     QList<Item> items{};
+
+    QStringList discountCodes{};
 
     struct Tax
     {
