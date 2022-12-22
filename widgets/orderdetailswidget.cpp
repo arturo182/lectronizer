@@ -281,7 +281,11 @@ void OrderDetailsWidget::updateOrderDetails()
     m_ui->billingLabel->setText(billingText);
     m_ui->billingLinkLabel->setText(QString("<a href='https://dashboard.stripe.com/payments/%1'>See payment on Stripe</a>").arg(m_order.payment.reference));
 
-    // note
+    // notes
+    m_ui->customerNoteTextEdit->setPlainText(m_order.customerNote);
+    m_ui->customerNoteLabel->setHidden(m_order.customerNote.isEmpty());
+    m_ui->customerNoteTextEdit->setHidden(m_order.customerNote.isEmpty());
+    m_ui->noteLabel->setHidden(m_order.customerNote.isEmpty());
     m_ui->noteTextEdit->setPlainText(m_order.note);
 }
 

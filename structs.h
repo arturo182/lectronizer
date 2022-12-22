@@ -131,6 +131,7 @@ struct Order
     QString storeUrl{};
     QString customerEmail{};
     QString customerPhone{};
+    QString customerNote{};
     QList<Item> items{};
 
     QStringList discountCodes{};

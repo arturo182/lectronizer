@@ -569,6 +569,7 @@ void PackagingHelperDialog::showOrderDetails(QTreeWidgetItem *current)
     m_ui->orderTrackingValueLabel->setText(order.tracking.required ? tr("Required") : tr("Not required"));
     m_ui->orderShippingValueLabel->setText(order.shipping.method);
     m_ui->orderTotalValueLabel->setText(QString("%1 %2").arg(order.total, 0, 'f', 2).arg(order.currency));
+    m_ui->customerNoteTextEdit->setPlainText(order.customerNote);
 
     // item tree
     QFont boldFont = font();

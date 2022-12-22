@@ -284,59 +284,10 @@
              </property>
             </widget>
            </item>
-           <item row="5" column="0">
-            <widget class="QLabel" name="orderTotalLabel">
-             <property name="text">
-              <string>Total:</string>
-             </property>
-            </widget>
-           </item>
            <item row="2" column="1">
             <widget class="QLabel" name="orderWeightValueLabel">
              <property name="text">
               <string/>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="1">
-            <widget class="QLabel" name="orderTotalValueLabel">
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="0" colspan="2">
-            <widget class="QLabel" name="orderItemsLabel">
-             <property name="text">
-              <string>Items in this order:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="7" column="0" colspan="2">
-            <widget class="QTreeWidget" name="orderItemTree">
-             <property name="alternatingRowColors">
-              <bool>false</bool>
-             </property>
-             <property name="indentation">
-              <number>0</number>
-             </property>
-             <attribute name="headerVisible">
-              <bool>false</bool>
-             </attribute>
-             <column>
-              <property name="text">
-               <string/>
-              </property>
-             </column>
-            </widget>
-           </item>
-           <item row="9" column="0" colspan="2">
-            <widget class="QComboBox" name="packagingComboBox"/>
-           </item>
-           <item row="8" column="0" colspan="2">
-            <widget class="QLabel" name="orderPackagingLabel">
-             <property name="text">
-              <string>Select the packaging (checks all items above and marks order as packed):</string>
              </property>
             </widget>
            </item>
@@ -367,6 +318,84 @@
               <string/>
              </property>
             </widget>
+           </item>
+           <item row="5" column="0">
+            <widget class="QLabel" name="orderTotalLabel">
+             <property name="text">
+              <string>Total:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1">
+            <widget class="QLabel" name="orderTotalValueLabel">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="0">
+            <widget class="QLabel" name="customerNoteLabel">
+             <property name="text">
+              <string>Customer note:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1">
+            <widget class="QPlainTextEdit" name="customerNoteTextEdit">
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>42</height>
+              </size>
+             </property>
+             <property name="verticalScrollBarPolicy">
+              <enum>Qt::ScrollBarAsNeeded</enum>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+             <property name="plainText">
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="8" column="0" colspan="2">
+            <widget class="QTreeWidget" name="orderItemTree">
+             <property name="alternatingRowColors">
+              <bool>false</bool>
+             </property>
+             <property name="indentation">
+              <number>0</number>
+             </property>
+             <attribute name="headerVisible">
+              <bool>false</bool>
+             </attribute>
+             <column>
+              <property name="text">
+               <string/>
+              </property>
+             </column>
+            </widget>
+           </item>
+           <item row="9" column="0" colspan="2">
+            <widget class="QLabel" name="orderPackagingLabel">
+             <property name="text">
+              <string>Select the packaging (checks all items above and marks order as packed):</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="0" colspan="2">
+            <widget class="QLabel" name="orderItemsLabel">
+             <property name="text">
+              <string>Items in this order:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="10" column="0" colspan="2">
+            <widget class="QComboBox" name="packagingComboBox"/>
            </item>
           </layout>
          </widget>

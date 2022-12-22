@@ -230,6 +230,7 @@ Order parseJsonOrder(const QJsonValue &val)
     order.storeUrl                   = object.value("store_url").toString();
     order.customerEmail              = object.value("customer_email").toString();
     order.customerPhone              = object.value("customer_phone").toString();
+    order.customerNote               = object.value("customer_note", true).toString();
 
     const QJsonArray items = object.value("items").toArray();
     for (const QJsonValue &item : items)
