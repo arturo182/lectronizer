@@ -45,6 +45,13 @@ OrderDetailsWidget::OrderDetailsWidget(const bool standalone, QWidget *parent)
     // Copy full shipping address
     connect(m_ui->addressCopyAllButton, &QPushButton::clicked, this, [&]() { m_order.copyFullAddress(); });
 
+    // Packaging order
+    connect(m_ui->shippingPackagingComboBox, qOverload<int>(&QComboBox::currentIndexChanged), this, [this]()
+    {
+        const int packId = m_ui->shippingPackagingComboBox->currentData().toInt();
+        m_orderMgr->setPackaging(m_order.id, packId);
+    });
+
     // Mark shipped
     connect(m_ui->shippingSubmitButton, &QPushButton::clicked, this, [&]()
     {
@@ -108,12 +115,32 @@ void OrderDetailsWidget::setOrderManager(OrderManager *orderMgr)
     {
         if (order.id == m_order.id)
             setOrder(order);
+
+        // update packaging combo labels, regardless which order changed
+        for (const Packaging &pack : m_sqlMgr->packagings()) {
+            // start at 2 cause No packaging, and Default packaging have no stock tracking
+            for (int i = 2; i < m_ui->shippingPackagingComboBox->count(); ++i) {
+                const int itemPackId = m_ui->shippingPackagingComboBox->itemData(i).toInt();
+
+                if (itemPackId != pack.id)
+                    continue;
+
+                m_ui->shippingPackagingComboBox->setItemText(i, tr("%1 (%2 left)").arg(pack.name).arg(pack.stock));
+                break;
+            }
+        }
     });
 }
 
 void OrderDetailsWidget::setSqlManager(SqlManager *sqlMgr)
 {
     m_sqlMgr = sqlMgr;
+
+    m_ui->shippingPackagingComboBox->addItem(tr("Not packaged"), -1);
+    m_ui->shippingPackagingComboBox->addItem(tr("Default packaging"), 0);
+
+    for (const Packaging &pack : m_sqlMgr->packagings())
+        m_ui->shippingPackagingComboBox->addItem(tr("%1 (%2 left)").arg(pack.name).arg(pack.stock), pack.id);
 }
 
 void OrderDetailsWidget::setOrder(const Order &order)
@@ -193,20 +220,17 @@ void OrderDetailsWidget::updateOrderDetails()
     m_ui->itemsTotalLabel->setText(totalText);
 
     // Shipping
-    QString packaging = tr("Not packaged");
-    if (m_order.isPackaged()) {
-        packaging = tr("Default packaging");
-
-        for (const Packaging &pack : m_sqlMgr->packagings()) {
-            if (pack.id != m_order.packaging)
-                continue;
-
-            packaging = pack.name;
-        }
-    }
-
     m_ui->shippingDeadlineValueLabel->setText(textDate(m_order.fulfillUntil, m_shared->friendlyDate));
-    m_ui->shippingPackagingValueLabel->setText(packaging);
+
+    for (int i = 0; i < m_ui->shippingPackagingComboBox->count(); ++i) {
+        if (m_order.packaging != m_ui->shippingPackagingComboBox->itemData(i).toInt())
+            continue;
+
+        m_ui->shippingPackagingComboBox->setCurrentIndex(i);
+        break;
+    }
+    m_ui->shippingPackagingComboBox->setDisabled(m_order.isShipped() || m_order.isRefunded());
+
     m_ui->shippingWeightValueLabel->setText(tr("%1 %2").arg(m_order.calcWeight(), 0, 'f', 1).arg(m_order.weight.unit));
     m_ui->shippingTrackingRequiredLabel->setText(m_order.tracking.required ? tr("Required") : tr("Not required"));
     if (!m_order.isShipped()) {

@@ -159,6 +159,32 @@ void OrderManager::markShipped(const int id, const QString &trackingNo, const QS
     });
 }
 
+void OrderManager::setPackaging(const int orderId, const int packId)
+{
+    if (!m_orders.contains(orderId))
+        return;
+
+    Order &order = m_orders[orderId];
+
+    const int prevPackId = order.packaging;
+    if (packId == prevPackId)
+        return;
+
+    order.packaging = packId;
+
+    // increase old packaging stock
+    if (prevPackId > 0)
+        m_sqlMgr->setPackagingStock(prevPackId, m_sqlMgr->packagingStock(prevPackId) + 1);
+
+    // decrease new packaging stock
+    if (packId > 0) {
+        const int newStock = m_sqlMgr->packagingStock(packId) - 1;
+        m_sqlMgr->setPackagingStock(packId, (newStock > 0) ? newStock : 0);
+    }
+
+    emit orderUpdated(order);
+}
+
 void OrderManager::resetProgressDlg()
 {
     m_progressDlg->setValue(0);

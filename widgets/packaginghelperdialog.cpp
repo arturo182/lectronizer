@@ -158,10 +158,10 @@ PackagingHelperDialog::PackagingHelperDialog(OrderManager *orderMgr, SqlManager 
 
     m_ui->orderItemTree->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
 
-    m_ui->packagingComboBox->addItem(tr("Not packaged"), QVariantList{ -1 });
-    m_ui->packagingComboBox->addItem(tr("Default packaging"), QVariantList{ 0 });
+    m_ui->packagingComboBox->addItem(tr("Not packaged"), -1);
+    m_ui->packagingComboBox->addItem(tr("Default packaging"), 0);
     for (const Packaging &pack : m_sqlMgr->packagings())
-        m_ui->packagingComboBox->addItem(tr("%1 (%2 left)").arg(pack.name).arg(pack.stock), QVariantList{ pack.id, pack.name, pack.stock, pack.restockUrl });
+        m_ui->packagingComboBox->addItem(tr("%1 (%2 left)").arg(pack.name).arg(pack.stock), pack.id);
 
     reset();
 
@@ -240,7 +240,7 @@ PackagingHelperDialog::PackagingHelperDialog(OrderManager *orderMgr, SqlManager 
     });
 
     // packaging changed, mark packaged and update order and packaging status
-    connect(m_ui->packagingComboBox, qOverload<int>(&QComboBox::currentIndexChanged), this, [this](const int idx)
+    connect(m_ui->packagingComboBox, qOverload<int>(&QComboBox::currentIndexChanged), this, [this]()
     {
         QTreeWidgetItem *orderItem = m_ui->orderListTree->currentItem();
         if (!orderItem)
@@ -250,51 +250,27 @@ PackagingHelperDialog::PackagingHelperDialog(OrderManager *orderMgr, SqlManager 
         if (!orderIdVar.isValid())
             return;
 
-        QVariantList packagingInfo = m_ui->packagingComboBox->currentData().toList();
-
-        const int packagingId = packagingInfo[0].toInt();
+        const int packId = m_ui->packagingComboBox->currentData().toInt();
 
         const int orderId = orderIdVar.toInt();
         Order &order = m_orderMgr->order(orderId);
 
-        if (order.packaging != packagingId) {
-            const int prevPackagingId = order.packaging;
+        const int prevPackId = order.packaging;
+        if (packId == prevPackId)
+            return;
 
-            order.packaging = packagingId;
-
-            emit m_orderMgr->orderUpdated(order);
-            m_ui->orderListTree->viewport()->repaint();
-
-            // check all items if packaged
-            if (packagingId >= 0) {
-                for (int i = 0; i < m_ui->orderItemTree->topLevelItemCount(); ++i) {
-                    QTreeWidgetItem *item = m_ui->orderItemTree->topLevelItem(i);
-                    item->setCheckState(0, Qt::Checked);
-                }
+        // check all items if packaged
+        if (packId >= 0) {
+            for (int i = 0; i < m_ui->orderItemTree->topLevelItemCount(); ++i) {
+                QTreeWidgetItem *item = m_ui->orderItemTree->topLevelItem(i);
+                item->setCheckState(0, Qt::Checked);
             }
-
-            // increase previous packaging stock
-            if (prevPackagingId > 0) {
-                const int prevIdx = idxFromPackagingId(prevPackagingId);
-                if (prevIdx > 1) {
-                    QVariantList prevInfo = m_ui->packagingComboBox->itemData(prevIdx).toList();
-                    prevInfo[2] = prevInfo[2].toInt() + 1;
-                    m_ui->packagingComboBox->setItemData(prevIdx, prevInfo);
-                }
-                m_sqlMgr->setPackagingStock(prevPackagingId, m_sqlMgr->packagingStock(prevPackagingId) + 1);
-            }
-
-            // decrease new packaging stock
-            if (packagingId > 0) {
-                if (packagingInfo[2].toInt() > 0)
-                    packagingInfo[2] = packagingInfo[2].toInt() - 1;
-
-                m_sqlMgr->setPackagingStock(packagingId, packagingInfo[2].toInt());
-                m_ui->packagingComboBox->setItemData(idx, packagingInfo);
-            }
-
-            updateComboLabels();
         }
+
+        m_orderMgr->setPackaging(orderId, packId);
+        m_ui->orderListTree->viewport()->repaint();
+
+        updateComboLabels();
     });
 
     readSettings();
@@ -647,13 +623,12 @@ void PackagingHelperDialog::updateOrderButtons()
 
 void PackagingHelperDialog::updateComboLabels()
 {
-    for (int i = 0; i < m_ui->packagingComboBox->count(); ++i) {
-        QVariantList infos = m_ui->packagingComboBox->itemData(i).toList();
-        if (infos.length() == 1)
+    for (const Packaging &pack : m_sqlMgr->packagings()) {
+        const int idx = idxFromPackagingId(pack.id);
+        if (idx == -1)
             continue;
 
-        m_ui->packagingComboBox->setItemText(i, tr("%1 (%2 left)").arg(infos[1].toString()).arg(infos[2].toInt()));
-        m_ui->packagingComboBox->setItemData(i, infos);
+        m_ui->packagingComboBox->setItemText(idx, tr("%1 (%2 left)").arg(pack.name).arg(pack.stock));
     }
 }
 
@@ -687,8 +662,8 @@ void PackagingHelperDialog::sortOrderList(const int idx)
 int PackagingHelperDialog::idxFromPackagingId(const int id)
 {
     for (int i = 0; i < m_ui->packagingComboBox->count(); ++i) {
-        const QVariantList infos = m_ui->packagingComboBox->itemData(i).toList();
-        if (infos[0].toInt() == id)
+        const int packId = m_ui->packagingComboBox->itemData(i).toInt();
+        if (packId == id)
             return i;
     }
 

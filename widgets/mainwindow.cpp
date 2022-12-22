@@ -778,6 +778,8 @@ void MainWindow::updateOrder(const Order &order)
         if (id == order.id)
             updateOrderDetails(selection->selection());
     }
+
+    updateOrderRelatedWidgets();
 }
 
 void MainWindow::updateDateFilter()
@@ -850,7 +852,6 @@ void MainWindow::updateOrderRelatedWidgets()
     bool hasNote = false;
     bool isFulfilled = false;
     bool isRefunded = false;
-    int packagingId = -1;
 
     QItemSelectionModel *selection = m_ui->orderTree->selectionModel();
     if (!selection->hasSelection()) { // no order, just hide details
@@ -870,43 +871,29 @@ void MainWindow::updateOrderRelatedWidgets()
             hasNote          = !order.note.isEmpty();
             isFulfilled      = order.isShipped();
             isRefunded       = order.isRefunded();
-            packagingId      = order.packaging;
             hasSelection     = true;
         }
 
         // generate packaging menu actions
         m_ui->markOrderPackagedMenu->clear();
-        if (packagingId < 0) {
-            const auto packageOrder = [this, orderId](const int packId)
-            {
-                if (packId > 0) {
-                    const int stock = m_sqlMgr->packagingStock(packId);
-                    m_sqlMgr->setPackagingStock(packId, (stock > 0) ? (stock - 1) : stock);
-                }
 
-                Order &order = m_orderMgr->order(orderId);
-                order.packaging = packId;
-                emit m_orderMgr->orderUpdated(order);
-            };
+        // default packaging
+        m_ui->markOrderPackagedMenu->addAction(tr("Default packaging"), this, [this, orderId]() { m_orderMgr->setPackaging(orderId, 0); });
 
-            // default packaging
-            m_ui->markOrderPackagedMenu->addAction(tr("Default packaging"), this, [packageOrder]() { packageOrder(0); });
+        // user packagings
+        const QList<Packaging> packagingTypes = m_sqlMgr->packagings();
+        for (int i = 0; i < packagingTypes.size(); ++i) {
+            const Packaging &pack = packagingTypes[i];
+            const int packId = pack.id;
 
-            // user packagings
-            const QList<Packaging> packagingTypes = m_sqlMgr->packagings();
-            for (int i = 0; i < packagingTypes.size(); ++i) {
-                const Packaging &pack = packagingTypes[i];
-                const int packId = pack.id;
-
-                m_ui->markOrderPackagedMenu->addAction(tr("%1 (%2 left)").arg(pack.name).arg(pack.stock), this, [packageOrder, packId]() { packageOrder(packId); });
-            }
+            m_ui->markOrderPackagedMenu->addAction(tr("%1 (%2 left)").arg(pack.name).arg(pack.stock), this, [this, orderId, packId]() { m_orderMgr->setPackaging(orderId, packId); });
         }
     }
 
     // update menu actions as needed
     m_ui->openOrderAction->setEnabled(hasSelection);
     m_ui->markOrderShippedAction->setEnabled(hasSelection && !isFulfilled && !isRefunded);
-    m_ui->markOrderPackagedMenu->setEnabled(hasSelection && (packagingId < 0));
+    m_ui->markOrderPackagedMenu->setEnabled(hasSelection && !isFulfilled && !isRefunded);
     m_ui->openOrderInBrowserAction->setEnabled(hasSelection);
     m_ui->openOrderTrackingUrlAction->setEnabled(hasSelection && trackingRequired && hasTrackingUrl);
     m_ui->openOrderInvoiceMenu->setEnabled(hasSelection);
