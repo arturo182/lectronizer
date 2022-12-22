@@ -5,8 +5,9 @@
 #include <QSettings>
 #include <QStandardItemModel>
 
-static const int ColumnRole = Qt::UserRole + 0;
-static const int NameRole   = Qt::UserRole + 1;
+static const int ColumnRole  = Qt::UserRole + 0;
+static const int NameRole    = Qt::UserRole + 1;
+static const int UseDataRole = Qt::UserRole + 2;
 
 FilterTreeWidget::FilterTreeWidget(QWidget *parent)
     : QTreeWidget(parent)
@@ -22,7 +23,7 @@ void FilterTreeWidget::setOrderModel(QStandardItemModel *orderModel)
     m_orderModel = orderModel;
 }
 
-void FilterTreeWidget::addFilter(const ModelColumn column)
+void FilterTreeWidget::addFilter(const ModelColumn column, bool useData)
 {
     if (!m_orderModel) {
         qDebug() << "Model empty, can't add a filter!";
@@ -35,6 +36,7 @@ void FilterTreeWidget::addFilter(const ModelColumn column)
     root->setText(0, QString("%1 (0/0)").arg(name));
     root->setData(0, ColumnRole, (int)column);
     root->setData(0, NameRole, name); // for updating the text later
+    root->setData(0, UseDataRole, useData);
 
     const auto addItem = [root](const QString &itemName)
     {
@@ -85,6 +87,7 @@ void FilterTreeWidget::refreshFilters()
     for (int i = 0; i < topLevelItemCount(); ++i) {
         QTreeWidgetItem *categoryItem = topLevelItem(i);
         const int column = categoryItem->data(0, ColumnRole).toInt();
+        const bool useData = categoryItem->data(0, UseDataRole).toBool();
 
         QStringList values;
 
@@ -92,7 +95,12 @@ void FilterTreeWidget::refreshFilters()
         const int rowCount = m_orderModel->rowCount();
         for (int row = 0; row < rowCount; ++row) {
             QStandardItem *item = m_orderModel->item(row, column);
-            values << item->text();
+
+            if (useData) {
+                values << item->data().toStringList();
+            } else {
+                values << item->text();
+            }
         }
 
         // sort and unique
@@ -241,5 +249,5 @@ void FilterTreeWidget::processCheckBox(QTreeWidgetItem *item, int column)
     }
 
     const int modelColumn = parent->data(0, ColumnRole).toInt();
-    emit filterChanged(modelColumn, filters);
+    emit filterChanged(modelColumn, filters, parent->data(0, UseDataRole).toBool());
 }

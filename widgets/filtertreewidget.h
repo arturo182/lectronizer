@@ -16,7 +16,7 @@ class FilterTreeWidget : public QTreeWidget
 
         void setOrderModel(QStandardItemModel *orderModel);
 
-        void addFilter(const ModelColumn column);
+        void addFilter(const ModelColumn column, bool useData = false);
         void setFilter(const QString &name, const QString &value);
 
         void refreshFilters();
@@ -29,7 +29,7 @@ class FilterTreeWidget : public QTreeWidget
         void processCheckBox(QTreeWidgetItem *item, int column);
 
     signals:
-        void filterChanged(const int column, const QStringList &filters);
+        void filterChanged(const int column, const QStringList &filters, const bool useData);
 
     private:
         QStandardItemModel *m_orderModel{};

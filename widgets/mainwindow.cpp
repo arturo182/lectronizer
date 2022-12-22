@@ -64,6 +64,7 @@ MainWindow::MainWindow(SqlManager *sqlMgr, QWidget *parent)
 
     // Maybe make these settings later?
     m_ui->filterTree->setOrderModel(&m_orderModel);
+    m_ui->filterTree->addFilter(ModelColumn::Items, true);
     m_ui->filterTree->addFilter(ModelColumn::Country);
     m_ui->filterTree->addFilter(ModelColumn::Shipping);
     m_ui->filterTree->addFilter(ModelColumn::Status);
@@ -684,7 +685,11 @@ void MainWindow::syncOrderRow(const int row, const Order &order)
                                   .arg(order.currency)
                                   .arg(converted.isEmpty() ? "" : " (" + converted + ")"), order.total);
 
-    setColumn(ModelColumn::Items, order.itemListing());
+    QStringList itemList;
+    for (int i = 0; i < order.items.count(); ++i)
+        itemList << order.items[i].product.name;
+
+    setColumn(ModelColumn::Items, order.itemListing(), itemList);
 
     setColumn(ModelColumn::Customer, QString("%1 %2").arg(order.shipping.address.firstName, order.shipping.address.lastName));
 

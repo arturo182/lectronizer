@@ -30,11 +30,11 @@ bool OrderSortFilterModel::lessThan(const QModelIndex &left, const QModelIndex &
 bool OrderSortFilterModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
 {
     // column filters
-    QHashIterator<int, QStringList> it(m_columnFilters);
+    QHashIterator<int, ColumnFilter> it(m_columnFilters);
     while (it.hasNext()) {
         it.next();
 
-        const QStringList &filters = it.value();
+        const QStringList &filters = it.value().filters;
         if (filters.isEmpty())
             return false;
 
@@ -43,10 +43,18 @@ bool OrderSortFilterModel::filterAcceptsRow(int sourceRow, const QModelIndex &so
             continue;
 
         const QModelIndex index = sourceModel()->index(sourceRow, it.key(), sourceParent);
-        const QString value = index.data().toString();
 
-        if (!filters.contains(value))
-            return false;
+        if (it.value().useData) {
+            const QStringList itemData = index.data(Qt::UserRole + 1).toStringList();
+            for (const QString &data : itemData) {
+                if (!filters.contains(data))
+                    return false;
+            }
+        } else {
+            const QString itemText = index.data().toString();
+            if (!filters.contains(itemText))
+                return false;
+        }
     }
 
     // date filters
@@ -58,9 +66,9 @@ bool OrderSortFilterModel::filterAcceptsRow(int sourceRow, const QModelIndex &so
     return QSortFilterProxyModel::filterAcceptsRow(sourceRow, sourceParent);
 }
 
-void OrderSortFilterModel::setColumnFilters(const int column, const QStringList &filters)
+void OrderSortFilterModel::setColumnFilters(const int column, const QStringList &filters, const bool useData)
 {
-    m_columnFilters.insert(column, filters);
+    m_columnFilters.insert(column, ColumnFilter{ filters, useData });
 
     invalidate();
 }
