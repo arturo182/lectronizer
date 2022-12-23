@@ -1,7 +1,6 @@
 #pragma once
 
 #include "enums.h"
-#include "structs.h"
 
 #include <QTreeWidget>
 
@@ -18,6 +17,7 @@ class FilterTreeWidget : public QTreeWidget
 
         void addFilter(const ModelColumn column, bool useData = false);
         void setFilter(const QString &name, const QString &value);
+        void setFilters(const QString &name, const QStringList &values);
 
         void refreshFilters();
 

@@ -82,6 +82,37 @@ void FilterTreeWidget::setFilter(const QString &name, const QString &value)
     }
 }
 
+void FilterTreeWidget::setFilters(const QString &name, const QStringList &values)
+{
+    QTreeWidgetItem *topItem = nullptr;
+
+    // find category
+    for (int i = 0; i < topLevelItemCount(); ++i) {
+        QTreeWidgetItem *item = topLevelItem(i);
+        if (item->data(0, NameRole).toString() != name)
+            continue;
+
+        topItem = item;
+        break;
+    }
+
+    if (!topItem || (topItem->childCount() == 0))
+        return;
+
+    // deselect "All"
+    topItem->child(0)->setCheckState(0, Qt::Unchecked);
+
+    // find values and select
+    for (int i = 0; i < topItem->childCount(); ++i) {
+        QTreeWidgetItem *child = topItem->child(i);
+
+        if (!values.contains(child->text(0)))
+            continue;
+
+        child->setCheckState(0, Qt::Checked);
+    }
+}
+
 void FilterTreeWidget::refreshFilters()
 {
     for (int i = 0; i < topLevelItemCount(); ++i) {

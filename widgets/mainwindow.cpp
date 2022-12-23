@@ -345,6 +345,20 @@ void MainWindow::connectSignals()
         const Order &order= m_orderMgr->order(id);
         qApp->clipboard()->setText(order.note);
     });
+    connect(m_ui->orderFilterItemsAction, &QAction::triggered, this, [this]()
+    {
+        const int id = currentOrderId();
+        if (id < 0)
+            return;
+
+        const Order &order= m_orderMgr->order(id);
+
+        QStringList itemList;
+        for (int i = 0; i < order.items.count(); ++i)
+            itemList << order.items[i].product.name;
+
+        m_ui->filterTree->setFilters(tr("Items"), itemList);
+    });
     connect(m_ui->orderFilterCountryAction, &QAction::triggered, this, [this]()
     {
         const int id = currentOrderId();

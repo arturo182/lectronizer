@@ -369,6 +369,7 @@ QTreeView::item:!selected {
       <iconset resource="../res.qrc">
        <normaloff>:/res/icons/funnel.png</normaloff>:/res/icons/funnel.png</iconset>
      </property>
+     <addaction name="orderFilterItemsAction"/>
      <addaction name="orderFilterCountryAction"/>
      <addaction name="orderFilterShippingAction"/>
      <addaction name="orderFilterStatusAction"/>
@@ -545,6 +546,11 @@ QTreeView::item:!selected {
    </property>
    <property name="toolTip">
     <string>Tracking number</string>
+   </property>
+  </action>
+  <action name="orderFilterItemsAction">
+   <property name="text">
+    <string>&amp;Items</string>
    </property>
   </action>
   <action name="orderFilterCountryAction">
