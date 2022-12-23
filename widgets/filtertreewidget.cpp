@@ -165,6 +165,38 @@ void FilterTreeWidget::refreshFilters()
             childItem->setCheckState(0, Qt::Checked);
         }
     }
+
+    // Load saved filter values
+    if (!m_valuesLoaded) {
+        QSettings set;
+
+        set.beginGroup("FilterTreeWidget");
+        set.beginGroup("values");
+
+        for (int i = 0; i < topLevelItemCount(); ++i) {
+            QTreeWidgetItem *categoryItem = topLevelItem(i);
+            const int column = categoryItem->data(0, ColumnRole).toInt();
+            const QStringList values = set.value(QString::number(column), "*").toStringList();
+
+            if (values[0] == "*") // "All"
+                continue;
+
+            // deselect "All"
+            categoryItem->child(0)->setCheckState(0, Qt::Unchecked);
+
+            // find values and select
+            for (int j = 0; j < categoryItem->childCount(); ++j) {
+                QTreeWidgetItem *child = categoryItem->child(j);
+
+                if (!values.contains(child->text(0)))
+                    continue;
+
+                child->setCheckState(0, Qt::Checked);
+            }
+        }
+
+        m_valuesLoaded = true;
+    }
 }
 
 void FilterTreeWidget::readSettings()
@@ -192,6 +224,22 @@ void FilterTreeWidget::writeSettings() const
         const int column = categoryItem->data(0, ColumnRole).toInt();
 
         set.setValue(QString::number(column), categoryItem->isExpanded());
+
+        QStringList values;
+        if (categoryItem->child(0)->checkState(0) == Qt::Checked) {
+            values << "*"; // "All"
+        } else {
+            for (int j = 1; j < categoryItem->childCount(); ++j) {
+                QTreeWidgetItem *child = categoryItem->child(j);
+
+                if (child->checkState(0) == Qt::Checked)
+                    values << child->text(0);
+            }
+        }
+
+        set.beginGroup("values");
+        set.setValue(QString::number(column), values);
+        set.endGroup();
     }
 }
 

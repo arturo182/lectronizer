@@ -33,4 +33,5 @@ class FilterTreeWidget : public QTreeWidget
 
     private:
         QStandardItemModel *m_orderModel{};
+        bool m_valuesLoaded{false};
 };
