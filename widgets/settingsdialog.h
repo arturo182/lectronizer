@@ -32,12 +32,15 @@ class SettingsDialog : public QDialog
 
     public:
         SettingsDialog(OrderManager *orderMgr, SqlManager *sqlMgr, QWidget *parent = nullptr);
-        ~SettingsDialog();
+        ~SettingsDialog() override;
 
         SharedData data();
         void setData(const SharedData &data);
 
         void addPage(SettingPage *page);
+
+    public slots:
+        void done(int r) override;
 
     signals:
         void applied();

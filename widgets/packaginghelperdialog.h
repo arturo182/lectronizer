@@ -19,6 +19,9 @@ class PackagingHelperDialog : public QDialog
 
         void reset();
 
+    public slots:
+        void done(int r) override;
+
     protected:
         void closeEvent(QCloseEvent *event) override;
 

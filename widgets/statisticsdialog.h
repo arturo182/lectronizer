@@ -19,9 +19,15 @@ class StatisticsDialog : public QDialog
 
     public:
         explicit StatisticsDialog(OrderManager *orderMgr, SqlManager *sqlMgr, QWidget *parent = nullptr);
-        ~StatisticsDialog();
+        ~StatisticsDialog() override;
+
+    public slots:
+        void done(int r) override;
 
     private:
+        void readSettings();
+        void writeSettings() const;
+
         void showBarChart(QChartView *chartView, const QString &title, const QList<QPair<QString, int>> &data);
         void showPieChart(QChartView *chartView, const QString &title, const QList<QPair<QString, int>> &data);
 

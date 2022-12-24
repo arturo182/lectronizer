@@ -8,6 +8,7 @@
 #include <QBarSet>
 #include <QPieSeries>
 #include <QProgressDialog>
+#include <QSettings>
 #include <QValueAxis>
 
 // Qt 5 quirk
@@ -43,12 +44,39 @@ StatisticsDialog::StatisticsDialog(OrderManager *orderMgr, SqlManager *sqlMgr, Q
         funcs[i]();
         progressDlg.setValue(step * (i + 1));
     }
+
+    readSettings();
 }
 
 StatisticsDialog::~StatisticsDialog()
 {
     delete m_ui;
     m_ui = nullptr;
+}
+
+void StatisticsDialog::done(int r)
+{
+    writeSettings();
+
+    QDialog::done(r);
+}
+
+void StatisticsDialog::readSettings()
+{
+    QSettings set;
+
+    set.beginGroup("StatisticsDialog");
+    restoreGeometry(set.value("geometry").toByteArray());
+    setWindowState(Qt::WindowStates(set.value("state").toInt()));
+}
+
+void StatisticsDialog::writeSettings() const
+{
+    QSettings set;
+
+    set.beginGroup("StatisticsDialog");
+    set.setValue("geometry", saveGeometry());
+    set.setValue("state", (int)windowState());
 }
 
 void StatisticsDialog::showBarChart(QChartView *chartView, const QString &title, const QList<QPair<QString, int>> &data)

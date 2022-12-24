@@ -309,6 +309,13 @@ void PackagingHelperDialog::reset()
     updateMatchingOrderCount();
 }
 
+void PackagingHelperDialog::done(int r)
+{
+    writeSettings();
+
+    QDialog::done(r);
+}
+
 void PackagingHelperDialog::closeEvent(QCloseEvent *event)
 {
     writeSettings();

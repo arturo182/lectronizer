@@ -97,6 +97,13 @@ void SettingsDialog::addPage(SettingPage *page)
     page->init(m_orderMgr, m_sqlMgr);
 }
 
+void SettingsDialog::done(int r)
+{
+    writeSettings();
+
+    QDialog::done(r);
+}
+
 void SettingsDialog::closeEvent(QCloseEvent *event)
 {
     writeSettings();
