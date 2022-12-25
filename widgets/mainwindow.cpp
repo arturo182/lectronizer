@@ -604,6 +604,24 @@ void MainWindow::readSettings()
     m_ui->orderTree->header()->restoreState(set.value("orderColumns").toByteArray());
     m_ui->splitter->restoreState(set.value("splitter").toByteArray());
 
+    m_ui->dateFilterGroup->setChecked(set.value("dateFilterEnabled").toBool());
+    switch (set.value("dateFilter", 7).toInt()) {
+    case 0:     m_ui->dateFilterTodayRadio->setChecked(true);       break;
+    case 1:     m_ui->dateFilterYesterdayRadio->setChecked(true);   break;
+    case 7:     m_ui->dateFilter7DaysRadio->setChecked(true);       break;
+    case 30:    m_ui->dateFilter30DaysRadio->setChecked(true);      break;
+
+    case -1:
+    {
+        m_ui->dateFilterCustomRadio->setChecked(true);
+        m_ui->dateFilterCustomStartEdit->setDate(set.value("dateFilterCustomStart", QDate::currentDate()).toDate());
+        m_ui->dateFilterCustomEndEdit->setDate(set.value("dateFilterCustomEnd", QDate::currentDate()).toDate());
+        break;
+    }
+    default:
+        break;
+    }
+
     m_shared.apiKey                 = set.value("apiKey").toString();
     m_shared.targetCurrency         = set.value("targetCurrency", "EUR").toString();
     m_shared.closeToSystemTray      = set.value("closeToSystemTray", true).toBool();
@@ -633,6 +651,22 @@ void MainWindow::writeSettings() const
     set.setValue("state",    saveState());
     set.setValue("orderColumns",  m_ui->orderTree->header()->saveState());
     set.setValue("splitter",  m_ui->splitter->saveState());
+
+    set.setValue("dateFilterEnabled", m_ui->dateFilterGroup->isChecked());
+
+    if (m_ui->dateFilterTodayRadio->isChecked()) {
+        set.setValue("dateFilter", 0);
+    } else if (m_ui->dateFilterYesterdayRadio->isChecked()) {
+        set.setValue("dateFilter", 1);
+    } else if (m_ui->dateFilter7DaysRadio->isChecked()) {
+        set.setValue("dateFilter", 7);
+    } else if (m_ui->dateFilter30DaysRadio->isChecked()) {
+        set.setValue("dateFilter", 30);
+    } else if (m_ui->dateFilterCustomRadio->isChecked()) {
+        set.setValue("dateFilter", -1);
+        set.setValue("dateFilterCustomStart", m_ui->dateFilterCustomStartEdit->date());
+        set.setValue("dateFilterCustomEnd", m_ui->dateFilterCustomEndEdit->date());
+    }
 
     set.setValue("apiKey",                  m_shared.apiKey);
     set.setValue("targetCurrency",          m_shared.targetCurrency);
