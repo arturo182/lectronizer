@@ -2,6 +2,7 @@
 #include "filtertreewidget.h"
 
 #include <QApplication>
+#include <QDebug>
 #include <QSettings>
 #include <QStandardItemModel>
 
