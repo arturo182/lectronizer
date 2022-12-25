@@ -1,3 +1,4 @@
+#include "bulkexporterdialog.h"
 #include "currencyfetchdialog.h"
 #include "enums.h"
 #include "mainwindow.h"
@@ -434,6 +435,11 @@ void MainWindow::connectSignals()
         StatisticsDialog dlg(m_orderMgr, m_sqlMgr, this);
         dlg.exec();
     });
+    connect(m_ui->toolsBulkExporterAction, &QAction::triggered, this, [this]()
+    {
+        BulkExporterDialog dlg(m_orderMgr, &m_orderProxyModel, m_sqlMgr, &m_shared, this);
+        dlg.exec();
+    });
     connect(m_ui->toolsSettingsAction, &QAction::triggered, this, &MainWindow::showSettingsDialog);
     connect(m_ui->helpAboutAction, &QAction::triggered, this, &MainWindow::showAboutDialog);
 
@@ -601,6 +607,7 @@ void MainWindow::readSettings()
     m_shared.friendlyDate           = set.value("friendlyDate", true).toBool();
     m_shared.autoFetchIntervalMin   = set.value("autoFetchIntervalMin").toInt();
     m_shared.trackingUrl            = set.value("trackingUrl").toString();
+    m_shared.csvSeparator           = set.value("csvSeparator").toInt();
 
     m_shared.phoneRemoveDashes      = set.value("phoneRemoveDashes", true).toBool();
     m_shared.phoneRemoveSpaces      = set.value("phoneRemoveSpaces", true).toBool();
@@ -630,6 +637,7 @@ void MainWindow::writeSettings() const
     set.setValue("friendlyDate",            m_shared.friendlyDate);
     set.setValue("autoFetchIntervalMin",    m_shared.autoFetchIntervalMin);
     set.setValue("trackingUrl",             m_shared.trackingUrl);
+    set.setValue("csvSeparator",            m_shared.csvSeparator);
 
     set.setValue("phoneRemoveDashes", m_shared.phoneRemoveDashes);
     set.setValue("phoneRemoveSpaces", m_shared.phoneRemoveSpaces);

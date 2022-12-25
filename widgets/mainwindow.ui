@@ -328,6 +328,7 @@ QTreeView::item:!selected {
     </property>
     <addaction name="toolsPackagingHelperAction"/>
     <addaction name="toolsStatisticsAction"/>
+    <addaction name="toolsBulkExporterAction"/>
     <addaction name="separator"/>
     <addaction name="toolsSettingsAction"/>
    </widget>
@@ -431,7 +432,7 @@ QTreeView::item:!selected {
      <normaloff>:/res/icons/cog.png</normaloff>:/res/icons/cog.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Settings</string>
+    <string>&amp;Settings...</string>
    </property>
   </action>
   <action name="orderRefreshOrdersAction">
@@ -574,7 +575,7 @@ QTreeView::item:!selected {
      <normaloff>:/res/icons/package_wrench.png</normaloff>:/res/icons/package_wrench.png</iconset>
    </property>
    <property name="text">
-    <string>Packaging &amp;Helper</string>
+    <string>Packaging &amp;Helper...</string>
    </property>
    <property name="toolTip">
     <string>Packaging Helper</string>
@@ -605,6 +606,18 @@ QTreeView::item:!selected {
    </property>
    <property name="shortcut">
     <string>F7</string>
+   </property>
+  </action>
+  <action name="toolsBulkExporterAction">
+   <property name="icon">
+    <iconset resource="../res.qrc">
+     <normaloff>:/res/icons/page_white_go.png</normaloff>:/res/icons/page_white_go.png</iconset>
+   </property>
+   <property name="text">
+    <string>Bulk &amp;Exporter...</string>
+   </property>
+   <property name="shortcut">
+    <string>F8</string>
    </property>
   </action>
  </widget>

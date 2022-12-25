@@ -10,6 +10,7 @@ SOURCES += \
     sqlmanager.cpp \
     structs.cpp \
     utils.cpp \
+    widgets/bulkexporterdialog.cpp \
     widgets/clickylineedit.cpp \
     widgets/collapsiblewidgetheader.cpp \
     widgets/currencyfetchdialog.cpp \
@@ -34,6 +35,7 @@ HEADERS += \
     sqlmanager.h \
     structs.h \
     utils.h \
+    widgets/bulkexporterdialog.h \
     widgets/clickylineedit.h \
     widgets/collapsiblewidgetheader.h \
     widgets/currencyfetchdialog.h \
@@ -49,6 +51,7 @@ HEADERS += \
     widgets/statisticsdialog.h
 
 FORMS += \
+    widgets/bulkexporterdialog.ui \
     widgets/mainwindow.ui \
     widgets/markshippeddialog.ui \
     widgets/orderdetailswidget.ui \

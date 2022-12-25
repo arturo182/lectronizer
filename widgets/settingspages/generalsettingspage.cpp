@@ -52,6 +52,7 @@ void GeneralSettingsPage::readSettings(const SharedData &shared)
     m_ui->friendlyDateCheckBox->setChecked(shared.friendlyDate);
     m_ui->autoFetchIntervalSpinBox->setValue(shared.autoFetchIntervalMin);
     m_ui->shippingTrackingUrlEdit->setText(shared.trackingUrl);
+    m_ui->csvSeparatorComboBox->setCurrentIndex(shared.csvSeparator);
 }
 
 void GeneralSettingsPage::writeSettings(SharedData &shared)
@@ -63,4 +64,5 @@ void GeneralSettingsPage::writeSettings(SharedData &shared)
     shared.friendlyDate = m_ui->friendlyDateCheckBox->isChecked();
     shared.autoFetchIntervalMin = m_ui->autoFetchIntervalSpinBox->value();
     shared.trackingUrl = m_ui->shippingTrackingUrlEdit->text();
+    shared.csvSeparator = m_ui->csvSeparatorComboBox->currentIndex();
 }

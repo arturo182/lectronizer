@@ -1,5 +1,7 @@
 #pragma once
 
+#include "widgets/bulkexporterdialog.h"
+
 #include <QHash>
 #include <QStringList>
 
@@ -14,6 +16,7 @@ struct SharedData
     bool friendlyDate{};
     int autoFetchIntervalMin{};
     QString trackingUrl{};
+    int csvSeparator{BulkExporterDialog::SepComma};
 
     // Phone number sanitization
     bool phoneRemoveDashes{};

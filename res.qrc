@@ -31,5 +31,8 @@
         <file>res/icons/exclamation_green.png</file>
         <file>res/icons/script.png</file>
         <file>res/icons/chart_bar.png</file>
+        <file>res/icons/page_white_go.png</file>
+        <file>res/icons/arrow_down.png</file>
+        <file>res/icons/arrow_up.png</file>
     </qresource>
 </RCC>
