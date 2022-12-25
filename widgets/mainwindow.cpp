@@ -586,6 +586,11 @@ void MainWindow::connectSignals()
         const qint64 msecs = midnight.toMSecsSinceEpoch() - now.toMSecsSinceEpoch();
 
         m_dailySyncTimer.start(msecs);
+
+        // also update allowed date filter range
+        const QDate today = QDate::currentDate();
+        m_ui->dateFilterCustomStartEdit->setMaximumDate(today);
+        m_ui->dateFilterCustomEndEdit->setMaximumDate(today);
     });
 }
 
