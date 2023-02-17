@@ -296,17 +296,17 @@ QString Order::statusString() const
 
 QString Order::editUrl() const
 {
-    return QString("https://lectronz.com/orders/%1/edit").arg(id);
+    return QString("https://lectronz.com/seller/orders/%1/edit").arg(id);
 }
 
 QString Order::customerInvoiceUrl() const
 {
-    return QString("https://lectronz.com/orders/%1/customer_invoice.pdf").arg(id);
+    return QString("https://lectronz.com/seller/orders/%1/customer_invoice.pdf").arg(id);
 }
 
 QString Order::supplierInvoiceUrl() const
 {
-    return QString("https://lectronz.com/orders/%1/supplier_invoice.pdf").arg(id);
+    return QString("https://lectronz.com/seller/orders/%1/supplier_invoice.pdf").arg(id);
 }
 
 QString Order::itemListing() const
