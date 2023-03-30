@@ -159,10 +159,10 @@ void OrderDetailsWidget::updateOrderButtons(const int row, const int rowCount)
 
 void OrderDetailsWidget::updateOrderDetails()
 {
-    if (!parent())
-        setWindowTitle(tr("Order details - #%1").arg(m_order.id));
-
     const Address &address = m_order.shipping.address;
+
+    if (!parent())
+        setWindowTitle(tr("Order details - #%1 - %2").arg(m_order.id).arg(address.firstName + " " + address.lastName));
 
     // Header
     m_ui->orderNumberLabel->setText(tr("<a href='%1'>Order #%2</a>").arg(m_order.editUrl(), QString::number(m_order.id)));
