@@ -128,7 +128,9 @@ struct Order
     QDateTime fulfillUntil{};
 
     QString status{};
+    int storeId{};
     QString storeUrl{};
+    QString customerLegalStatus{};
     QString customerEmail{};
     QString customerPhone{};
     QString customerNote{};
@@ -212,13 +214,14 @@ struct Order
     bool operator==(const Order &other) const
     {
         return std::tie(billing, id, currency, subtotal, taxableAmount, total, payout, lectronzFee,
-                        paymentFee, payment, createdAt, updatedAt, fulfilledAt, status, storeUrl,
-                        customerEmail, customerPhone, items, tax, shipping, tracking, weight, packaging, note) ==
+                        paymentFee, payment, createdAt, updatedAt, fulfilledAt, status, storeUrl, storeId,
+                        customerLegalStatus, customerEmail, customerPhone, items, tax, shipping, tracking, weight,
+                        packaging, note) ==
                     std::tie(other.billing, other.id, other.currency, other.subtotal, other.taxableAmount,
                              other.total, other.payout, other.lectronzFee, other. paymentFee, other.payment,
-                             other.createdAt, other.updatedAt, other.fulfilledAt, other.status, other.storeUrl,
-                             other.customerEmail, other.customerPhone, other.items, other.tax, other.shipping,
-                             other.tracking, other.weight, other.packaging, other.note);
+                             other.createdAt, other.updatedAt, other.fulfilledAt, other.status, other.storeUrl, other.storeId,
+                             other.customerLegalStatus, other.customerEmail, other.customerPhone, other.items, other.tax,
+                             other.shipping, other.tracking, other.weight, other.packaging, other.note);
     }
     bool operator!=(const Order &other) const { return !(*this == other); };
 };

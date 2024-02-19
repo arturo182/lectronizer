@@ -81,7 +81,9 @@ QDebug operator<<(QDebug debug, const Order &o)
         debug << ", fulfilledAt = " << o.fulfilledAt;
 
     debug << ", status = " << o.status;
+    debug << ", storeId = " << o.storeId;
     debug << ", storeUrl = " << o.storeUrl;
+    debug << ", customerLegalStatus = " << o.customerLegalStatus;
     debug << ", customerEmail = " << o.customerEmail;
     debug << ", items = " << o.items;
     debug << ", tax = { appliesToShipping = " << o.tax.appliesToShipping << ", rate = " << o.tax.rate << ", total = " << o.tax.total << ", collected = " << o.tax.collected <<" }";
@@ -227,7 +229,9 @@ Order parseJsonOrder(const QJsonValue &val)
     order.fulfillUntil               = QDateTime::fromString(object.value("fulfill_until", true).toString(), Qt::ISODateWithMs).toLocalTime();
 
     order.status                     = object.value("status").toString();
+    order.storeId                    = object.value("store_id").toInt();
     order.storeUrl                   = object.value("store_url").toString();
+    order.customerLegalStatus        = object.value("customer_legal_status").toString();
     order.customerEmail              = object.value("customer_email").toString();
     order.customerPhone              = object.value("customer_phone").toString();
     order.customerNote               = object.value("customer_note", true).toString();
