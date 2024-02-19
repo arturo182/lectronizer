@@ -180,7 +180,7 @@ void FilterTreeWidget::refreshFilters()
             QStringList values = set.value(QString::number(column), "*").toStringList();
 
             if (values.isEmpty())
-                values = { "*" };
+                values = QStringList{ "*" };
 
             if (values[0] == "*") // "All"
                 continue;

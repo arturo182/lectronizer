@@ -5,7 +5,7 @@
 namespace Ui { class MarkShippedDialog; }
 
 class Order;
-class SharedData;
+struct SharedData;
 
 class MarkShippedDialog : public QDialog
 {

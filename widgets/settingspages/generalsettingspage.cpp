@@ -3,6 +3,7 @@
 
 #include <QDesktopServices>
 #include <QToolTip>
+#include <QUrl>
 
 GeneralSettingsPage::GeneralSettingsPage(QWidget *parent)
     : SettingPage{parent}

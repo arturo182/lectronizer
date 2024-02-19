@@ -6,8 +6,8 @@ namespace Ui { class BulkExporterDialog; }
 
 class OrderManager;
 class QSortFilterProxyModel;
-class SharedData;
 class SqlManager;
+struct SharedData;
 
 enum class ColumnId;
 
