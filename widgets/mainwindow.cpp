@@ -1035,6 +1035,7 @@ if (_MSC_VER >= 1500) // 1500: MSVC 2008, 1600: MSVC 2010, ... (2-year release c
                                    "Built on %5 %6<br><br>"
                                    "%7"
                                    "Copyright &copy; 2022 <a href='http://twitter.com/arturo182'>arturo182</a>. All rights reserved.<br><br>"
+                                   "<a href=\"https://www.exchangerate-api.com\">Rates By Exchange Rate API</a><br><br>"
                                    "The program is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE WARRANTY OF DESIGN, "
                                    "MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.");
 

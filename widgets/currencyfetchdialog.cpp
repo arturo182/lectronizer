@@ -6,7 +6,7 @@
 #include <QNetworkReply>
 #include <QNetworkRequest>
 
-static const QString CurrencyUrl{"https://api.exchangerate.host/latest"};
+static const QString CurrencyUrl{"https://open.er-api.com/v6/latest/EUR"};
 
 CurrencyFetchDialog::CurrencyFetchDialog(QNetworkAccessManager *nam, QWidget *parent)
     : QProgressDialog{parent}
@@ -66,7 +66,7 @@ int CurrencyFetchDialog::exec()
 
         const QJsonObject root = doc.object();
 
-        if (root.value("base").toString() != "EUR") {
+        if (root.value("base_code").toString() != "EUR") {
             setErrorMsg("Base currency is not EUR");
             return;
         }
