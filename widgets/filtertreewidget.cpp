@@ -177,7 +177,10 @@ void FilterTreeWidget::refreshFilters()
         for (int i = 0; i < topLevelItemCount(); ++i) {
             QTreeWidgetItem *categoryItem = topLevelItem(i);
             const int column = categoryItem->data(0, ColumnRole).toInt();
-            const QStringList values = set.value(QString::number(column), "*").toStringList();
+            QStringList values = set.value(QString::number(column), "*").toStringList();
+
+            if (values.isEmpty())
+                values = { "*" };
 
             if (values[0] == "*") // "All"
                 continue;
