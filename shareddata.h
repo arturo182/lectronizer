@@ -14,6 +14,7 @@ struct SharedData
     bool closeToSystemTray{};
     bool autoFetchWhenMinimized{};
     bool friendlyDate{};
+    QString dateFormat{};
     int autoFetchIntervalMin{};
     QString trackingUrl{};
     int csvSeparator{BulkExporterDialog::SepComma};

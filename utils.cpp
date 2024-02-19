@@ -263,8 +263,8 @@ static const QMap<QString, QString> phoneCodes =
 //  - <day name> for this week
 //  - "Last <day name>" for last week
 //  - "Next <day name>" for next week
-// and a full date everything else
-QString textDate(const QDateTime &date, bool friendly)
+// and a full date for everything else
+QString textDate(const QDateTime &date, const SharedData &shared)
 {
     const QDateTime now = QDateTime::currentDateTime();
     const int days = date.daysTo(now);
@@ -272,8 +272,8 @@ QString textDate(const QDateTime &date, bool friendly)
     const int dowDate = dowNow + -days; // 1 - Monday, 7 - Sunday
     const QString timeStr = date.time().toString("hh:mm");
 
-    if (!friendly || (dowDate < -6) || (dowDate > 14))
-        return date.toString("dd MMMM, hh:mm");
+    if (!shared.friendlyDate || (dowDate < -6) || (dowDate > 14))
+        return date.toString(shared.dateFormat);
 
     if (days == -1)
         return QObject::tr("Tomorrow, ") + timeStr;

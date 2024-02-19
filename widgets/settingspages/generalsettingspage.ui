@@ -177,13 +177,44 @@
      <property name="title">
       <string>Display</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
+     <layout class="QFormLayout" name="formLayout_5">
+      <item row="0" column="0" colspan="2">
        <widget class="QCheckBox" name="friendlyDateCheckBox">
         <property name="text">
          <string>Use friendly date format (&quot;Today&quot;, &quot;Yesterday&quot;, etc.)</string>
         </property>
        </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Date format:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <widget class="QLineEdit" name="dateFormatEdit"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="dateFormatHelpButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../../res.qrc">
+            <normaloff>:/res/icons/world.png</normaloff>:/res/icons/world.png</iconset>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>

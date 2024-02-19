@@ -167,8 +167,8 @@ void OrderDetailsWidget::updateOrderDetails()
     // Header
     m_ui->orderNumberLabel->setText(tr("<a href='%1'>Order #%2</a>").arg(m_order.editUrl(), QString::number(m_order.id)));
     m_ui->orderStatusLabel->setText(tr("Status: %1").arg(m_order.statusString()));
-    m_ui->createdAtLabel->setText(tr("Created: %1").arg(textDate(m_order.createdAt, m_shared->friendlyDate)));
-    m_ui->updatedAtLabel->setText(tr("Updated: %1").arg(textDate(m_order.updatedAt, m_shared->friendlyDate)));
+    m_ui->createdAtLabel->setText(tr("Created: %1").arg(textDate(m_order.createdAt, *m_shared)));
+    m_ui->updatedAtLabel->setText(tr("Updated: %1").arg(textDate(m_order.updatedAt, *m_shared)));
 
     // Address
     m_ui->addressNameEdit->setText(address.firstName + " " + address.lastName);
@@ -220,7 +220,7 @@ void OrderDetailsWidget::updateOrderDetails()
     m_ui->itemsTotalLabel->setText(totalText);
 
     // Shipping
-    m_ui->shippingDeadlineValueLabel->setText(textDate(m_order.fulfillUntil, m_shared->friendlyDate));
+    m_ui->shippingDeadlineValueLabel->setText(textDate(m_order.fulfillUntil, *m_shared));
 
     for (int i = 0; i < m_ui->shippingPackagingComboBox->count(); ++i) {
         if (m_order.packaging != m_ui->shippingPackagingComboBox->itemData(i).toInt())
@@ -245,7 +245,7 @@ void OrderDetailsWidget::updateOrderDetails()
     m_ui->shippingMethodValueLabel->setText(m_order.shipping.method);
     m_ui->shippingSubmitButton->setDisabled(m_order.isShipped() || m_order.isRefunded());
     if (m_order.isShipped()) {
-        m_ui->shippingSubmitButton->setText(tr("Shipped %1").arg(textDate(m_order.fulfilledAt, m_shared->friendlyDate)));
+        m_ui->shippingSubmitButton->setText(tr("Shipped %1").arg(textDate(m_order.fulfilledAt, *m_shared)));
     } else if (m_order.isRefunded()) {
         m_ui->shippingSubmitButton->setText(tr("Order Refunded"));
     } else {
