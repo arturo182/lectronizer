@@ -6,7 +6,7 @@
 static const QMap<QString, QString> phoneCodes =
 {
     { "Afghanistan", "93" },
-    { "Åland Islands", "35818" },
+    { "Åland Islands", "358" },
     { "Albania", "355" },
     { "Algeria", "213" },
     { "American Samoa", "1684" },
