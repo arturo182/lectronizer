@@ -151,7 +151,10 @@ PackagingHelperDialog::PackagingHelperDialog(OrderManager *orderMgr, SqlManager 
     m_ui->packagingSplitter->setStretchFactor(0, 1);
     m_ui->packagingSplitter->setStretchFactor(1, 2);
     m_ui->orderListTree->setItemDelegate(new OrderListDelegate(m_orderMgr, this));
-    m_ui->orderItemTree->setItemDelegateForColumn(0, new OrderItemDelegate(m_orderMgr, this));
+
+    OrderItemDelegate *delegate = new OrderItemDelegate(m_orderMgr, this);
+    delegate->setColoredSubText(true);
+    m_ui->orderItemTree->setItemDelegateForColumn(0, delegate);
 
     m_ui->productSelectionTree->header()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     m_ui->productSelectionTree->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);

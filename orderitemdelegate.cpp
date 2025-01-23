@@ -143,11 +143,22 @@ static void doLayout(const QStyleOptionViewItem &option, QRect *checkRect, QRect
     }
 }
 
+static QString mergeSubPair(const QPair<QString, QString> &subText)
+{
+    return QString("%1: %2\n").arg(subText.first).arg(subText.second);
+}
+
 OrderItemDelegate::OrderItemDelegate(OrderManager *orderMgr, QObject *parent)
     : QItemDelegate{parent}
     , m_orderMgr{orderMgr}
+    , m_coloredSubText{false}
 {
 
+}
+
+void OrderItemDelegate::setColoredSubText(const bool colored)
+{
+    m_coloredSubText = colored;
 }
 
 void OrderItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -174,9 +185,9 @@ void OrderItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     }
 
     const QString text = QString("%1x %2").arg(item.qty).arg(item.product.name);
-    QStringList subTexts;
+    SubTextList subTexts;
     for (const ItemOption &itemOption : item.options)
-        subTexts << QString("%1: %2\n").arg(itemOption.name, itemOption.choice);
+        subTexts << qMakePair(itemOption.name, itemOption.choice);
 
     // do the layout
     QFont subFnt = option.font;
@@ -207,9 +218,9 @@ QSize OrderItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QMod
 
     const QString text = QString("%1x %2").arg(item.qty).arg(item.product.name);
 
-    QStringList subTexts;
+    SubTextList subTexts;
     for (const ItemOption &itemOption : item.options)
-        subTexts << QString("%1: %2\n").arg(itemOption.name, itemOption.choice);
+        subTexts << qMakePair(itemOption.name, itemOption.choice);
 
     QFont subFnt = option.font;
     subFnt.setPointSize(subFnt.pointSize() - 1);
@@ -282,7 +293,7 @@ QRect OrderItemDelegate::textLayoutBounds(const QStyleOptionViewItem &option, co
     return rect;
 }
 
-QRect OrderItemDelegate::textRectangle(const QRect &rect, const QFont &font, const QString &text, const QFont &subFont, const QStringList &subTexts) const
+QRect OrderItemDelegate::textRectangle(const QRect &rect, const QFont &font, const QString &text, const QFont &subFont, const SubTextList &subTexts) const
 {
     m_textOption.setWrapMode(QTextOption::WordWrap);
     m_textLayout.setTextOption(m_textOption);
@@ -294,9 +305,9 @@ QRect OrderItemDelegate::textRectangle(const QRect &rect, const QFont &font, con
     const QSize size(qCeil(fSize.width()), qCeil(fSize.height()));
 
     QSize subSize;
-    for (const QString &subText : subTexts) {
+    for (const auto &subPair : subTexts) {
         m_textLayout.setFont(subFont);
-        m_textLayout.setText(subText);
+        m_textLayout.setText(mergeSubPair(subPair));
 
         const QSizeF subFSize = doTextLayout(rect.width());
         subSize = { qMax(subSize.width(), qCeil(subFSize.width())), subSize.height() + qCeil(subFSize.height()) };
@@ -306,7 +317,7 @@ QRect OrderItemDelegate::textRectangle(const QRect &rect, const QFont &font, con
     return QRect(0, 0, size.width() + 2 * textMargin, size.height() + subSize.height() + 2);
 }
 
-void OrderItemDelegate::drawDisplay(QPainter *painter, const QStyleOptionViewItem &option, const QRect &rect, const QString &text, const QStringList &subTexts) const
+void OrderItemDelegate::drawDisplay(QPainter *painter, const QStyleOptionViewItem &option, const QRect &rect, const QString &text, const SubTextList &subTexts) const
 {
     QPalette::ColorGroup cg = (option.state & QStyle::State_Enabled) ? QPalette::Normal : QPalette::Disabled;
     if (cg == QPalette::Normal && !(option.state & QStyle::State_Active))
@@ -385,9 +396,10 @@ void OrderItemDelegate::drawDisplay(QPainter *painter, const QStyleOptionViewIte
     if (!(option.state & QStyle::State_Selected))
         painter->setPen(option.palette.color(cg, QPalette::Shadow));
 
-    for (const QString &subText : subTexts) {
+    for (const auto &subPair : subTexts) {
         textRect.adjust(0, layoutRect.height() - 1, 0, 0);
 
+        const QString subText = mergeSubPair(subPair);
         QFont subFont = option.font;
         subFont.setPointSize(subFont.pointSize() - 1);
         m_textLayout.setFont(subFont);
@@ -417,16 +429,39 @@ void OrderItemDelegate::drawDisplay(QPainter *painter, const QStyleOptionViewIte
             subTextLayoutSize = doTextLayout(textRect.width());
         }
 
+        QVector<QTextLayout::FormatRange> formatRange;
+
+        if (m_coloredSubText && m_textLayout.text().endsWith("\n")) {
+            const QColor baseColor = painter->pen().color();
+
+            QTextCharFormat fmt;
+            int len = 0;
+
+            if (subPair.second.toLower() == tr("yes")) {
+                len = tr("yes").length();
+                fmt.setForeground(baseColor.lightness() < 128 ? QColor(0, 150, 0) : QColor(100, 255, 100));
+            } else if (subPair.second.toLower() == tr("no")) {
+                len = tr("no").length();
+                fmt.setForeground(baseColor.lightness() < 128 ? QColor(200, 0, 0) : QColor(255, 100, 100));
+            } else {
+                len = subPair.second.length();
+                fmt.setForeground(baseColor.lightness() < 128 ? QColor(200, 100, 0) : QColor(255, 165, 50));
+            }
+
+            if (len > 0)
+                formatRange << QTextLayout::FormatRange{ (int)m_textLayout.text().length() - len - 1, len, fmt };
+        }
+
         const QSize subLayoutSize(textRect.width(), int(subTextLayoutSize.height()));
         layoutRect = QStyle::alignedRect(option.direction, Qt::AlignLeft, subLayoutSize, textRect);
         // if we still overflow even after eliding the text, enable clipping
         if (textRect.width() < subTextLayoutSize.width() || textRect.height() < subTextLayoutSize.height()) {
             painter->save();
             painter->setClipRect(layoutRect);
-            m_textLayout.draw(painter, layoutRect.topLeft(), QVector<QTextLayout::FormatRange>(), layoutRect);
+            m_textLayout.draw(painter, layoutRect.topLeft(), formatRange, layoutRect);
             painter->restore();
         } else {
-            m_textLayout.draw(painter, layoutRect.topLeft(), QVector<QTextLayout::FormatRange>(), layoutRect);
+            m_textLayout.draw(painter, layoutRect.topLeft(), formatRange, layoutRect);
         }
     }
 }
