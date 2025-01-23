@@ -321,7 +321,7 @@ QString Order::itemListing() const
 
         QString value = QString("%1x %2").arg(item.qty).arg(item.product.name);
         if (item.options.size())
-            value += " (+options)";
+            value += QObject::tr(" (+options)");
 
 
         itemValues << value;
