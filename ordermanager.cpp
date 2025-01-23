@@ -195,7 +195,8 @@ void OrderManager::resetProgressDlg()
 
 void OrderManager::fetch(const int offset, const int limit)
 {
-    m_progressDlg->setMaximum(m_progressDlg->maximum() + limit);
+    if (m_progressDlg->maximum() == 0)
+        m_progressDlg->setMaximum(limit);
 
     if (m_reply) {
         qDebug() << "Trying to fetch while previous request still active!";
@@ -292,7 +293,7 @@ void OrderManager::processFetch(const QJsonObject &root)
 
         fetch(lastOrderNum, size);
 
-        // fetch() updates maximum(), we set value after that
+        m_progressDlg->setMaximum(totalOrders);
         m_progressDlg->setValue(m_progressDlg->value() + count);
     } else {
         // we're done
