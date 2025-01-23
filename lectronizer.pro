@@ -14,6 +14,7 @@ SOURCES += \
     widgets/clickylineedit.cpp \
     widgets/collapsiblewidgetheader.cpp \
     widgets/currencyfetchdialog.cpp \
+    widgets/daterangewidget.cpp \
     widgets/filtertreewidget.cpp \
     widgets/mainwindow.cpp \
     widgets/markshippeddialog.cpp \
@@ -39,6 +40,7 @@ HEADERS += \
     widgets/clickylineedit.h \
     widgets/collapsiblewidgetheader.h \
     widgets/currencyfetchdialog.h \
+    widgets/daterangewidget.h \
     widgets/filtertreewidget.h \
     widgets/mainwindow.h \
     widgets/markshippeddialog.h \
@@ -52,6 +54,7 @@ HEADERS += \
 
 FORMS += \
     widgets/bulkexporterdialog.ui \
+    widgets/daterangewidget.ui \
     widgets/mainwindow.ui \
     widgets/markshippeddialog.ui \
     widgets/orderdetailswidget.ui \

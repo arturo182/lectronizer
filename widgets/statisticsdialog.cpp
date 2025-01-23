@@ -1,3 +1,4 @@
+#include "widgets/daterangewidget.h"
 #include "ordermanager.h"
 #include "statisticsdialog.h"
 #include "sqlmanager.h"
@@ -6,9 +7,12 @@
 #include <QBarCategoryAxis>
 #include <QBarSeries>
 #include <QBarSet>
+#include <QDateTimeAxis>
+#include <QLineSeries>
 #include <QPieSeries>
 #include <QProgressDialog>
 #include <QSettings>
+#include <QSplineSeries>
 #include <QValueAxis>
 
 // Qt 5 quirk
@@ -30,6 +34,7 @@ StatisticsDialog::StatisticsDialog(OrderManager *orderMgr, SqlManager *sqlMgr, Q
     // pretty way to add new tabs and make the progress dialog % follow
     const QList<std::function<void()>> funcs =
     {
+        std::bind(&StatisticsDialog::processSales, this),
         std::bind(&StatisticsDialog::processCountries, this),
         std::bind(&StatisticsDialog::processProducts, this),
         std::bind(&StatisticsDialog::processWeight, this),
@@ -43,6 +48,8 @@ StatisticsDialog::StatisticsDialog(OrderManager *orderMgr, SqlManager *sqlMgr, Q
     for (int i = 0; i < funcs.size(); ++i) {
         funcs[i]();
         progressDlg.setValue(step * (i + 1));
+        qApp->processEvents();
+
     }
 
     readSettings();
@@ -181,6 +188,107 @@ void StatisticsDialog::showPieChart(QChartView *chartView, const QString &title,
     chartView->setChart(chart);
 
     delete previousChart;
+}
+
+void StatisticsDialog::processSales()
+{
+    const auto updateChartRange = [&](const QDate &from, const QDate &to)
+    {
+        QLineSeries *series = new QLineSeries();
+        int totalOrders = 0;
+
+        QMapIterator<QDate, int> it(m_ordersPerDay);
+        while (it.hasNext()) {
+            it.next();
+
+            if (it.key() >= from && it.key() <= to) {
+                series->append(QDateTime(it.key(), QTime()).toMSecsSinceEpoch(), it.value());
+                totalOrders += it.value();
+            }
+        }
+
+        QString format = "MMM d, yyyy";
+        QString xTitle = QString("Days (%1 total)").arg(series->count());
+        int tickDiv = 1;
+        if (series->count() > 60) {
+            tickDiv = 30;
+        } else if (series->count() > 365) {
+            tickDiv = 60;
+        } else if (series->count() > 365 * 2) {
+            tickDiv = 90;
+        }
+
+        if (tickDiv != 1) {
+            format = "MMM yyyy";
+            xTitle = QString("Months (%1 days total)").arg(series->count());
+        }
+
+        QChart *chart = new QChart();
+        chart->addSeries(series);
+        chart->legend()->hide();
+
+        QDateTimeAxis *xAxis = new QDateTimeAxis();
+        xAxis->setTickCount(series->count() / tickDiv);
+        xAxis->setFormat(format);
+        xAxis->setLabelsAngle(270);
+        xAxis->setTitleText(xTitle);
+        chart->addAxis(xAxis, Qt::AlignBottom);
+        series->attachAxis(xAxis);
+
+        QValueAxis *yAxis = new QValueAxis;
+        yAxis->setLabelFormat("%i");
+        yAxis->setTitleText(QString("Orders (%1 total)").arg(totalOrders));
+        chart->addAxis(yAxis, Qt::AlignLeft);
+        series->attachAxis(yAxis);
+
+        QChart *previousChart = m_ui->salesChartView->chart();
+
+        m_ui->salesChartView->setChart(chart);
+
+        delete previousChart;
+
+        m_ui->salesDateRangeLabel->setText(QString("%1 to %2").arg(from.toString("MMM d, yyyy"), to.toString("MMM d, yyyy")));
+
+        m_salesRange = qMakePair(from, to);
+    };
+
+    for (const int id : m_orderMgr->orderIds()) {
+        const Order &order = m_orderMgr->order(id);
+        const QDate date = order.createdAt.date();
+
+        if (m_ordersPerDay.contains(date)) {
+            m_ordersPerDay.insert(date, m_ordersPerDay.value(date) + 1);
+        } else {
+            m_ordersPerDay.insert(date, 1);
+        }
+    }
+
+    const QDate lastDate = m_ordersPerDay.lastKey();
+
+    QDate currentDate = m_ordersPerDay.firstKey();
+    while (currentDate <= lastDate) {
+        if (!m_ordersPerDay.contains(currentDate)) {
+            m_ordersPerDay.insert(currentDate, 0);
+        }
+        currentDate = currentDate.addDays(1);
+    }
+
+    connect(m_ui->salesChangeButton, &QPushButton::clicked, this, [&, updateChartRange]()
+    {
+        const QPoint buttonPos = m_ui->salesChangeButton->mapToGlobal(QPoint(0, m_ui->salesChangeButton->height()));
+
+        DateRangeWidget *dateRange = new DateRangeWidget(m_ordersPerDay.firstKey(), this);
+        dateRange->setWindowFlags(Qt::Popup | Qt::FramelessWindowHint);
+        dateRange->move(dateRange->mapFromGlobal(buttonPos));
+        dateRange->setRange(m_salesRange.first, m_salesRange.second);
+        dateRange->show();
+
+        connect(dateRange, &DateRangeWidget::rangeSelected, this, updateChartRange);
+    });
+
+    // last 7 days
+    m_salesRange = qMakePair(QDate::currentDate().addDays(-6), QDate::currentDate());
+    updateChartRange(m_salesRange.first, m_salesRange.second);
 }
 
 void StatisticsDialog::processCountries()

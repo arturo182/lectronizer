@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DateRangeWidget</class>
+ <widget class="QWidget" name="DateRangeWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>775</width>
+    <height>248</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <widget class="QListWidget" name="presetListWidget">
+      <item>
+       <property name="text">
+        <string>Today</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Last 7 Days</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>This Month</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Last Month</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Last 3 Months</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Last 6 Months</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>This Year</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Last Year</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>All Time</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Custom Range</string>
+       </property>
+      </item>
+     </widget>
+     <widget class="QWidget" name="layoutWidget">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QCalendarWidget" name="fromCalendarWidget">
+         <property name="styleSheet">
+          <string notr="true">QCalendarWidget QAbstractItemView::item:selected {
+    background-color: palette(Highlight);
+    color: palette(HighlightedText);
+}</string>
+         </property>
+         <property name="verticalHeaderFormat">
+          <enum>QCalendarWidget::NoVerticalHeader</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCalendarWidget" name="toCalendarWidget">
+         <property name="styleSheet">
+          <string notr="true">QCalendarWidget QAbstractItemView::item:selected {
+    background-color: palette(Highlight);
+    color: palette(HighlightedText);
+}</string>
+         </property>
+         <property name="verticalHeaderFormat">
+          <enum>QCalendarWidget::NoVerticalHeader</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="dateRangeLabel">
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDialogButtonBox" name="buttonBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="standardButtons">
+        <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

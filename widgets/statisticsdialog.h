@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QChartView>
+#include <QDate>
 #include <QDialog>
 
 namespace Ui { class StatisticsDialog; }
@@ -31,6 +32,7 @@ class StatisticsDialog : public QDialog
         void showBarChart(QChartView *chartView, const QString &title, const QList<QPair<QString, int>> &data);
         void showPieChart(QChartView *chartView, const QString &title, const QList<QPair<QString, int>> &data);
 
+        void processSales();
         void processCountries();
         void processProducts();
         void processWeight();
@@ -44,6 +46,9 @@ class StatisticsDialog : public QDialog
         SqlManager *m_sqlMgr{};
         Ui::StatisticsDialog *m_ui;
 
+        QPair<QDate, QDate> m_salesRange;
+
+        QMap<QDate, int> m_ordersPerDay;
         QList<QPair<QString, int>> m_countryCounts;
         QList<QPair<QString, int>> m_productCounts;
         QList<QPair<QString, int>> m_weightCounts;
