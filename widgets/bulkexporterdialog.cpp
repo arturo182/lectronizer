@@ -505,7 +505,15 @@ QString BulkExporterDialog::generateCsv(const bool preview)
 #endif
             case QMetaType::Int:        values << QString::number(value.toInt());                           break;
             case QMetaType::Double:     values << QString::number(value.toDouble(), 'f', 2);                break;
-            case QMetaType::QString:    values << "\"" + value.toString().replace("\"", "\\\"") + "\"";     break;
+            case QMetaType::QString:
+            {
+                QString str = value.toString();
+                str = str.remove("\r");
+                str = str.replace("\"", "\\\"");
+                str = str.replace("\n", "\\n");
+                values << "\"" + str + "\"";
+                break;
+            }
             case QMetaType::QDateTime:  values << value.toDateTime().toString(Qt::ISODate);                 break;
 
             default:
