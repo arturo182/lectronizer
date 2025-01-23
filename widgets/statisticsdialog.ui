@@ -477,6 +477,9 @@
             <property name="text">
              <string>0</string>
             </property>
+            <property name="openExternalLinks">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item row="1" column="0">
@@ -490,6 +493,9 @@
            <widget class="QLabel" name="miscValueMaxLabel">
             <property name="text">
              <string>0</string>
+            </property>
+            <property name="openExternalLinks">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -505,6 +511,9 @@
             <property name="text">
              <string>0</string>
             </property>
+            <property name="openExternalLinks">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item row="3" column="0">
@@ -518,6 +527,9 @@
            <widget class="QLabel" name="miscValueTotalLabel">
             <property name="text">
              <string>0</string>
+            </property>
+            <property name="openExternalLinks">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -542,6 +554,9 @@
             <property name="text">
              <string>0</string>
             </property>
+            <property name="openExternalLinks">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item row="1" column="0">
@@ -556,6 +571,9 @@
             <property name="text">
              <string>0</string>
             </property>
+            <property name="openExternalLinks">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item row="2" column="0">
@@ -569,6 +587,9 @@
            <widget class="QLabel" name="miscWeightAvgLabel">
             <property name="text">
              <string>0</string>
+            </property>
+            <property name="openExternalLinks">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -593,6 +614,9 @@
             <property name="text">
              <string>0</string>
             </property>
+            <property name="openExternalLinks">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item row="1" column="0">
@@ -606,6 +630,9 @@
            <widget class="QLabel" name="miscShipTimeMaxLabel">
             <property name="text">
              <string>0</string>
+            </property>
+            <property name="openExternalLinks">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -621,6 +648,9 @@
             <property name="text">
              <string>0</string>
             </property>
+            <property name="openExternalLinks">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
          </layout>
@@ -629,7 +659,7 @@
        <item>
         <widget class="QLabel" name="miscInfoLabel">
          <property name="text">
-          <string>Statistics based on x orders (y shipped).</string>
+          <string>Statistics based on x orders (y shipped, excluding z refunded).</string>
          </property>
         </widget>
        </item>

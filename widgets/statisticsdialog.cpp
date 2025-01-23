@@ -610,6 +610,7 @@ void StatisticsDialog::processMisc()
 
     int orderCount = m_orderMgr->orderIds().size();
     int shippedOrderCount = 0;
+    int refundedOrderCount = 0;
 
     const auto processOrder = [](const int orderId, const auto value, auto &stats, auto &orders, auto &avg)
     {
@@ -671,6 +672,8 @@ void StatisticsDialog::processMisc()
             processOrder(id, order.createdAt.secsTo(order.fulfilledAt), shipTimeStats, shipTimeOrders, shipTimeAvg);
 
             shippedOrderCount += 1;
+        } else if (order.isRefunded()) {
+            refundedOrderCount += 1;
         }
     }
 
@@ -679,18 +682,24 @@ void StatisticsDialog::processMisc()
     if (shippedOrderCount > 0)
         shipTimeAvg /= shippedOrderCount;
 
-    m_ui->miscValueMinLabel->setText(tr("%1 %2 (Order #%3)").arg(valueStats.first).arg(valueCurrency).arg(valueOrders.first));
-    m_ui->miscValueMaxLabel->setText(tr("%1 %2 (Order #%3)").arg(valueStats.second).arg(valueCurrency).arg(valueOrders.second));
+    const auto orderLink = [&](const int id) -> QString
+    {
+        const Order &order = m_orderMgr->order(id);
+        return tr("<a href='%1'>#%2</a>").arg(order.editUrl(), QString::number(order.id));
+    };
+
+    m_ui->miscValueMinLabel->setText(tr("%1 %2 (Order %3)").arg(valueStats.first).arg(valueCurrency).arg(orderLink(valueOrders.first)));
+    m_ui->miscValueMaxLabel->setText(tr("%1 %2 (Order %3)").arg(valueStats.second).arg(valueCurrency).arg(orderLink(valueOrders.second)));
     m_ui->miscValueAvgLabel->setText(tr("%1 %2").arg(valueAvg, 0, 'f', 2).arg(valueCurrency));
     m_ui->miscValueTotalLabel->setText(tr("%1 %2").arg(valueTotal, 0, 'f', 2).arg(valueCurrency));
 
-    m_ui->miscWeightMinLabel->setText(tr("%1 %2 (Order #%3)").arg(weightStats.first).arg(weightUnit).arg(weightOrders.first));
-    m_ui->miscWeightMaxLabel->setText(tr("%1 %2 (Order #%3)").arg(weightStats.second).arg(weightUnit).arg(weightOrders.second));
+    m_ui->miscWeightMinLabel->setText(tr("%1 %2 (Order %3)").arg(weightStats.first).arg(weightUnit).arg(orderLink(weightOrders.first)));
+    m_ui->miscWeightMaxLabel->setText(tr("%1 %2 (Order %3)").arg(weightStats.second).arg(weightUnit).arg(orderLink(weightOrders.second)));
     m_ui->miscWeightAvgLabel->setText(tr("%1 %2").arg(weightAvg, 0, 'f', 2).arg(weightUnit));
 
-    m_ui->miscShipTimeMinLabel->setText(tr("%1 (Order #%3)").arg(prettySeconds(shipTimeStats.first)).arg(shipTimeOrders.first));
-    m_ui->miscShipTimeMaxLabel->setText(tr("%1 (Order #%3)").arg(prettySeconds(shipTimeStats.second)).arg(shipTimeOrders.second));
+    m_ui->miscShipTimeMinLabel->setText(tr("%1 (Order %3)").arg(prettySeconds(shipTimeStats.first)).arg(orderLink(shipTimeOrders.first)));
+    m_ui->miscShipTimeMaxLabel->setText(tr("%1 (Order %3)").arg(prettySeconds(shipTimeStats.second)).arg(orderLink(shipTimeOrders.second)));
     m_ui->miscShipTimeAvgLabel->setText(prettySeconds(shipTimeAvg));
 
-    m_ui->miscInfoLabel->setText(tr("Statistics based on %1 orders (%2 shipped).").arg(orderCount).arg(shippedOrderCount));
+    m_ui->miscInfoLabel->setText(tr("Statistics based on %1 orders (%2 shipped, excluding %3 refunded).").arg(orderCount).arg(shippedOrderCount).arg(refundedOrderCount));
 }
