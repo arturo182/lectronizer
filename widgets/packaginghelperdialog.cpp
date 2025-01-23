@@ -492,9 +492,19 @@ void PackagingHelperDialog::fillOrderList()
 {
     QList<QTreeWidgetItem*> items;
     for (const int id : filteredOrders()) {
+        const Order &order = m_orderMgr->order(id);
+        QString toolTip;
+        for (const Item &item : order.items) {
+            toolTip.append(QString("%1x %2%3\n").arg(item.qty).arg(item.product.name).arg(item.options.isEmpty() ? "" : tr(" (+options)")));
+        }
+
+        if (toolTip.endsWith("\n"))
+            toolTip = toolTip.chopped(1);
+
         QTreeWidgetItem *orderItem = new QTreeWidgetItem();
         orderItem->setText(0, tr("Order #%1").arg(id));
         orderItem->setData(0, Qt::UserRole, id);
+        orderItem->setToolTip(0, toolTip);
         items << orderItem;
     }
 
