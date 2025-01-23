@@ -54,6 +54,7 @@ MainWindow::MainWindow(SqlManager *sqlMgr, QWidget *parent)
     m_orderModel.setHorizontalHeaderItem((int)ModelColumn::Total,       new QStandardItem(tr("Total")));
     m_orderModel.setHorizontalHeaderItem((int)ModelColumn::Items,       new QStandardItem(tr("Items")));
     m_orderModel.setHorizontalHeaderItem((int)ModelColumn::Customer,    new QStandardItem(tr("Customer")));
+    m_orderModel.setHorizontalHeaderItem((int)ModelColumn::Email,       new QStandardItem(tr("Email")));
     m_orderModel.setHorizontalHeaderItem((int)ModelColumn::Country,     new QStandardItem(tr("Country")));
     m_orderModel.setHorizontalHeaderItem((int)ModelColumn::Shipping,    new QStandardItem(tr("Shipping")));
     m_orderModel.setHorizontalHeaderItem((int)ModelColumn::Status,      new QStandardItem(tr("Status")));
@@ -767,6 +768,8 @@ void MainWindow::syncOrderRow(const int row, const Order &order)
     setColumn(ModelColumn::Items, order.itemListing(), itemList);
 
     setColumn(ModelColumn::Customer, QString("%1 %2").arg(order.shipping.address.firstName, order.shipping.address.lastName));
+
+    setColumn(ModelColumn::Email, order.customerEmail);
 
     setColumn(ModelColumn::Country, order.shipping.address.country);
 

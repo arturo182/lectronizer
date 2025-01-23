@@ -7,6 +7,7 @@ enum class ModelColumn
     Total,
     Items,
     Customer,
+    Email,
     Country,
     Shipping,
     Status,
