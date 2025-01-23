@@ -30,6 +30,7 @@ MainWindow::MainWindow(SqlManager *sqlMgr, QWidget *parent)
     , m_ui{new Ui::MainWindow}
 {
     m_ui->setupUi(this);
+    m_ui->orderSearchEdit->installEventFilter(this);
 
     m_ui->splitter->setStretchFactor(0, 1);
     m_ui->splitter->setStretchFactor(1, 4);
@@ -132,6 +133,17 @@ void MainWindow::closeEvent(QCloseEvent *event)
     writeSettings();
     QMainWindow::closeEvent(event);
     qApp->quit();
+}
+
+bool MainWindow::eventFilter(QObject *obj, QEvent *event)
+{
+    if ((obj == m_ui->orderSearchEdit) && (event->type() == QEvent::KeyPress)) {
+        if (static_cast<QKeyEvent*>(event)->key() == Qt::Key_Escape) {
+            m_ui->orderSearchEdit->clear();
+        }
+    }
+
+    return QMainWindow::eventFilter(obj, event);
 }
 
 bool MainWindow::event(QEvent *event)
