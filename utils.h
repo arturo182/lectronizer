@@ -6,3 +6,4 @@
 
 QString textDate(const QDateTime &date, const SharedData &shared);
 QString sanitizePhoneNumber(const QString &phone, const QString &country, const SharedData &shared);
+QString shortenUsState(const QString &country, const QString &state);
