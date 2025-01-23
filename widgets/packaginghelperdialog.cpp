@@ -570,6 +570,7 @@ void PackagingHelperDialog::showOrderDetails(QTreeWidgetItem *current)
     const Order &order = m_orderMgr->order(id);
 
     // labels
+    m_ui->orderIdLabel->setText(tr("<a href='%1'>Order #%2</a>").arg(order.editUrl(), QString::number(order.id)));
     m_ui->orderNameValueLabel->setText(QString("%1 %2").arg(order.shipping.address.firstName, order.shipping.address.lastName));
     m_ui->orderCountryValueLabel->setText(order.shipping.address.country);
     m_ui->orderWeightValueLabel->setText(QString("%1 %2").arg(order.calcWeight(), 0, 'f', 1).arg(order.weight.unit));

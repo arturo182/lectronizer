@@ -249,91 +249,91 @@
          </widget>
          <widget class="QWidget" name="layoutWidget_2">
           <layout class="QFormLayout" name="formLayout">
-           <item row="0" column="0">
+           <item row="1" column="0">
             <widget class="QLabel" name="orderNameLabel">
              <property name="text">
               <string>Name:</string>
              </property>
             </widget>
            </item>
-           <item row="0" column="1">
+           <item row="1" column="1">
             <widget class="QLabel" name="orderNameValueLabel">
              <property name="text">
               <string/>
              </property>
             </widget>
            </item>
-           <item row="1" column="0">
+           <item row="2" column="0">
             <widget class="QLabel" name="orderCountryLabel">
              <property name="text">
               <string>Country:</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="1">
+           <item row="2" column="1">
             <widget class="QLabel" name="orderCountryValueLabel">
              <property name="text">
               <string/>
              </property>
             </widget>
            </item>
-           <item row="2" column="0">
+           <item row="3" column="0">
             <widget class="QLabel" name="orderWeightLabel">
              <property name="text">
               <string>Weight:</string>
              </property>
             </widget>
            </item>
-           <item row="2" column="1">
+           <item row="3" column="1">
             <widget class="QLabel" name="orderWeightValueLabel">
              <property name="text">
               <string/>
              </property>
             </widget>
            </item>
-           <item row="3" column="0">
+           <item row="4" column="0">
             <widget class="QLabel" name="orderTrackingLabel">
              <property name="text">
               <string>Tracking:</string>
              </property>
             </widget>
            </item>
-           <item row="3" column="1">
+           <item row="4" column="1">
             <widget class="QLabel" name="orderTrackingValueLabel">
              <property name="text">
               <string/>
              </property>
             </widget>
            </item>
-           <item row="4" column="0">
+           <item row="5" column="0">
             <widget class="QLabel" name="orderShippingLabel">
              <property name="text">
               <string>Shipping method:</string>
              </property>
             </widget>
            </item>
-           <item row="4" column="1">
+           <item row="5" column="1">
             <widget class="QLabel" name="orderShippingValueLabel">
              <property name="text">
               <string/>
              </property>
             </widget>
            </item>
-           <item row="5" column="0">
+           <item row="6" column="0">
             <widget class="QLabel" name="orderTotalLabel">
              <property name="text">
               <string>Total:</string>
              </property>
             </widget>
            </item>
-           <item row="5" column="1">
+           <item row="6" column="1">
             <widget class="QLabel" name="orderTotalValueLabel">
              <property name="text">
               <string/>
              </property>
             </widget>
            </item>
-           <item row="6" column="0">
+           <item row="7" column="0">
             <widget class="QLabel" name="customerNoteLabel">
              <property name="text">
               <string>Customer note:</string>
@@ -343,7 +343,7 @@
              </property>
             </widget>
            </item>
-           <item row="6" column="1">
+           <item row="7" column="1">
             <widget class="QPlainTextEdit" name="customerNoteTextEdit">
              <property name="maximumSize">
               <size>
@@ -363,6 +363,13 @@
             </widget>
            </item>
            <item row="8" column="0" colspan="2">
+            <widget class="QLabel" name="orderItemsLabel">
+             <property name="text">
+              <string>Items in this order:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="9" column="0" colspan="2">
             <widget class="QTreeWidget" name="orderItemTree">
              <property name="alternatingRowColors">
               <bool>false</bool>
@@ -380,22 +387,31 @@
              </column>
             </widget>
            </item>
-           <item row="9" column="0" colspan="2">
+           <item row="10" column="0" colspan="2">
             <widget class="QLabel" name="orderPackagingLabel">
              <property name="text">
               <string>Select the packaging (checks all items above and marks order as packed):</string>
              </property>
             </widget>
            </item>
-           <item row="7" column="0" colspan="2">
-            <widget class="QLabel" name="orderItemsLabel">
+           <item row="11" column="0" colspan="2">
+            <widget class="QComboBox" name="packagingComboBox"/>
+           </item>
+           <item row="0" column="0" colspan="2">
+            <widget class="QLabel" name="orderIdLabel">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+               <bold>true</bold>
+              </font>
+             </property>
              <property name="text">
-              <string>Items in this order:</string>
+              <string>Order #0</string>
+             </property>
+             <property name="openExternalLinks">
+              <bool>true</bool>
              </property>
             </widget>
-           </item>
-           <item row="10" column="0" colspan="2">
-            <widget class="QComboBox" name="packagingComboBox"/>
            </item>
           </layout>
          </widget>
