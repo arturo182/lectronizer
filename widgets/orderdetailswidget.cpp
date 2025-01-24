@@ -23,7 +23,7 @@ OrderDetailsWidget::OrderDetailsWidget(const bool standalone, QWidget *parent)
     m_ui->itemsHeader->setContainer(m_ui->itemsContainer);
     m_ui->shippingHeader->setContainer(m_ui->shippingContainer);
     m_ui->billingHeader->setContainer(m_ui->billingContainer);
-    m_ui->notesHeader->setContainer(m_ui->noteTextEdit);
+    m_ui->notesHeader->setContainer(m_ui->notesContainer);
 
     if (standalone) {
         m_ui->collapseButton->hide();
@@ -283,9 +283,6 @@ void OrderDetailsWidget::updateOrderDetails()
 
     // notes
     m_ui->customerNoteTextEdit->setPlainText(m_order.customerNote);
-    m_ui->customerNoteLabel->setHidden(m_order.customerNote.isEmpty());
-    m_ui->customerNoteTextEdit->setHidden(m_order.customerNote.isEmpty());
-    m_ui->noteLabel->setHidden(m_order.customerNote.isEmpty());
     m_ui->noteTextEdit->setPlainText(m_order.note);
 }
 

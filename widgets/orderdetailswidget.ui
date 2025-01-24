@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>446</width>
-    <height>831</height>
+    <height>855</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -611,34 +611,43 @@
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="customerNoteLabel">
-     <property name="text">
-      <string>Customer Note:</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QPlainTextEdit" name="customerNoteTextEdit">
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLabel" name="noteLabel">
-     <property name="text">
-      <string>Your Note:</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QPlainTextEdit" name="noteTextEdit">
-     <property name="sizeAdjustPolicy">
-      <enum>QAbstractScrollArea::AdjustToContents</enum>
-     </property>
-     <property name="placeholderText">
-      <string>Put any extra info about the order here, it's only saved locally</string>
-     </property>
+    <widget class="QWidget" name="notesContainer" native="true">
+     <layout class="QVBoxLayout" name="verticalLayout_7">
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="customerNoteLabel">
+        <property name="text">
+         <string>Customer Note:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPlainTextEdit" name="customerNoteTextEdit">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="noteLabel">
+        <property name="text">
+         <string>Your Note:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPlainTextEdit" name="noteTextEdit">
+        <property name="sizeAdjustPolicy">
+         <enum>QAbstractScrollArea::AdjustToContents</enum>
+        </property>
+        <property name="placeholderText">
+         <string>Put any extra info about the order here, it's only saved locally</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
    <item>
