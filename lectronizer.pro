@@ -18,6 +18,7 @@ SOURCES += \
     widgets/filtertreewidget.cpp \
     widgets/mainwindow.cpp \
     widgets/markshippeddialog.cpp \
+    widgets/orderdetailsmdiwidget.cpp \
     widgets/orderdetailswidget.cpp \
     widgets/packaginghelperdialog.cpp \
     widgets/settingsdialog.cpp \
@@ -44,6 +45,7 @@ HEADERS += \
     widgets/filtertreewidget.h \
     widgets/mainwindow.h \
     widgets/markshippeddialog.h \
+    widgets/orderdetailsmdiwidget.h \
     widgets/orderdetailswidget.h \
     widgets/packaginghelperdialog.h \
     widgets/settingsdialog.h \
@@ -57,6 +59,7 @@ FORMS += \
     widgets/daterangewidget.ui \
     widgets/mainwindow.ui \
     widgets/markshippeddialog.ui \
+    widgets/orderdetailsmdiwidget.ui \
     widgets/orderdetailswidget.ui \
     widgets/packaginghelperdialog.ui \
     widgets/settingsdialog.ui \

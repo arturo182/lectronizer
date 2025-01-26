@@ -30,6 +30,8 @@ void OrderSettingsPage::readSettings(const SharedData &shared)
     m_ui->phoneRemoveSpacesCheckBox->setChecked(shared.phoneRemoveSpaces);
     m_ui->phoneAddCodeCheckBox->setChecked(shared.phoneAddCountryCode);
     m_ui->phonePrefixComboBox->setCurrentIndex(!shared.phoneUsePlusPrefix);
+
+    m_ui->groupOrderDetailWindowsCheckBox->setChecked(shared.groupOrderDetailWindows);
 }
 
 void OrderSettingsPage::writeSettings(SharedData &shared)
@@ -38,4 +40,6 @@ void OrderSettingsPage::writeSettings(SharedData &shared)
     shared.phoneRemoveSpaces = m_ui->phoneRemoveSpacesCheckBox->isChecked();
     shared.phoneAddCountryCode = m_ui->phoneAddCodeCheckBox->isChecked();
     shared.phoneUsePlusPrefix = (m_ui->phonePrefixComboBox->currentIndex() == 0);
+
+    shared.groupOrderDetailWindows = m_ui->groupOrderDetailWindowsCheckBox->isChecked();
 }

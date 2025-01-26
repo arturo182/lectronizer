@@ -3,6 +3,7 @@
 #include "enums.h"
 #include "mainwindow.h"
 #include "markshippeddialog.h"
+#include "orderdetailsmdiwidget.h"
 #include "ordermanager.h"
 #include "packaginghelperdialog.h"
 #include "settingsdialog.h"
@@ -635,21 +636,22 @@ void MainWindow::readSettings()
         break;
     }
 
-    m_shared.apiKey                 = set.value("apiKey").toString();
-    m_shared.targetCurrency         = set.value("targetCurrency", "EUR").toString();
-    m_shared.closeToSystemTray      = set.value("closeToSystemTray", true).toBool();
-    m_shared.showedTrayHint         = set.value("showedTrayHint").toBool();
-    m_shared.autoFetchWhenMinimized = set.value("autoFetchWhenMinimized").toBool();
-    m_shared.dateFormat             = set.value("dateFormat", "dd MMMM, hh:mm").toString();
-    m_shared.friendlyDate           = set.value("friendlyDate", true).toBool();
-    m_shared.autoFetchIntervalMin   = set.value("autoFetchIntervalMin").toInt();
-    m_shared.trackingUrl            = set.value("trackingUrl").toString();
-    m_shared.csvSeparator           = set.value("csvSeparator").toInt();
+    m_shared.apiKey                  = set.value("apiKey").toString();
+    m_shared.targetCurrency          = set.value("targetCurrency", "EUR").toString();
+    m_shared.closeToSystemTray       = set.value("closeToSystemTray", true).toBool();
+    m_shared.showedTrayHint          = set.value("showedTrayHint").toBool();
+    m_shared.autoFetchWhenMinimized  = set.value("autoFetchWhenMinimized").toBool();
+    m_shared.dateFormat              = set.value("dateFormat", "dd MMMM, hh:mm").toString();
+    m_shared.friendlyDate            = set.value("friendlyDate", true).toBool();
+    m_shared.autoFetchIntervalMin    = set.value("autoFetchIntervalMin").toInt();
+    m_shared.trackingUrl             = set.value("trackingUrl").toString();
+    m_shared.csvSeparator            = set.value("csvSeparator").toInt();
+    m_shared.groupOrderDetailWindows = set.value("groupOrderDetailWindows").toBool();
 
-    m_shared.phoneRemoveDashes      = set.value("phoneRemoveDashes", true).toBool();
-    m_shared.phoneRemoveSpaces      = set.value("phoneRemoveSpaces", true).toBool();
-    m_shared.phoneAddCountryCode    = set.value("phoneAddCountryCode", true).toBool();
-    m_shared.phoneUsePlusPrefix     = set.value("phoneUsePlusPrefix", true).toBool();
+    m_shared.phoneRemoveDashes       = set.value("phoneRemoveDashes", true).toBool();
+    m_shared.phoneRemoveSpaces       = set.value("phoneRemoveSpaces", true).toBool();
+    m_shared.phoneAddCountryCode     = set.value("phoneAddCountryCode", true).toBool();
+    m_shared.phoneUsePlusPrefix      = set.value("phoneUsePlusPrefix", true).toBool();
 
     m_ui->detailWidget->readSettings(set);
     m_ui->filterTree->readSettings();
@@ -692,6 +694,7 @@ void MainWindow::writeSettings() const
     set.setValue("autoFetchIntervalMin",    m_shared.autoFetchIntervalMin);
     set.setValue("trackingUrl",             m_shared.trackingUrl);
     set.setValue("csvSeparator",            m_shared.csvSeparator);
+    set.setValue("groupOrderDetailWindows", m_shared.groupOrderDetailWindows);
 
     set.setValue("phoneRemoveDashes", m_shared.phoneRemoveDashes);
     set.setValue("phoneRemoveSpaces", m_shared.phoneRemoveSpaces);
@@ -713,7 +716,21 @@ void MainWindow::openOrderWindow(const int id)
     orderWidget->setSqlManager(m_sqlMgr);
     orderWidget->setSharedData(&m_shared);
     orderWidget->setOrder(m_orderMgr->order(id));
-    orderWidget->show();
+
+    if (m_shared.groupOrderDetailWindows) {
+        OrderDetailsMdiWidget *mdiDlg = OrderDetailsMdiWidget::getInstance();
+        if (mdiDlg->hasOrder(id)) {
+            mdiDlg->setCurrentOrder(id);
+        } else {
+            mdiDlg->addWidget(orderWidget);
+        }
+
+        mdiDlg->show();
+        mdiDlg->raise();
+        mdiDlg->activateWindow();
+    } else {
+        orderWidget->show();
+    }
 }
 
 int MainWindow::orderIdFromProxyModel(const QModelIndex &proxyIndex) const

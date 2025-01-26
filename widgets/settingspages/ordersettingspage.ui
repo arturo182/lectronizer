@@ -66,6 +66,22 @@
     </widget>
    </item>
    <item>
+    <widget class="QGroupBox" name="behaviorGroupBox">
+     <property name="title">
+      <string>Behavior</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QCheckBox" name="groupOrderDetailWindowsCheckBox">
+        <property name="text">
+         <string>Group Order Details windows together</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>

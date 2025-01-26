@@ -18,6 +18,7 @@ struct SharedData
     int autoFetchIntervalMin{};
     QString trackingUrl{};
     int csvSeparator{BulkExporterDialog::SepComma};
+    bool groupOrderDetailWindows{};
 
     // Phone number sanitization
     bool phoneRemoveDashes{};

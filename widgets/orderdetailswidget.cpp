@@ -14,8 +14,9 @@
 #include <QUrl>
 
 OrderDetailsWidget::OrderDetailsWidget(const bool standalone, QWidget *parent)
-    : QWidget(parent)
-    , m_ui(new Ui::OrderDetailsWidget)
+    : QWidget{parent}
+    , m_ui{new Ui::OrderDetailsWidget}
+    , m_standalone{standalone}
 {
     m_ui->setupUi(this);
 
@@ -25,7 +26,7 @@ OrderDetailsWidget::OrderDetailsWidget(const bool standalone, QWidget *parent)
     m_ui->billingHeader->setContainer(m_ui->billingContainer);
     m_ui->notesHeader->setContainer(m_ui->notesContainer);
 
-    if (standalone) {
+    if (m_standalone) {
         m_ui->collapseButton->hide();
         m_ui->orderPosLabel->hide();
         m_ui->prevOrderButton->hide();
@@ -96,6 +97,12 @@ OrderDetailsWidget::OrderDetailsWidget(const bool standalone, QWidget *parent)
 
 OrderDetailsWidget::~OrderDetailsWidget()
 {
+    if (m_standalone) {
+        QSettings set;
+        set.beginGroup("OrderDetails");
+        writeSettings(set);
+    }
+
     delete m_ui;
     m_ui = nullptr;
 }
@@ -141,6 +148,11 @@ void OrderDetailsWidget::setSqlManager(SqlManager *sqlMgr)
 
     for (const Packaging &pack : m_sqlMgr->packagings())
         m_ui->shippingPackagingComboBox->addItem(tr("%1 (%2 left)").arg(pack.name).arg(pack.stock), pack.id);
+}
+
+const Order &OrderDetailsWidget::order() const
+{
+    return m_order;
 }
 
 void OrderDetailsWidget::setOrder(const Order &order)
@@ -322,17 +334,6 @@ void OrderDetailsWidget::writeSettings(QSettings &set) const
         set.setValue("headers", saveHeaderStates());
         set.setValue("columns", m_ui->itemsTreeWidget->header()->saveState());
     }
-}
-
-void OrderDetailsWidget::closeEvent(QCloseEvent *event)
-{
-    if (!parent()) {
-        QSettings set;
-        set.beginGroup("OrderDetails");
-        writeSettings(set);
-    }
-
-    QWidget::closeEvent(event);
 }
 
 QVariantList OrderDetailsWidget::saveHeaderStates() const

@@ -15,7 +15,6 @@ CollapsibleWidgetHeader::CollapsibleWidgetHeader(QWidget *parent)
     : QWidget{parent}
 {
     setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed));
-    setAutoFillBackground(true);
 }
 
 QWidget *CollapsibleWidgetHeader::container() const
@@ -86,11 +85,9 @@ void CollapsibleWidgetHeader::paintEvent(QPaintEvent *event)
     QWidget::paintEvent(event);
 
     QPainter p(this);
-    p.fillRect(rect(), palette().window());
 
     p.setPen(QPen(palette().color(QPalette::Dark)));
     p.drawLine(rect().topLeft(), rect().topRight());
-
 
     QStyleOption arrowOpt{};
     arrowOpt.state = QStyle::State_Enabled;

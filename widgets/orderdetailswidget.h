@@ -22,6 +22,8 @@ class OrderDetailsWidget : public QWidget
         void setSharedData(SharedData *shared);
         void setOrderManager(OrderManager *orderMgr);
         void setSqlManager(SqlManager *sqlMgr);
+
+        const Order &order() const;
         void setOrder(const Order &order);
 
     public slots:
@@ -35,9 +37,6 @@ class OrderDetailsWidget : public QWidget
         void orderRequested(const int delta);
         void hideRequested();
 
-    protected:
-        void closeEvent(QCloseEvent *event) override;
-
     private:
         QVariantList saveHeaderStates() const;
         void restoreHeaderStates(const QVariantList &states);
@@ -48,4 +47,5 @@ class OrderDetailsWidget : public QWidget
         Ui::OrderDetailsWidget *m_ui{};
         SharedData *m_shared{};
         SqlManager *m_sqlMgr{};
+        bool m_standalone{};
 };
