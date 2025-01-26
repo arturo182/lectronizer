@@ -82,7 +82,7 @@ RC_ICONS = res/cart_chip.ico
 ICON = res/cart_chip.icns
 
 # Version
-VERSION = 0.7.0
+VERSION = 0.8.0
 VERSION_PARTS = $$split(VERSION, ".")
 
 DEFINES += \
